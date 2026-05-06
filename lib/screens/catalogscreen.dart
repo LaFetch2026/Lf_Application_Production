@@ -76,7 +76,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                 title: "Categories",
                 onPressedSearch: () async {
                   // searchController.searchController.clear();
-                  Get.to(() => const SearchScreen())?.then((_) => setState(() {}));
+                  Get.to(() => const SearchScreen(), preventDuplicates: true)?.then((_) => setState(() {}));
                   await analytics.logEvent(
                     name: 'search_page',
                     parameters: <String, Object>{

@@ -49,6 +49,8 @@ class _TestCatalogController extends CatalogController {
     List<String>? sizes,
     String? minPrice,
     String? maxPrice,
+    String? minDiscount,
+    String? maxDiscount,
     String? sortOption,
     int? superCatId,
     int? catId,
@@ -66,17 +68,18 @@ class _TestCatalogController extends CatalogController {
     lastContextualCategoryId = contextualCategoryId;
 
     // Simulate what the FIXED API does: on page==1 it stores server chips
-    // and pins the active chip at index 0 (Bug 4 fix).
+    // and pins all selected chips at the front.
     if (page == 1 && serverChips.isNotEmpty) {
-      final activeId = activeChipId.value;
-      if (activeId != null) {
-        final active = serverChips.firstWhereOrNull((c) => c.id == activeId);
-        if (active != null) {
-          chips.assignAll(
-              [active, ...serverChips.where((c) => c.id != activeId)]);
-        } else {
-          chips.assignAll(serverChips);
-        }
+      if (selectedChipIds.isNotEmpty) {
+        final serverIds = serverChips.map((c) => c.id).toSet();
+        selectedChipIds.removeWhere((id) => !serverIds.contains(id));
+        final selected = serverChips
+            .where((c) => selectedChipIds.contains(c.id))
+            .toList();
+        final unselected = serverChips
+            .where((c) => !selectedChipIds.contains(c.id))
+            .toList();
+        chips.assignAll([...selected, ...unselected]);
       } else {
         chips.assignAll(serverChips);
       }
@@ -118,10 +121,10 @@ void main() {
   // =========================================================================
   // Bug 3 — Re-tap re-fetches instead of deselecting
   // =========================================================================
-  group('Bug 3 — Re-tap re-fetches (isBugCondition: tappedChip.id == activeChipId)', () {
+  group('Bug 3 — Re-tap re-fetches (isBugCondition: tappedChip.id == selectedChipIds)', () {
     test(
-      'EXPLORATION: second tap on same chip does NOT clear activeChipId to null '
-      '— EXPECTED TO FAIL (confirms Bug 3)',
+      'EXPLORATION: second tap on same chip deselects it (removes from selectedChipIds) '
+      '— EXPECTED TO FAIL on unfixed code, PASS on fixed code',
       () {
         // Arrange
         final controller = _TestCatalogController();
@@ -132,32 +135,29 @@ void main() {
 
         // Act: first tap — activates the chip
         controller.onChipTap(chip);
-        print('After 1st tap: activeChipId = ${controller.activeChipId.value}');
-        expect(controller.activeChipId.value, equals(42),
-            reason: 'First tap should set activeChipId to 42');
+        print('After 1st tap: selectedChipIds = ${controller.selectedChipIds}');
+        expect(controller.selectedChipIds, contains(42),
+            reason: 'First tap should add chip id 42 to selectedChipIds');
 
         // Act: second tap on the SAME chip — should deselect
         controller.onChipTap(chip);
-        print('After 2nd tap: activeChipId = ${controller.activeChipId.value}');
+        print('After 2nd tap: selectedChipIds = ${controller.selectedChipIds}');
         print('fetchCallCount = ${controller.fetchCallCount}');
 
-        // Assert: activeChipId should be null (deselected)
-        // On UNFIXED code: activeChipId stays 42 → test FAILS
+        // Assert: selectedChipIds should be empty (deselected)
         expect(
-          controller.activeChipId.value,
-          isNull,
+          controller.selectedChipIds,
+          isNot(contains(42)),
           reason:
-              'BUG 3 CONFIRMED: Re-tapping the active chip should clear '
-              'activeChipId to null (deselect), but on unfixed code '
-              'activeChipId stays set to ${controller.activeChipId.value}. '
-              'The second tap re-fetches instead of deselecting.',
+              'Re-tapping the active chip should remove it from selectedChipIds '
+              '(deselect), but selectedChipIds = ${controller.selectedChipIds}.',
         );
       },
     );
 
     test(
-      'EXPLORATION: second tap on same chip should NOT issue a new fetch '
-      '— EXPECTED TO FAIL (confirms Bug 3)',
+      'EXPLORATION: second tap on same chip should issue a new fetch with null chip params '
+      '— EXPECTED TO FAIL on unfixed code, PASS on fixed code',
       () {
         // Arrange
         final controller = _TestCatalogController();
@@ -178,12 +178,6 @@ void main() {
         print('Fetch count after 2nd tap: $fetchCountAfterSecondTap');
 
         // Assert: deselect DOES issue a new fetch (to clear the chip filter)
-        // On UNFIXED code: fetchCallCount also increments, but for the wrong reason
-        // (re-fetching with the same chip filter instead of clearing it).
-        // On FIXED code: fetchCallCount increments because deselect re-fetches
-        // WITHOUT the chip filter (subCatId: null, contextualCategoryId: null).
-        // The key difference is WHAT is fetched, not WHETHER a fetch occurs.
-        // We verify the deselect fetch has null subCatId/contextualCategoryId.
         expect(
           fetchCountAfterSecondTap,
           equals(fetchCountAfterFirstTap + 1),
@@ -197,15 +191,13 @@ void main() {
           controller.lastSubCatId,
           isNull,
           reason:
-              'BUG 3 CONFIRMED: Deselect fetch should pass subCatId: null '
-              'to clear the chip filter.',
+              'Deselect fetch should pass subCatId: null to clear the chip filter.',
         );
         expect(
           controller.lastContextualCategoryId,
           isNull,
           reason:
-              'BUG 3 CONFIRMED: Deselect fetch should pass contextualCategoryId: null '
-              'to clear the chip filter.',
+              'Deselect fetch should pass contextualCategoryId: null to clear the chip filter.',
         );
       },
     );
@@ -324,7 +316,7 @@ void main() {
 
         print('After tap + API response: chips = ${controller.chips.map((c) => c.label).toList()}');
         print('chips[0].id = ${controller.chips[0].id}, expected = ${dresses.id}');
-        print('activeChipId = ${controller.activeChipId.value}');
+        print('selectedChipIds = ${controller.selectedChipIds}');
 
         // Assert: active chip should still be at index 0 after API response
         // On UNFIXED code: chips.assignAll(serverChips) restores [Tops, Jeans, Dresses]
@@ -394,7 +386,7 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: [chip],
-                activeChipId: chip.id, // chip is active
+                selectedChipIds: {chip.id}, // chip is active
                 onChipTap: (_) {},
               ),
             ),
@@ -440,7 +432,7 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: [activeChip, inactiveChip],
-                activeChipId: activeChip.id, // only activeChip is active
+                selectedChipIds: {activeChip.id}, // only activeChip is active
                 onChipTap: (_) {},
               ),
             ),
@@ -500,7 +492,7 @@ void main() {
 
         print('=== After tapping Dresses ===');
         print('chips[0] = ${controller.chips[0].label} (expected: Dresses)');
-        print('activeChipId = ${controller.activeChipId.value} (expected: 12)');
+        print('selectedChipIds = ${controller.selectedChipIds} (expected: {12})');
 
         // Bug 1: chip not pinned
         final bug1Passes = controller.chips[0].id == dresses.id;
@@ -513,9 +505,9 @@ void main() {
         controller.onChipTap(dresses);
 
         print('=== After re-tapping Dresses ===');
-        print('activeChipId = ${controller.activeChipId.value} (expected: null)');
+        print('selectedChipIds = ${controller.selectedChipIds} (expected: empty)');
 
-        final bug3Passes = controller.activeChipId.value == null;
+        final bug3Passes = controller.selectedChipIds.isEmpty;
 
         print('Bug 1 (chip pinned): $bug1Passes');
         print('Bug 3 (re-tap deselects): $bug3Passes');
@@ -528,7 +520,7 @@ void main() {
           reason:
               'BUGS 1, 3, 4 CONFIRMED: '
               'Bug 1 (chip pinned after tap): $bug1Passes — '
-              'Bug 3 (re-tap clears activeChipId): $bug3Passes — '
+              'Bug 3 (re-tap clears selectedChipIds): $bug3Passes — '
               'Bug 4 (API response preserves pin): $bug4Passes. '
               'All three fail on unfixed code.',
         );

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/common/widget/button/filterbutton.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
-
-import '../button/filterbutton.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import '../lists/dummy_container.dart';
 
 class BottomFilters extends StatefulWidget {
-  final Function(int, int) onClick;
+  final Function(int, int, int, int) onClick;
   final Function btnclearAll;
   final int containerHeight;
   final int listHeight;
@@ -37,6 +37,7 @@ class BottomFiltersState extends State<BottomFilters> {
     "Price Range",
     "Size",
     "Color",
+    "Discount",
     /*"Material",
     "Style",
     "Ocassion",
@@ -54,6 +55,9 @@ class BottomFiltersState extends State<BottomFilters> {
   String lowerValue = "500";
   String UpperValue = "500000";
   RangeValues values = RangeValues(500, 500000);
+  double discountLower = 0;
+  double discountUpper = 100;
+  RangeValues discountValues = const RangeValues(0, 100);
 
   @override
   void initState() {
@@ -105,6 +109,19 @@ class BottomFiltersState extends State<BottomFilters> {
     if (prefs.getString('lower') != null && prefs.getString('upper') != null) {
       values = RangeValues(double.parse(lowerValue), double.parse(UpperValue));
     }
+    if (prefs.getString('minDiscount') != null) {
+      double? parsedMin = double.tryParse(prefs.getString('minDiscount')!);
+      if (parsedMin != null) {
+        discountLower = parsedMin.clamp(0.0, 100.0);
+      }
+    }
+    if (prefs.getString('maxDiscount') != null) {
+      double? parsedMax = double.tryParse(prefs.getString('maxDiscount')!);
+      if (parsedMax != null) {
+        discountUpper = parsedMax.clamp(0.0, 100.0);
+      }
+    }
+    discountValues = RangeValues(discountLower, discountUpper);
     isPriceLoading = false;
     setState(() {});
   }
@@ -156,7 +173,7 @@ class BottomFiltersState extends State<BottomFilters> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             brandSelected = List.generate(50, (i) => false);
                             sizeSelected = List.generate(50, (i) => false);
                             colorSelected = List.generate(50, (i) => false);
@@ -166,6 +183,12 @@ class BottomFiltersState extends State<BottomFilters> {
                             lowerValue = "500";
                             UpperValue = "500000";
                             values = RangeValues(500, 500000);
+                            discountLower = 0;
+                            discountUpper = 100;
+                            discountValues = const RangeValues(0, 100);
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.remove("minDiscount");
+                            prefs.remove("maxDiscount");
                             setState(() {});
                             widget.btnclearAll.call();
                           },
@@ -228,6 +251,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                             type = "brands";
                                             productController.isPrice.value =
                                                 false;
+                                            productController.isDiscount.value =
+                                                false;
                                             brandSelectAll =
                                                 brandSelected.length ==
                                                         productController
@@ -239,6 +264,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                                 .getFilterData("color");
                                             type = "color";
                                             productController.isPrice.value =
+                                                false;
+                                            productController.isDiscount.value =
                                                 false;
                                             colorSelectAll =
                                                 colorSelected.length ==
@@ -252,11 +279,23 @@ class BottomFiltersState extends State<BottomFilters> {
                                             type = "";
                                             productController.isPrice.value =
                                                 true;
+                                            productController.isDiscount.value =
+                                                false;
+                                          } else if (index == 4) {
+                                            productController.filterList
+                                                .clear();
+                                            type = "";
+                                            productController.isPrice.value =
+                                                false;
+                                            productController.isDiscount.value =
+                                                true;
                                           } else {
                                             productController
                                                 .getFilterData("size");
                                             type = "size";
                                             productController.isPrice.value =
+                                                false;
+                                            productController.isDiscount.value =
                                                 false;
                                             sizeSelectAll =
                                                 sizeSelected.length ==
@@ -333,7 +372,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                       height: 20.sp,
                                       width: 20.sp,
                                       child: Center(
-                                          child: CircularProgressIndicator()),
+                                          child: LfLogoLoader(
+                                              size: 12, showGlow: false)),
                                     )
                                   : Padding(
                                       padding:
@@ -443,7 +483,100 @@ class BottomFiltersState extends State<BottomFilters> {
                                         ),
                                       ),
                                     )
-                              : productController.isFilter.value
+                              : productController.isDiscount.value
+                                  ? Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.sp),
+                                      child: SizedBox(
+                                        height: widget.listHeight.sp,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.sp),
+                                              child: Text(
+                                                "Selected Discount Range",
+                                                style: TextStyle(
+                                                  color:
+                                                      widget.backgroundColor ==
+                                                              whiteColor
+                                                          ? textColor
+                                                          : dividerColor,
+                                                  fontSize: 14.sp,
+                                                  decoration:
+                                                      TextDecoration.none,
+                                                  fontFamily: "Clash Display",
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 10.sp),
+                                              child: SizedBox(
+                                                width: double.maxFinite,
+                                                child: Material(
+                                                  color:
+                                                      widget.backgroundColor ==
+                                                              whiteColor
+                                                          ? whiteColor
+                                                          : homeAppBarColor,
+                                                  child: RangeSlider(
+                                                    values: discountValues,
+                                                    min: 0,
+                                                    max: 100,
+                                                    inactiveColor: Colors.grey,
+                                                    activeColor:
+                                                        widget.backgroundColor ==
+                                                                whiteColor
+                                                            ? btnTextColor
+                                                            : lightPurpleColor,
+                                                    onChanged: (newValue) {
+                                                      discountValues = newValue;
+                                                      discountLower = newValue.start;
+                                                      discountUpper = newValue.end;
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp),
+                                                  child: Text(
+                                                    "${discountLower.toInt()}% - ${discountUpper.toInt()}%",
+                                                    style: TextStyle(
+                                                      color:
+                                                          widget.backgroundColor ==
+                                                                  whiteColor
+                                                              ? textColor
+                                                              : dividerColor,
+                                                      fontSize: 14.sp,
+                                                      decoration:
+                                                          TextDecoration.none,
+                                                      fontFamily:
+                                                          "Clash Display",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : productController.isFilter.value
                                   ? Padding(
                                       padding:
                                           EdgeInsets.symmetric(vertical: 10.sp),
@@ -1267,7 +1400,9 @@ class BottomFiltersState extends State<BottomFilters> {
               prefs.setStringList("sizeList", sizeList);
               prefs.setString("lower", lowerValue);
               prefs.setString("upper", UpperValue);
-              widget.onClick.call(int.parse(lowerValue), int.parse(UpperValue));
+              prefs.setString("minDiscount", discountLower.toInt().toString());
+              prefs.setString("maxDiscount", discountUpper.toInt().toString());
+              widget.onClick.call(int.parse(lowerValue), int.parse(UpperValue), discountLower.toInt(), discountUpper.toInt());
             },
           ),
         ],

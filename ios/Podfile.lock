@@ -266,6 +266,21 @@ PODS:
     - FlutterMacOS
   - sign_in_with_apple (0.0.1):
     - Flutter
+  - Smartech-iOS-SDK (3.8.1)
+  - smartech_appinbox (1.0.0):
+    - Flutter
+    - Smartech-iOS-SDK
+    - SmartechAppInbox-iOS-SDK
+  - smartech_base (1.0.0):
+    - Flutter
+    - Smartech-iOS-SDK
+  - smartech_push (1.0.0):
+    - Flutter
+    - SmartPush-iOS-SDK
+  - SmartechAppInbox-iOS-SDK (3.6.1):
+    - Smartech-iOS-SDK (>= 3.8.0)
+  - SmartPush-iOS-SDK (3.5.8):
+    - Smartech-iOS-SDK (>= 3.7.4)
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
@@ -305,6 +320,10 @@ DEPENDENCIES:
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
+  - smartech_appinbox (from `.symlinks/plugins/smartech_appinbox/ios`)
+  - smartech_base (from `.symlinks/plugins/smartech_base/ios`)
+  - smartech_push (from `.symlinks/plugins/smartech_push/ios`)
+  - SmartPush-iOS-SDK
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
@@ -346,6 +365,9 @@ SPEC REPOS:
     - razorpay-core-pod
     - razorpay-pod
     - RecaptchaInterop
+    - Smartech-iOS-SDK
+    - SmartechAppInbox-iOS-SDK
+    - SmartPush-iOS-SDK
 
 EXTERNAL SOURCES:
   app_links:
@@ -400,6 +422,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sign_in_with_apple:
     :path: ".symlinks/plugins/sign_in_with_apple/ios"
+  smartech_appinbox:
+    :path: ".symlinks/plugins/smartech_appinbox/ios"
+  smartech_base:
+    :path: ".symlinks/plugins/smartech_base/ios"
+  smartech_push:
+    :path: ".symlinks/plugins/smartech_push/ios"
   sqflite_darwin:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
   url_launcher_ios:
@@ -470,11 +498,17 @@ SPEC CHECKSUMS:
   share_plus: de6030e33b4e106470e09322d87cf2a4258d2d1d
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   sign_in_with_apple: c5dcc141574c8c54d5ac99dd2163c0c72ad22418
+  Smartech-iOS-SDK: 974674cade95a942b31fb1b9e15eefa2abfb7df7
+  smartech_appinbox: eca08565a6fa37e384a54dff4b063d49a63657ad
+  smartech_base: f24a62060405604f108f2e06dea603e573a09b21
+  smartech_push: bd907255309b5aa88a4a1df794e0869a5c46c99d
+  SmartechAppInbox-iOS-SDK: f7415195e6e1281024170abda9e683554fb166f8
+  SmartPush-iOS-SDK: a153ddc6488d7ee40bfa2661bb91f9f07d447b11
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
   video_player_avfoundation: dd410b52df6d2466a42d28550e33e4146928280a
   webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
 
-PODFILE CHECKSUM: d2b94cec83ba56d8d4cfbf482ee0912b75dccd72
+PODFILE CHECKSUM: 554ff64f07127e98caa1816959269f7dd91e51a2
 
 COCOAPODS: 1.16.2

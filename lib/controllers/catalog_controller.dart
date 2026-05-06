@@ -34,8 +34,7 @@ class CatalogController extends BaseController {
   /// [catalogByGender] is used by the Home screen's "Shop by Category" section.
   /// Keyed by gender ID so switching tabs in the Category screen never
   /// overwrites another gender's data shown on the Home screen.
-  final RxMap<int, List<dynamic>> catalogByGender =
-      <int, List<dynamic>>{}.obs;
+  final RxMap<int, List<dynamic>> catalogByGender = <int, List<dynamic>>{}.obs;
 
   RxList<dynamic> catagoryList = <dynamic>[].obs;
   RxList<dynamic> categoryProductList = <dynamic>[].obs;
@@ -46,12 +45,34 @@ class CatalogController extends BaseController {
   /// Cleared and replaced on every fresh query; never updated on load-more.
   RxList<FilterChipItem> chips = <FilterChipItem>[].obs;
 
-  /// The id of the currently active chip (set by [onChipTap]).
-  final Rx<int?> activeChipId = Rx<int?>(null);
+  /// The set of IDs of currently selected chips (set by [onChipTap]).
+  final RxSet<int> selectedChipIds = <int>{}.obs;
+
+  /// Cache of selected chip objects so they can be shown as pills even after
+  /// the server stops returning them in the chip list.
+  final Map<int, FilterChipItem> _selectedChipObjects = {};
 
   /// The last chip list returned by the server (page = 1).
   /// Used to restore server order when the active chip is deselected.
+  // ignore: unused_field
   List<FilterChipItem> _lastServerChips = [];
+
+  /// Reactive list of currently selected chip objects (shown as pills).
+  final RxList<FilterChipItem> selectedChips = <FilterChipItem>[].obs;
+
+  void _syncSelectedChips() {
+    selectedChips.assignAll(
+      selectedChipIds.map((id) => _selectedChipObjects[id]).whereType<FilterChipItem>().toList(),
+    );
+    print('🔹 _syncSelectedChips: selectedChips=${selectedChips.map((c) => c.label).toList()}');
+  }
+
+  /// Clears all chip selections. Call this when the screen is disposed.
+  void clearChipSelection() {
+    selectedChipIds.clear();
+    _selectedChipObjects.clear();
+    selectedChips.clear();
+  }
 
   // Stored filter state so [onChipTap] can re-issue the query while
   // preserving all active filters the user has selected.
@@ -66,16 +87,22 @@ class CatalogController extends BaseController {
   // ignore: unused_field
   String? _lastMaxPrice;
   // ignore: unused_field
+  String? _lastMinDiscount;
+  // ignore: unused_field
+  String? _lastMaxDiscount;
+  // ignore: unused_field
   String? _lastSortOption;
   // ignore: unused_field
   int? _lastSuperCatId;
   // ignore: unused_field
   int? _lastCatId;
+  // ignore: unused_field
   int? _lastSubCatId;
   // ignore: unused_field
   int? _lastBrandId;
   // ignore: unused_field
   int? _lastCollectionId;
+  // ignore: unused_field
   int? _lastContextualCategoryId;
   // ignore: unused_field
   String? _lastKey;
@@ -99,7 +126,9 @@ class CatalogController extends BaseController {
   /// Fetch catalog by gender
   Future<void> getCatalogData(int gender, {bool forceRefresh = false}) async {
     // ✅ Skip if already loaded for this specific gender (unless force refresh)
-    if (!forceRefresh && isCatalogLoaded(gender) && (catalogByGender[gender]?.isNotEmpty ?? false)) {
+    if (!forceRefresh &&
+        isCatalogLoaded(gender) &&
+        (catalogByGender[gender]?.isNotEmpty ?? false)) {
       print('✅ Catalog already loaded for gender: $gender, skipping API call');
       // Sync catalogList so the Category screen tab also shows correct data
       catalogList.assignAll(catalogByGender[gender]!);
@@ -462,6 +491,8 @@ class CatalogController extends BaseController {
     List<String>? sizes,
     String? minPrice,
     String? maxPrice,
+    String? minDiscount,
+    String? maxDiscount,
     String? sortOption,
     int? superCatId,
     int? catId,
@@ -484,6 +515,8 @@ class CatalogController extends BaseController {
       _lastSizes = sizes;
       _lastMinPrice = minPrice;
       _lastMaxPrice = maxPrice;
+      _lastMinDiscount = minDiscount;
+      _lastMaxDiscount = maxDiscount;
       _lastSortOption = sortOption;
       _lastSuperCatId = superCatId;
       _lastCatId = catId;
@@ -520,6 +553,28 @@ class CatalogController extends BaseController {
 
       if (maxPrice != null && maxPrice.isNotEmpty) {
         queryParams['maxPrice'] = maxPrice;
+      }
+
+      // Add discount params with defensive guard for invalid ranges
+      if (minDiscount != null && minDiscount.isNotEmpty &&
+          maxDiscount != null && maxDiscount.isNotEmpty) {
+        final minDiscountInt = int.tryParse(minDiscount);
+        final maxDiscountInt = int.tryParse(maxDiscount);
+        
+        // Only include if valid and minDiscount <= maxDiscount
+        if (minDiscountInt != null && maxDiscountInt != null &&
+            minDiscountInt <= maxDiscountInt) {
+          queryParams['minDiscount'] = minDiscount;
+          queryParams['maxDiscount'] = maxDiscount;
+        }
+      } else {
+        // Include individual params if only one is provided
+        if (minDiscount != null && minDiscount.isNotEmpty) {
+          queryParams['minDiscount'] = minDiscount;
+        }
+        if (maxDiscount != null && maxDiscount.isNotEmpty) {
+          queryParams['maxDiscount'] = maxDiscount;
+        }
       }
 
       if (key != null && key.isNotEmpty) {
@@ -633,21 +688,8 @@ class CatalogController extends BaseController {
               .whereType<Map<String, dynamic>>()
               .map((c) => FilterChipItem.fromJson(c))
               .toList();
-          // Always store the server-returned order so deselect can restore it.
           _lastServerChips = parsedChips;
-          final activeId = activeChipId.value;
-          if (activeId != null) {
-            final active =
-                parsedChips.firstWhereOrNull((c) => c.id == activeId);
-            if (active != null) {
-              chips.assignAll(
-                  [active, ...parsedChips.where((c) => c.id != activeId)]);
-            } else {
-              chips.assignAll(parsedChips); // active chip no longer in response
-            }
-          } else {
-            chips.assignAll(parsedChips);
-          }
+          chips.assignAll(parsedChips);
         }
 
         print("✅ Products loaded: ${transformed.length}");
@@ -723,7 +765,8 @@ class CatalogController extends BaseController {
       ).timeout(const Duration(seconds: 15));
 
       print('🔹 Chips response: ${response.statusCode}');
-      print('🔹 Chips body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+      print(
+          '🔹 Chips body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
 
       if (response.statusCode == 200) {
         final decoded = json.decode(response.body);
@@ -735,6 +778,7 @@ class CatalogController extends BaseController {
               .whereType<Map<String, dynamic>>()
               .map((c) => FilterChipItem.fromJson(c))
               .toList();
+          _lastServerChips = parsed;
           chips.assignAll(parsed);
           print('✅ Chips loaded: ${parsed.length}');
         } else {
@@ -755,65 +799,61 @@ class CatalogController extends BaseController {
   /// clears the other, then re-issues the product query while preserving all
   /// other active filter parameters.
   void onChipTap(FilterChipItem chip) {
-    // Deselect guard: tapping the already-active chip clears the selection,
-    // restores server order, and re-fetches without the chip filter.
-    if (activeChipId.value == chip.id) {
-      activeChipId.value = null;
-      chips.assignAll(_lastServerChips);
+    if (selectedChipIds.contains(chip.id)) {
+      // Deselect
+      selectedChipIds.remove(chip.id);
+      _selectedChipObjects.remove(chip.id);
+      _syncSelectedChips();
+
+      // Re-fetch with no subCat/contextual filter (or remaining selection)
+      int? newSubCatId;
+      int? newContextualCategoryId;
+      if (selectedChipIds.isNotEmpty) {
+        final remaining = _selectedChipObjects[selectedChipIds.last];
+        if (remaining != null) {
+          if (remaining.type == ChipType.category) {
+            newSubCatId = remaining.id;
+          } else {
+            newContextualCategoryId = remaining.id;
+          }
+        }
+      }
+
       getFilterAndSortProducts(
-        brandIds: _lastBrandIds,
-        colors: _lastColors,
-        sizes: _lastSizes,
-        minPrice: _lastMinPrice,
-        maxPrice: _lastMaxPrice,
+        brandIds: _lastBrandIds, colors: _lastColors, sizes: _lastSizes,
+        minPrice: _lastMinPrice, maxPrice: _lastMaxPrice,
+        minDiscount: _lastMinDiscount, maxDiscount: _lastMaxDiscount,
         sortOption: _lastSortOption,
-        superCatId: _lastSuperCatId,
-        catId: _lastCatId,
-        subCatId: null,
-        brandId: _lastBrandId,
-        collectionId: _lastCollectionId,
-        contextualCategoryId: null,
-        key: _lastKey,
-        page: 1,
-        limit: _lastLimit,
-        appendResults: false,
+        superCatId: _lastSuperCatId, catId: _lastCatId, subCatId: newSubCatId,
+        brandId: _lastBrandId, collectionId: _lastCollectionId,
+        contextualCategoryId: newContextualCategoryId,
+        key: _lastKey, page: 1, limit: _lastLimit, appendResults: false,
       );
       return;
     }
 
-    activeChipId.value = chip.id;
-
-    // Pin the tapped chip at index 0 immediately (client-side reorder).
-    chips.assignAll([chip, ...chips.where((c) => c.id != chip.id)]);
+    // Select
+    selectedChipIds.add(chip.id);
+    _selectedChipObjects[chip.id] = chip;
+    _syncSelectedChips();
 
     int? newSubCatId;
     int? newContextualCategoryId;
-
     if (chip.type == ChipType.category) {
       newSubCatId = chip.id;
-      newContextualCategoryId = null;
     } else {
       newContextualCategoryId = chip.id;
-      newSubCatId = null;
     }
 
     getFilterAndSortProducts(
-      brandIds: _lastBrandIds,
-      colors: _lastColors,
-      sizes: _lastSizes,
-      minPrice: _lastMinPrice,
-      maxPrice: _lastMaxPrice,
+      brandIds: _lastBrandIds, colors: _lastColors, sizes: _lastSizes,
+      minPrice: _lastMinPrice, maxPrice: _lastMaxPrice,
+      minDiscount: _lastMinDiscount, maxDiscount: _lastMaxDiscount,
       sortOption: _lastSortOption,
-      superCatId: _lastSuperCatId,
-      catId: _lastCatId,
-      subCatId: newSubCatId,
-      brandId: _lastBrandId,
-      collectionId: _lastCollectionId,
+      superCatId: _lastSuperCatId, catId: _lastCatId, subCatId: newSubCatId,
+      brandId: _lastBrandId, collectionId: _lastCollectionId,
       contextualCategoryId: newContextualCategoryId,
-      key: _lastKey,
-      page: 1,
-      limit: _lastLimit,
-      appendResults: false,
+      key: _lastKey, page: 1, limit: _lastLimit, appendResults: false,
     );
   }
 
@@ -828,6 +868,8 @@ class CatalogController extends BaseController {
     List<String>? sizes,
     String? minPrice,
     String? maxPrice,
+    String? minDiscount,
+    String? maxDiscount,
     String? sortOption,
     int? superCatId,
     int? catId,
@@ -843,6 +885,8 @@ class CatalogController extends BaseController {
     _lastSizes = sizes;
     _lastMinPrice = minPrice;
     _lastMaxPrice = maxPrice;
+    _lastMinDiscount = minDiscount;
+    _lastMaxDiscount = maxDiscount;
     _lastSortOption = sortOption;
     _lastSuperCatId = superCatId;
     _lastCatId = catId;

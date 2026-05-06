@@ -304,7 +304,11 @@ extension PdpBottomSection on _ProductDetailsScreenV2State {
             if (isLoading)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.sp),
-                child: const Center(child: CircularProgressIndicator()),
+                child: const Center(
+                    child: LfLoaderWidget(
+                  size: 48,
+                  brandColor: Colors.grey,
+                )),
               )
             else if (reviews.isEmpty)
               Padding(
@@ -470,9 +474,8 @@ extension PdpBottomSection on _ProductDetailsScreenV2State {
         ),
       );
 
-  Widget _buildTrendingProducts() => SimilarProductsCarousel(
+  Widget _buildTrendingProducts() => TrendingNowSection(
       productId: widget.productId,
-      showSimilar: false,
       onNavigating: () => setState(() => _isForeground = false));
 
   Widget _buildNewsletter() =>

@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import '../../../controllers/base_controller.dart';
 import '../../../core/constant/constants.dart';
-
-import 'package:get/get.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 enum SnackBarType { success, error, info, warning }
 
@@ -117,11 +118,10 @@ Widget getSingleButton(
         color: backgroundColor,
         child: (controller != null && controller.pageState == PageState.LOADING)
             ? Center(
-                child: Transform.scale(
-                  scale: 0.5.sp,
-                  child: const CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
+                child: const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Center(child: LfLogoLoader(size: 12, showGlow: false)),
                 ),
               )
             : ElevatedButton(
@@ -169,11 +169,10 @@ Widget getSmallButton(
       color: backgroundColor,
       child: (controller != null && controller.pageState == PageState.LOADING)
           ? Center(
-              child: Transform.scale(
-                scale: 0.5,
-                child: const CircularProgressIndicator(
-                  color: Colors.grey,
-                ),
+              child: const SizedBox(
+                width: 20,
+                height: 20,
+                child: Center(child: LfLogoLoader(size: 12, showGlow: false)),
               ),
             )
           : ElevatedButton(

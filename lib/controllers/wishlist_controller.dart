@@ -11,6 +11,7 @@ import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../core/services/meta_event_service.dart';
 import '../screens/loginscreen.dart';
+import '../services/netcore_service.dart';
 
 /// Endpoints used by the new wishlist API.
 class ApiEndpoints {
@@ -313,7 +314,7 @@ class WishlistController extends BaseController {
       );
 
       if (resp.statusCode == 201 || resp.statusCode == 200) {
-        getSnackBar("✅ Board created.");
+        getSnackBar("Board created.");
         await fetchBoards();
       } else {
         getSnackBar(_serverMessage(resp, fallback: "Failed to create board."));
@@ -342,7 +343,7 @@ class WishlistController extends BaseController {
       );
 
       if (resp.statusCode == 200) {
-        getSnackBar("✅ Board renamed.");
+        getSnackBar("Board renamed.");
         await fetchBoards();
       } else {
         getSnackBar(_serverMessage(resp, fallback: "Failed to rename board."));
@@ -371,7 +372,7 @@ class WishlistController extends BaseController {
 
       final ok = resp.statusCode == 200 || resp.statusCode == 204;
       if (ok) {
-        getSnackBar("✅ Board deleted.");
+        getSnackBar("Board deleted.");
         // Do NOT fetch here automatically; caller usually handles navigation then refresh.
         return true;
       } else {
@@ -512,7 +513,7 @@ class WishlistController extends BaseController {
       );
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
-        getSnackBar("✅ Product added to board.");
+        getSnackBar("Product added to board.");
 
         // Update wishlist status
         isWishlisted.value = true;
@@ -522,6 +523,13 @@ class WishlistController extends BaseController {
           contentId: productId.toString(),
           price: price,
         );
+
+        // ── Netcore CE: track wishlist add ─────────────────────────────────
+        try {
+          NetcoreService.instance.trackEvent('Add To Wishlist', {
+            'productId': productId,
+          });
+        } catch (_) {}
 
         // Refresh boards list
         await fetchBoards();
@@ -576,7 +584,7 @@ class WishlistController extends BaseController {
         isWishlisted.value = false;
         wishListDetails["wishlisted"] = false;
 
-        // getSnackBar("✅ Product removed.");
+        // getSnackBar("Product removed.");
       } else {
         final msg = _serverMessage(res, fallback: "Failed to delete product.");
         print("❌ removeProductFromBoard ${res.statusCode} ${res.body}");

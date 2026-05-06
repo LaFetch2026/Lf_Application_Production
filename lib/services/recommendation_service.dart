@@ -18,13 +18,13 @@ class _CacheEntry {
 class RecommendationService extends GetxService {
   static RecommendationService get instance => Get.find();
 
-  final _cache = <int, _CacheEntry>{};
+  final _cache = <dynamic, _CacheEntry>{};
   static const _maxEntries = 50;
   static const _ttl = Duration(minutes: 5);
 
   /// Fetch trending products. Returns [] on any error.
-  Future<List<RecommendationProduct>> fetchTrending({int limit = 12}) async {
-    final cacheKey = -1; // fixed key for trending
+  Future<List<RecommendationProduct>> fetchTrending({int limit = 12, String? gender}) async {
+    final cacheKey = gender != null ? 'trending_$gender' : 'trending_all';
     final cached = _getCached(cacheKey);
     if (cached != null) return cached;
 
@@ -40,6 +40,7 @@ class RecommendationService extends GetxService {
         'limit': limit.toString(),
         'sessionId': sessionId,
         if (userId != null) 'userId': userId.toString(),
+        if (gender != null) 'gender': gender,
       });
 
       final response = await http.get(uri, headers: {
@@ -54,10 +55,14 @@ class RecommendationService extends GetxService {
             ? (body['data'] is Map ? body['data']['products'] : body['data'])
             : body;
         if (rawList is! List) return [];
-        final products = rawList
-            .whereType<Map<String, dynamic>>()
-            .map(RecommendationProduct.fromJson)
-            .toList();
+        final products = rawList.whereType<Map<String, dynamic>>().map((item) {
+          if (rawList.indexOf(item) == 0) {
+            debugPrint('[TrendingService] First item keys: ${item.keys.toList()}');
+            debugPrint('[TrendingService] First item: $item');
+          }
+          return RecommendationProduct.fromJson(item);
+        }).toList();
+        debugPrint('[TrendingService] gender=$gender → ${products.length} products, categories: ${products.map((p) => p.category).toSet()}');
         _putCache(cacheKey, products);
         return products;
       }
@@ -68,7 +73,49 @@ class RecommendationService extends GetxService {
     }
   }
 
-  /// Fetch similar products for [productId]. Returns [] on any error.
+  /// Fetch trending products grouped by subcategory.
+  /// Endpoint: /trending-products?category=men|women|accessories
+  /// Returns data.tabs + data.productsByCategory keyed by subCatId string.
+  Future<Map<String, dynamic>> fetchTrendingByCategory(String gender) async {
+    final cacheKey = 'trending_by_cat_$gender';
+    final entry = _cache[cacheKey];
+    if (entry != null && DateTime.now().difference(entry.createdAt) < _ttl) {
+      return entry.products.first as dynamic;
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/trending-products')
+          .replace(queryParameters: {'category': gender});
+
+      debugPrint('[TrendingService] GET $uri');
+
+      final response = await http.get(uri, headers: {
+        'Accept': 'application/json; charset=UTF-8',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+      }).timeout(const Duration(seconds: 15));
+
+      debugPrint('[TrendingService] status=${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body is Map && body['success'] == false) return _emptyTrendingResult();
+        final data = body is Map ? (body['data'] ?? {}) : {};
+        return data is Map ? Map<String, dynamic>.from(data as Map) : _emptyTrendingResult();
+      }
+      debugPrint('[TrendingService] error body: ${response.body.substring(0, response.body.length.clamp(0, 200))}');
+      return _emptyTrendingResult();
+    } catch (e) {
+      debugPrint('[TrendingService] fetchTrendingByCategory error: $e');
+      return _emptyTrendingResult();
+    }
+  }
+
+  Map<String, dynamic> _emptyTrendingResult() => {'tabs': [], 'productsByCategory': {}};
+
+
   Future<List<RecommendationProduct>> fetchSimilar(int productId) async {
     final cached = _getCached(productId);
     if (cached != null) return cached;
@@ -143,19 +190,19 @@ class RecommendationService extends GetxService {
     }
   }
 
-  List<RecommendationProduct>? _getCached(int productId) {
-    final entry = _cache[productId];
+  List<RecommendationProduct>? _getCached(dynamic key) {
+    final entry = _cache[key];
     if (entry == null) return null;
     if (DateTime.now().difference(entry.createdAt) >= _ttl) {
-      _cache.remove(productId);
+      _cache.remove(key);
       return null;
     }
     return entry.products;
   }
 
-  void _putCache(int productId, List<RecommendationProduct> products) {
+  void _putCache(dynamic key, List<RecommendationProduct> products) {
     if (_cache.length >= _maxEntries) _evictOldest();
-    _cache[productId] = _CacheEntry(products);
+    _cache[key] = _CacheEntry(products);
   }
 
   void _evictOldest() {

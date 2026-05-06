@@ -16,7 +16,11 @@ extension PdpImageSection on _ProductDetailsScreenV2State {
     searchCtrl.resetFilters();
 
     Get.dialog(
-      const Center(child: CircularProgressIndicator()),
+      const Center(
+          child: LfLoaderWidget(
+        size: 32,
+        brandColor: Colors.grey,
+      )),
       barrierDismissible: false,
     );
 

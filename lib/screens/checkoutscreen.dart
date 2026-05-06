@@ -20,6 +20,8 @@ import '../controllers/cart_controller.dart';
 import '../controllers/order_controller.dart';
 import '../controllers/shipaddress_controller.dart';
 import '../core/constant/constants.dart';
+import '../services/serviceability_service.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String orderId;
@@ -124,7 +126,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
         backgroundColor: whiteColor,
         body: Obx(
           () => controller.isPayment.value
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: LfLoaderWidget(size: 54))
               : Column(
                   children: [
                     BackButtonAppbar(
@@ -1120,26 +1122,81 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       backgroundColor: colorPrimary,
                                       controller: controller,
                                       onPressed: () async {
-                                        if (shipController.addressId.value !=
+                                        if (shipController.addressId.value ==
                                             0) {
-                                          var options = {
-                                            'key': ApiConstants.razorPayKey,
-                                            'amount':
-                                                double.parse(widget.amount) *
-                                                    100,
-                                            'name': 'Lafetch',
-                                            'order_id': widget.orderId,
-                                            'description': 'Lafetch Customer',
-                                            'timeout': 60,
-                                            'theme': {
-                                              'color': '#070707',
-                                            },
-                                            'fullscreen': true,
-                                          };
-                                          razorpay.open(options);
-                                        } else {
                                           getSnackBar("Add Address");
+                                          return;
                                         }
+
+                                        controller.isPayment.value = true;
+
+                                        try {
+                                          // Serviceability guard
+                                          final postalCode = (shipController
+                                                      .addressDetails
+                                                  is Map
+                                              ? shipController
+                                                  .addressDetails['zip']
+                                                  ?.toString()
+                                              : null) ??
+                                              '';
+                                          final cartController =
+                                              Get.find<CartController>();
+                                          final variantIds = cartController
+                                              .orderList
+                                              .map((item) =>
+                                                  item['product_variant']
+                                                      ['id'] as int)
+                                              .toList();
+                                          final variantIdToName =
+                                              Map<int, String>.fromEntries(
+                                            cartController.orderList.map(
+                                                (item) => MapEntry(
+                                                      item['product_variant']
+                                                          ['id'] as int,
+                                                      (item['product']
+                                                                  ?['title'] ??
+                                                              item['product_variant']
+                                                                  ?['title'] ??
+                                                              '')
+                                                          as String,
+                                                    )),
+                                          );
+
+                                          ServiceabilityResult
+                                              serviceabilityResult;
+                                          try {
+                                            serviceabilityResult =
+                                                await ServiceabilityService()
+                                                    .checkCart(
+                                              postalCode: postalCode,
+                                              variantIds: variantIds,
+                                              variantIdToName: variantIdToName,
+                                            );
+                                          } catch (e) {
+                                            // Fail-open: if checker throws unexpectedly, allow payment to proceed
+                                            debugPrint(
+                                                'ServiceabilityService unexpected error: $e');
+                                            serviceabilityResult =
+                                                const ServiceabilityResult(
+                                              isServiceable: true,
+                                              nonServiceableVariantIds: [],
+                                              nonServiceableItemNames: [],
+                                            );
+                                          }
+
+                                          if (!serviceabilityResult
+                                              .isServiceable) {
+                                            controller.isPayment.value = false;
+                                            getSnackBar(
+                                                "Your selected address is not serviceable. Please change your delivery address.");
+                                            return;
+                                          }
+                                        } finally {
+                                          controller.isPayment.value = false;
+                                        }
+
+                                        // Existing Razorpay logic — unchanged
                                         await analytics.logEvent(
                                           name: 'checkoutPage_btnpaynow',
                                           parameters: <String, Object>{
@@ -1147,6 +1204,20 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                 'checkoutPage_btnpaynow',
                                           },
                                         );
+                                        var options = {
+                                          'key': ApiConstants.razorPayKey,
+                                          'amount':
+                                              double.parse(widget.amount) * 100,
+                                          'name': 'Lafetch',
+                                          'order_id': widget.orderId,
+                                          'description': 'Lafetch Customer',
+                                          'timeout': 60,
+                                          'theme': {
+                                            'color': '#070707',
+                                          },
+                                          'fullscreen': true,
+                                        };
+                                        razorpay.open(options);
                                       },
                                       borderColor: colorPrimary),
                                 ),

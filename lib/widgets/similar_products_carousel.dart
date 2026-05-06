@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../common/widget/other/pounce_wrapper.dart';
@@ -11,6 +12,7 @@ import '../models/recommendation_event.dart';
 import '../screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import '../services/event_tracking_service.dart';
 import '../services/recommendation_service.dart';
+import 'nudge_badge_row.dart';
 
 class SimilarProductsCarousel extends StatefulWidget {
   final int productId;
@@ -81,6 +83,15 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
     } catch (_) {
       if (mounted) setState(() => _loadingTrending = false);
     }
+  }
+
+  String _formatPrice(num value) {
+    final formatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 0,
+    );
+    return formatter.format(value);
   }
 
   void _navigate(
@@ -169,8 +180,7 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
           if (_loadingSimilar)
             _buildShimmerRow('YOU MAY ALSO LIKE')
           else if (_similar.isNotEmpty) ...[
-            _buildSectionHeader('LAFETCH RECOMMENDATIONS',
-                subtitle: 'CURATED FOR YOU'),
+            _buildSectionHeader('TRENDING ON LAFETCH'),
             _buildRow(_similar, isTrending: false),
             SizedBox(height: 8.sp),
           ],
@@ -351,6 +361,15 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
                     //       ),
                     //     ),
                     //   ),
+                    Positioned(
+                      top: 8.sp,
+                      left: 8.sp,
+                      child: NudgeBadgeRow(
+                        nudges: product.nudges,
+                        maxVisible: 2,
+                        isExpanded: true,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 6.sp),
@@ -388,7 +407,8 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.sp),
                   child: Text(
-                    '₹${product.sellingPrice.toStringAsFixed(0)}',
+                    // '₹${product.sellingPrice.toStringAsFixed(0)}',
+                    _formatPrice(product.sellingPrice),
                     style: TextStyle(
                       fontFamily: 'Clash Display Semibold',
                       fontWeight: FontWeight.w600,

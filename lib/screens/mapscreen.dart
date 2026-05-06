@@ -10,6 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
@@ -134,7 +135,7 @@ class MapScreenState extends State<MapScreen> {
         () => shipController.isDetails.value
             ? Padding(
                 padding: EdgeInsets.all(40.0.sp),
-                child: const Center(child: CircularProgressIndicator()),
+                child: const Center(child: LfLoaderWidget(size: 54)),
               )
             : Column(
                 children: [
@@ -234,7 +235,9 @@ class MapScreenState extends State<MapScreen> {
                               ? Container(
                                   color: whiteColor,
                                   alignment: Alignment.center,
-                                  child: const CircularProgressIndicator(),
+                                  child: const Center(
+                                    child: LfLogoLoader(size: 32, showGlow: false),
+                                  ),
                                 )
                               : ListView.builder(
                                   primary: false,

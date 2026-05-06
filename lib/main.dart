@@ -15,6 +15,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartech_push/smartech_push.dart';
 
 import 'controllers/home_controller.dart';
 import 'controllers/login_controller.dart';
@@ -31,6 +32,8 @@ import 'screens/home/women/homescreen.dart' show routeObserver;
 import 'services/session_manager.dart';
 import 'services/recommendation_service.dart';
 import 'services/event_tracking_service.dart';
+import 'services/netcore_service.dart';
+import 'lf_swipe/services/swipe_feed_service.dart';
 
 /// Background FCM handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -38,6 +41,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("🔔 Background message received:");
   print("   notification: ${message.notification?.title}");
   print("   data: ${message.data}");
+
+  // ── Netcore CE push routing check ────────────────────────────────────────
+  // Check if this notification is from Netcore before processing with FCM.
+  try {
+    final isNetcore = await SmartechPush().isNotificationFromSmartech(message.data.toString());
+    if (isNetcore) {
+      print("🔔 Background: Netcore notification — delegating to SmartechPush");
+      SmartechPush().handlePushNotification(message.data.toString());
+      return; // Do NOT show local notification for Netcore messages
+    }
+  } catch (e) {
+    print("⚠️ Background: Netcore routing check failed: $e — defaulting to FCM handler");
+    // Fall through to existing FCM handler on error
+  }
 
   // For data-only messages, show a local notification manually
   if (message.notification == null && message.data.isNotEmpty) {
@@ -139,6 +156,15 @@ Future<void> main() async {
     Get.put(EventTrackingService(), permanent: true);
   }
 
+  if (!Get.isRegistered<SwipeFeedService>()) {
+    Get.put(SwipeFeedService(), permanent: true);
+  }
+
+  // ---------------- Netcore CE Service -----------------------
+  if (!Get.isRegistered<NetcoreService>()) {
+    Get.put(NetcoreService(), permanent: true);
+  }
+
   // ---------------- Firebase Init -----------------------
   try {
     await Firebase.initializeApp(
@@ -168,6 +194,16 @@ Future<void> main() async {
   // Meta (Facebook) App Events
   if (!kReleaseMode) MetaEventService.testEventCode = 'TEST81951';
   await MetaEventService.instance.init();
+
+  // ---------------- Netcore CE SDK Init -----------------------
+  try {
+    await NetcoreService.instance.init();
+    NetcoreService.instance.registerDeeplinkHandler();
+  } catch (e, stack) {
+    debugPrint('❌ Netcore SDK init failed: $e');
+    await FirebaseCrashlytics.instance.recordError(e, stack, fatal: false);
+    // App continues normally — Netcore is non-critical
+  }
 
   final prefs = await SharedPreferences.getInstance();
   await _initPushNotifications(prefs);
@@ -293,11 +329,26 @@ Future<void> _initPushNotifications(prefs) async {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // Foreground message listener
-    FirebaseMessaging.onMessage.listen((message) {
+    FirebaseMessaging.onMessage.listen((message) async {
       print("🔔 Foreground message received!");
       print(
           "   notification: ${message.notification?.title} - ${message.notification?.body}");
       print("   data: ${message.data}");
+
+      // ── Netcore CE push routing check ──────────────────────────────────────
+      // If the notification is from Netcore, delegate to SmartechPush and skip
+      // the existing FCM local notification display.
+      try {
+        final isNetcore = await SmartechPush().isNotificationFromSmartech(message.data.toString());
+        if (isNetcore) {
+          print("🔔 Netcore notification detected — delegating to SmartechPush");
+          SmartechPush().handlePushNotification(message.data.toString());
+          return; // Do NOT show local notification for Netcore messages
+        }
+      } catch (e) {
+        print("⚠️ Netcore routing check failed: $e — defaulting to FCM handler");
+        // Fall through to existing FCM handler on error
+      }
 
       RemoteNotification? notification = message.notification;
 
@@ -365,6 +416,8 @@ Future<void> _initPushNotifications(prefs) async {
         if (token != null && token.isNotEmpty) {
           print("📱 FCM Token obtained: $token");
           await prefs.setString('pending_fcm_token', token);
+          // ── Netcore CE: forward FCM token ──────────────────────────────────
+          NetcoreService.instance.setDevicePushToken(token);
           break;
         }
         // If token is null, wait briefly before retry
@@ -412,6 +465,8 @@ Future<void> _initPushNotifications(prefs) async {
     messaging.onTokenRefresh.listen((newToken) {
       print("🔄 FCM Token refreshed: $newToken");
       prefs.setString('pending_fcm_token', newToken);
+      // ── Netcore CE: forward refreshed FCM token ────────────────────────────
+      NetcoreService.instance.setDevicePushToken(newToken);
       _sendFcmTokenIfLoggedIn();
     });
   } catch (e, stackTrace) {

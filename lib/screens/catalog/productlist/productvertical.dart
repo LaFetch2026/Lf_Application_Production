@@ -14,6 +14,7 @@ import '../../../common/widget/bottom_sheets/bottomsortby.dart';
 import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_vertical_list.dart';
+import '../../../common/widget/other/chip_shimmer_row.dart';
 import '../../../common/widget/other/filter_chips_row.dart';
 import '../../../common/widget/other/productvedio.dart';
 import '../../../common/widget/other/pounce_wrapper.dart';
@@ -23,6 +24,8 @@ import '../../../controllers/catalog_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../models/nudge_model.dart';
+import '../../../widgets/nudge_badge_row.dart';
 
 class ProductVerticalScreen extends StatefulWidget {
   final int categoryId;
@@ -46,6 +49,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  int _appliedMinDiscount = 0;
+  int _appliedMaxDiscount = 100;
 
   //late Future<void> _initializeVideoPlayerFuture;
 
@@ -79,12 +85,20 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   void dispose() {
     productController.isVideoPlaying.value = true;
     videoController.dispose();
+    catalogController.clearChipSelection();
     super.dispose();
   }
 
   bool isImage(String path) {
     print(path);
     return path.contains('product_photo');
+  }
+
+  List<Nudge> _nudgesFromMap(Map<String, dynamic> map) {
+    return (map['nudges'] as List<dynamic>?)
+            ?.map((e) => Nudge.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
   }
 
   List<Widget> getListForPageView(int index) {
@@ -220,14 +234,20 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                     SizedBox(
                                       height: 10.sp,
                                     ),
-                                    Obx(() => FilterChipsRow(
-                                          chips:
-                                              catalogController.chips.toList(),
-                                          activeChipId:
-                                              catalogController.activeChipId.value,
-                                          onChipTap:
-                                              catalogController.onChipTap,
-                                        )),
+                                    Obx(() {
+                                      if (catalogController.isCategory.value) {
+                                        return const ChipShimmerRow();
+                                      }
+                                      return FilterChipsRow(
+                                        chips: catalogController.chips.toList(),
+                                        selectedChipIds:
+                                            catalogController.selectedChipIds,
+                                        selectedChips: catalogController
+                                            .selectedChips
+                                            .toList(),
+                                        onChipTap: catalogController.onChipTap,
+                                      );
+                                    }),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           left: 16.sp,
@@ -570,6 +590,18 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           ),
                                                         ),
                                                       ),
+                                                      Positioned(
+                                                        top: 8.sp,
+                                                        left: 8.sp,
+                                                        child: NudgeBadgeRow(
+                                                          nudges: _nudgesFromMap(
+                                                              productController
+                                                                      .productCategoryList[
+                                                                  index]),
+                                                          maxVisible: 2,
+                                                          isExpanded: true,
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                   productController
@@ -760,7 +792,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           //   ],
                                                           // ),
                                                         )
-                                                      : SizedBox(
+                                                      : const SizedBox(
                                                           height: 0,
                                                         )
                                                 ],
@@ -852,12 +884,22 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       prefs.remove("upper");
                                       prefs.remove("lower");
                                       prefs.remove("sortby");
+                                      prefs.remove("minDiscount");
+                                      prefs.remove("maxDiscount");
+                                      setState(() {
+                                        _appliedMinDiscount = 0;
+                                        _appliedMaxDiscount = 100;
+                                      });
                                     },
-                                    onClick: (p0, p1) {
+                                    onClick: (p0, p1, p2, p3) {
                                       productController.filterEnable.value =
                                           true;
                                       productController.lowPrice.value = p0;
                                       productController.highPrice.value = p1;
+                                      setState(() {
+                                        _appliedMinDiscount = p2;
+                                        _appliedMaxDiscount = p3;
+                                      });
                                     },
                                   );
                                 },

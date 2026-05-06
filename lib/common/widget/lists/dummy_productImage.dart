@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'dummy_container.dart';
-
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class DummyProductImage extends StatelessWidget {
   const DummyProductImage({
@@ -17,9 +17,10 @@ class DummyProductImage extends StatelessWidget {
       children: [
         Padding(
           padding:
-          EdgeInsets.only(top: MediaQuery.sizeOf(context).height / 2.sp),
-          child: Align(
-              alignment: Alignment.center, child: CircularProgressIndicator()),
+              EdgeInsets.only(top: MediaQuery.sizeOf(context).height / 3.sp),
+          child: const Align(
+              alignment: Alignment.center,
+              child: LfLogoLoader(size: 36, showGlow: false)),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +43,7 @@ class DummyProductImage extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.04),
                           borderRadius:
-                          BorderRadius.all(Radius.circular(20.sp))),
+                              BorderRadius.all(Radius.circular(20.sp))),
                       width: 50.sp,
                       height: 30.sp,
                     ),

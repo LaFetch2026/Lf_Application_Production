@@ -15,6 +15,7 @@ import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/orders/confirm_orderdetails.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyOrdersScreen extends StatefulWidget {
@@ -26,6 +27,7 @@ class MyOrdersScreen extends StatefulWidget {
 
 class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
   final OrderController orderController = Get.put(OrderController());
+  bool _isRefreshing = false;
 
   /// Helper to extract product data from nested or flat structure
   Map<String, dynamic> _extractProduct(dynamic rawProduct) {
@@ -74,6 +76,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
   }
 
   Future<void> _loadOrderHistory() async {
+    setState(() => _isRefreshing = true);
+    try {
     final prefs = await SharedPreferences.getInstance();
     final int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
 
@@ -83,6 +87,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     }
 
     await orderController.getOrderHistoryByUser(userId);
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
+    }
   }
 
   @override
@@ -107,7 +114,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
       ),
       body: Obx(() {
         if (orderController.isOrderHistory.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: LfLoaderWidget(size: 54));
         }
 
         final orders = [...orderController.orderHistory];
@@ -160,7 +167,11 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
 
         return RefreshIndicator(
           onRefresh: _loadOrderHistory,
-          child: Column(
+          color: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            children: [
+              Column(
             children: [
               _buildFilterBar(),
               Expanded(
@@ -173,6 +184,19 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                   ),
                   itemBuilder: (_, index) =>
                       _buildOrderItem(filteredOrders[index]),
+                ),
+              ),
+            ],
+          ),
+              AnimatedOpacity(
+                opacity: _isRefreshing ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 200),
+                child: const Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: LfLogoLoader(size: 44),
+                  ),
                 ),
               ),
             ],

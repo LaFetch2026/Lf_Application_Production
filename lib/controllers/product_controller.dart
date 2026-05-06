@@ -18,6 +18,7 @@ import '../models/collection_model.dart';
 import '../models/collection_extensions.dart';
 import '../models/collection_banner_model.dart';
 import 'base_controller.dart';
+import '../services/netcore_service.dart';
 
 class ProductController extends BaseController {
   RxBool isProduct = false.obs;
@@ -184,6 +185,7 @@ class ProductController extends BaseController {
   List addressList = [].obs;
   List pricelist = [100, 5000].obs;
   RxBool isPrice = true.obs;
+  RxBool isDiscount = false.obs;
   RxInt category_id = 0.obs;
   RxInt totalReview = 0.obs;
   RxInt productImageindex = 0.obs;
@@ -1330,6 +1332,16 @@ class ProductController extends BaseController {
       }
 
       print("🖼️ Display images count: ${currentDisplayImages.length}");
+
+      // ── Netcore CE: track product view ────────────────────────────────────
+      // Called after all product data is loaded — additive, never replaces
+      // existing EventTrackingService calls.
+      try {
+        NetcoreService.instance.trackEvent('Product Viewed', {
+          'productId': data['id'] ?? 0,
+          'productName': (data['title'] ?? '').toString(),
+        });
+      } catch (_) {}
     } catch (e, stackTrace) {
       errorMsg.value = "Error fetching product: $e";
       print("❌ getProductById error: $e");

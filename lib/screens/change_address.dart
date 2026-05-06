@@ -10,14 +10,19 @@ import 'package:get/get.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 import '../common/widget/appbar/saveaddress_appbar.dart';
+import '../common/widget/other/error_shake.dart';
 import '../common/widget/lists/dummy_container.dart';
+import '../common/widget/other/common_widget.dart';
 import '../common/widget/text/app_text.dart';
+import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/shipaddress_controller.dart';
 import '../core/constant/constants.dart';
+import '../services/serviceability_service.dart';
 
 class ChangeAddressScreen extends StatefulWidget {
   final int cartId;
@@ -34,6 +39,12 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
   final productController = Get.put(ProductController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
+
+  // Serviceability state
+  final Map<String, ServiceabilityResult> _serviceabilityCache = {};
+  final Map<int, int> _shakeTriggersMap = {};
+  final Set<int> _checkingRows = {};
+  final ServiceabilityService _serviceabilityService = ServiceabilityService();
 
   @override
   void initState() {
@@ -59,6 +70,73 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
         },
       );
     });
+  }
+
+  void _showNonServiceableSnackbar(ServiceabilityResult result) {
+    final String message;
+    if (result.nonServiceableItemNames.isEmpty) {
+      message =
+          "None of your items can be delivered to this address. Please choose a different address.";
+    } else {
+      message =
+          "${result.nonServiceableItemNames.length} item(s) in your cart are not deliverable to this address: ${result.nonServiceableItemNames.join(', ')}. Please choose a different address.";
+    }
+    // ignore: deprecated_member_use
+    getSnackBar(message);
+  }
+
+  Future<void> _onSelectTapped(
+      int index, Map<String, dynamic> address) async {
+    final postalCode = address['zip']?.toString() ?? '';
+    final cached = _serviceabilityCache[postalCode];
+
+    // Already known non-serviceable: re-shake without API call
+    if (cached != null && !cached.isServiceable) {
+      setState(
+          () => _shakeTriggersMap[index] = (_shakeTriggersMap[index] ?? 0) + 1);
+      _showNonServiceableSnackbar(cached);
+      return;
+    }
+
+    // Start loading
+    setState(() => _checkingRows.add(index));
+
+    final cartController = Get.find<CartController>();
+    final variantIds = cartController.orderList
+        .map((item) => item['product_variant']['id'] as int)
+        .toList();
+    final variantIdToName = Map.fromEntries(
+      cartController.orderList.map((item) => MapEntry(
+            item['product_variant']['id'] as int,
+            (item['product']?['title'] ??
+                    item['product_variant']?['title'] ??
+                    '') as String,
+          )),
+    );
+
+    final result = await _serviceabilityService.checkCart(
+      postalCode: postalCode,
+      variantIds: variantIds,
+      variantIdToName: variantIdToName,
+    );
+
+    setState(() {
+      _checkingRows.remove(index);
+      _serviceabilityCache[postalCode] = result;
+    });
+
+    if (!result.isServiceable) {
+      setState(
+          () => _shakeTriggersMap[index] = (_shakeTriggersMap[index] ?? 0) + 1);
+      _showNonServiceableSnackbar(result);
+      return;
+    }
+
+    // Serviceable: proceed with address selection
+    shipController.addressId.value = address['id'];
+    shipController.cartId.value = widget.cartId;
+    await shipController.callCartAddressUpdate("update");
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override
@@ -374,240 +452,54 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                   padding: EdgeInsets.zero,
                                   scrollDirection: Axis.vertical,
                                   itemBuilder: (ctx, index) {
-                                    return Container(
-                                      color: whiteColor,
-                                      margin: EdgeInsets.only(bottom: 10.sp),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                          top: 10.sp,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 16.sp),
-                                                  child: AppText(
-                                                    text: controller
-                                                                .addressList[
-                                                            index]["type"] ??
-                                                        "",
-                                                    color: titleColor,
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        "Clash Display Semibold",
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                                controller.addressList[index]
-                                                        ["default_shipping"]
-                                                    ? Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 14.sp,
-                                                        ),
-                                                        child:
-                                                            AnimatedContainer(
-                                                          duration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      300),
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  right: 5.sp),
-                                                          width: 120.sp,
-                                                          height: 20.sp,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: titleColor,
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        5.sp),
-                                                            child: Center(
-                                                              child: AppText(
-                                                                text: controller
-                                                                            .addressList[index]
-                                                                        [
-                                                                        "default_shipping"]
-                                                                    ? "Currently selected"
-                                                                        .toUpperCase()
-                                                                    : "",
-                                                                color:
-                                                                    whiteColor,
-                                                                fontSize: 10,
-                                                                fontFamily:
-                                                                    "Clash Display",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : const SizedBox(
-                                                        height: 0,
-                                                      ),
-                                                Expanded(
-                                                  child: SizedBox(
-                                                    height: 0,
-                                                  ),
-                                                ),
-                                                shipController.selected[index]
-                                                    ? Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 5.sp,
-                                                                right: 30.sp,
-                                                                bottom: 5.sp),
-                                                        child: Center(
-                                                          child: SizedBox(
-                                                            height: 16.sp,
-                                                            width: 16.sp,
-                                                            child: Center(
-                                                                child:
-                                                                    CircularProgressIndicator()),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : GestureDetector(
-                                                        onTap: () async {
-                                                          if (widget.cartId ==
-                                                              0) {
-                                                            shipController
-                                                                        .selected[
-                                                                    index] =
-                                                                !shipController
-                                                                        .selected[
-                                                                    index];
-                                                            shipController
-                                                                .update();
-                                                            setState(() {});
-                                                            productController
-                                                                    .lat.value =
-                                                                double.parse(controller
-                                                                            .addressList[
-                                                                        index][
-                                                                    "latitude"]);
-                                                            productController
-                                                                    .lng.value =
-                                                                double.parse(controller
-                                                                            .addressList[
-                                                                        index][
-                                                                    "longitude"]);
-                                                            final prefs =
-                                                                await SharedPreferences
-                                                                    .getInstance();
-                                                            prefs.setDouble(
-                                                                "latitude",
-                                                                productController
-                                                                    .lat.value);
-                                                            prefs.setDouble(
-                                                                "longitude",
-                                                                productController
-                                                                    .lng.value);
-                                                            productController.callSaveAddress(
-                                                                "change address",
-                                                                controller.addressList[index]
-                                                                    ["id"],
-                                                                controller.addressList[index]
-                                                                    ["name"],
-                                                                controller.addressList[index]
-                                                                    ["phone"],
-                                                                controller.addressList[index]
-                                                                        ["city"]
-                                                                    ["name"],
-                                                                controller.addressList[index]
-                                                                    ["type"],
-                                                                controller.addressList[index]
-                                                                    ["address"],
-                                                                controller
-                                                                    .addressList[index]
-                                                                        ["zip"]
-                                                                    .toString(),
-                                                                controller.addressList[index][
-                                                                    "locality"],
-                                                                controller.addressList[index]
-                                                                            ["city"]
-                                                                        ["state"]
-                                                                    ["name"],
-                                                                double.parse(
-                                                                    controller.addressList[index]
-                                                                        ["latitude"]),
-                                                                double.parse(controller.addressList[index]["longitude"]),
-                                                                context);
-                                                          } else {
-                                                            shipController
-                                                                        .selected[
-                                                                    index] =
-                                                                !shipController
-                                                                        .selected[
-                                                                    index];
-                                                            shipController
-                                                                .update();
-                                                            setState(() {});
-                                                            shipController
-                                                                .addressId
-                                                                .value = controller
-                                                                    .addressList[
-                                                                index]["id"];
-                                                            shipController
-                                                                    .cartId
-                                                                    .value =
-                                                                widget.cartId;
-                                                            /*   shipController
-                                                                .callCartAddressUpdate(
-                                                                    "update"); */
-                                                            productController.callSaveAddress(
-                                                                "",
-                                                                controller.addressList[index]
-                                                                    ["id"],
-                                                                controller.addressList[index]
-                                                                    ["name"],
-                                                                controller.addressList[index]
-                                                                    ["phone"],
-                                                                controller.addressList[index]
-                                                                        ["city"]
-                                                                    ["name"],
-                                                                controller.addressList[index]
-                                                                    ["type"],
-                                                                controller.addressList[index]
-                                                                    ["address"],
-                                                                controller
-                                                                    .addressList[index]
-                                                                        ["zip"]
-                                                                    .toString(),
-                                                                controller.addressList[index][
-                                                                    "locality"],
-                                                                controller.addressList[index]
-                                                                            ["city"]
-                                                                        ["state"]
-                                                                    ["name"],
-                                                                double.parse(
-                                                                    controller.addressList[index]
-                                                                        ["latitude"]),
-                                                                double.parse(controller.addressList[index]["longitude"]),
-                                                                context);
-                                                          }
+                                    final address =
+                                        controller.addressList[index];
+                                    final postalCode =
+                                        address['zip']?.toString() ?? '';
+                                    final cached =
+                                        _serviceabilityCache[postalCode];
+                                    final isNonServiceable =
+                                        cached != null && !cached.isServiceable;
+                                    final isChecking =
+                                        _checkingRows.contains(index);
 
-                                                          await analytics
-                                                              .logEvent(
-                                                            name:
-                                                                'changeAddress_btnclick',
-                                                            parameters: <String,
-                                                                Object>{
-                                                              'page_name':
-                                                                  'changeAddress_btnclick',
-                                                            },
-                                                          );
-                                                        },
-                                                        child: Padding(
+                                    return ShakeWidget(
+                                      trigger: _shakeTriggersMap[index] ?? 0,
+                                      child: Container(
+                                        color: isNonServiceable
+                                            ? const Color(0xFFF5F5F5)
+                                            : whiteColor,
+                                        margin:
+                                            EdgeInsets.only(bottom: 10.sp),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 10.sp,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 16.sp),
+                                                    child: AppText(
+                                                      text: controller
+                                                                  .addressList[
+                                                              index]["type"] ??
+                                                          "",
+                                                      color: titleColor,
+                                                      fontSize: 14,
+                                                      fontFamily:
+                                                          "Clash Display Semibold",
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                  controller.addressList[index]
+                                                          ["default_shipping"]
+                                                      ? Padding(
                                                           padding: EdgeInsets
                                                               .symmetric(
                                                             horizontal: 14.sp,
@@ -622,19 +514,11 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                 EdgeInsets.only(
                                                                     right:
                                                                         5.sp),
-                                                            width: 80.sp,
+                                                            width: 120.sp,
                                                             height: 20.sp,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: whiteColor,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20.sp),
-                                                              border: Border.all(
-                                                                  color:
-                                                                      btnTextColor,
-                                                                  width: 1.sp),
+                                                              color: titleColor,
                                                             ),
                                                             child: Padding(
                                                               padding: EdgeInsets
@@ -643,11 +527,16 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                           5.sp),
                                                               child: Center(
                                                                 child: AppText(
-                                                                  text:
-                                                                      "Select",
+                                                                  text: controller
+                                                                              .addressList[index]
+                                                                          [
+                                                                          "default_shipping"]
+                                                                      ? "Currently selected"
+                                                                          .toUpperCase()
+                                                                      : "",
                                                                   color:
-                                                                      btnTextColor,
-                                                                  fontSize: 12,
+                                                                      whiteColor,
+                                                                  fontSize: 10,
                                                                   fontFamily:
                                                                       "Clash Display",
                                                                   fontWeight:
@@ -657,41 +546,226 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                               ),
                                                             ),
                                                           ),
+                                                        )
+                                                      : const SizedBox(
+                                                          height: 0,
                                                         ),
-                                                      )
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 16.sp,
-                                                  right: 16.sp,
-                                                  top: 8.sp),
-                                              child: AppText(
-                                                text: controller
-                                                            .addressList[index]
-                                                        ["address"] ??
-                                                    "",
-                                                color: subtitleColor,
-                                                fontSize: 12,
-                                                fontFamily:
-                                                    "Clash Display Regular",
-                                                fontWeight: FontWeight.w400,
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      height: 0,
+                                                    ),
+                                                  ),
+                                                  shipController.selected[index]
+                                                      ? Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 5.sp,
+                                                                  right: 30.sp,
+                                                                  bottom: 5.sp),
+                                                          child: Center(
+                                                            child: SizedBox(
+                                                              height: 16.sp,
+                                                              width: 16.sp,
+                                                              child: Center(
+                                                                  child: LfLogoLoader(
+                                                                      size: 10,
+                                                                      showGlow:
+                                                                          false)),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : isChecking
+                                                          ? Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          14.sp),
+                                                              child: SizedBox(
+                                                                height: 20.sp,
+                                                                width: 20.sp,
+                                                                child: Center(
+                                                                    child: LfLogoLoader(
+                                                                        size:
+                                                                            10,
+                                                                        showGlow:
+                                                                            false)),
+                                                              ),
+                                                            )
+                                                          : isNonServiceable
+                                                              ? Padding(
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              14.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Not serviceable",
+                                                                    color: const Color(
+                                                                        0xFFC0392B),
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        "Clash Display",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                )
+                                                              : GestureDetector(
+                                                                  onTap:
+                                                                      () async {
+                                                                    if (widget
+                                                                            .cartId ==
+                                                                        0) {
+                                                                      shipController.selected[
+                                                                              index] =
+                                                                          !shipController
+                                                                              .selected[index];
+                                                                      shipController
+                                                                          .update();
+                                                                      setState(
+                                                                          () {});
+                                                                      productController
+                                                                              .lat
+                                                                              .value =
+                                                                          double.parse(controller
+                                                                              .addressList[index]["latitude"]);
+                                                                      productController
+                                                                              .lng
+                                                                              .value =
+                                                                          double.parse(controller
+                                                                              .addressList[index]["longitude"]);
+                                                                      final prefs =
+                                                                          await SharedPreferences
+                                                                              .getInstance();
+                                                                      prefs.setDouble(
+                                                                          "latitude",
+                                                                          productController
+                                                                              .lat
+                                                                              .value);
+                                                                      prefs.setDouble(
+                                                                          "longitude",
+                                                                          productController
+                                                                              .lng
+                                                                              .value);
+                                                                      productController.callSaveAddress(
+                                                                          "change address",
+                                                                          controller.addressList[index]["id"],
+                                                                          controller.addressList[index]["name"],
+                                                                          controller.addressList[index]["phone"],
+                                                                          controller.addressList[index]["city"]["name"],
+                                                                          controller.addressList[index]["type"],
+                                                                          controller.addressList[index]["address"],
+                                                                          controller.addressList[index]["zip"].toString(),
+                                                                          controller.addressList[index]["locality"],
+                                                                          controller.addressList[index]["city"]["state"]["name"],
+                                                                          double.parse(controller.addressList[index]["latitude"]),
+                                                                          double.parse(controller.addressList[index]["longitude"]),
+                                                                          context);
+                                                                    } else {
+                                                                      await _onSelectTapped(
+                                                                          index,
+                                                                          controller
+                                                                              .addressList[index]);
+                                                                    }
+                                                                    await analytics
+                                                                        .logEvent(
+                                                                      name:
+                                                                          'changeAddress_btnclick',
+                                                                      parameters: <String,
+                                                                          Object>{
+                                                                        'page_name':
+                                                                            'changeAddress_btnclick',
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsets
+                                                                        .symmetric(
+                                                                            horizontal:
+                                                                                14.sp),
+                                                                    child:
+                                                                        AnimatedContainer(
+                                                                      duration: const Duration(
+                                                                          milliseconds:
+                                                                              300),
+                                                                      margin: EdgeInsets.only(
+                                                                          right:
+                                                                              5.sp),
+                                                                      width:
+                                                                          80.sp,
+                                                                      height:
+                                                                          20.sp,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color:
+                                                                            whiteColor,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20.sp),
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                btnTextColor,
+                                                                            width:
+                                                                                1.sp),
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                5.sp),
+                                                                        child:
+                                                                            Center(
+                                                                          child:
+                                                                              AppText(
+                                                                            text:
+                                                                                "Select",
+                                                                            color:
+                                                                                btnTextColor,
+                                                                            fontSize:
+                                                                                12,
+                                                                            fontFamily:
+                                                                                "Clash Display",
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                ],
                                               ),
-                                            ),
-                                            SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2.sp,
-                                              height: 20.sp,
-                                              child: Padding(
+                                              if (isNonServiceable &&
+                                                  cached != null)
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 16.sp, top: 4.sp),
+                                                  child: AppText(
+                                                    text: cached
+                                                            .nonServiceableItemNames
+                                                            .isNotEmpty
+                                                        ? "${cached.nonServiceableItemNames.join(', ')} not serviceable"
+                                                        : "${cached.nonServiceableVariantIds.length} item(s) not serviceable",
+                                                    color: const Color(
+                                                        0xFFC0392B),
+                                                    fontSize: 11,
+                                                    fontFamily:
+                                                        "Clash Display Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              Padding(
                                                 padding: EdgeInsets.only(
                                                     left: 16.sp,
                                                     right: 16.sp,
-                                                    top: 4.sp),
+                                                    top: 8.sp),
                                                 child: AppText(
-                                                  text:
-                                                      "${controller.addressList[index]["locality"] ?? ""} ,${controller.addressList[index]["city"] != null ? controller.addressList[index]["city"]["name"] : ""}",
+                                                  text: controller
+                                                              .addressList[index]
+                                                          ["address"] ??
+                                                      "",
                                                   color: subtitleColor,
                                                   fontSize: 12,
                                                   fontFamily:
@@ -699,23 +773,44 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 16.sp,
-                                                  right: 16.sp,
-                                                  top: 4.sp),
-                                              child: AppText(
-                                                text: controller
-                                                    .addressList[index]["zip"]
-                                                    .toString(),
-                                                color: subtitleColor,
-                                                fontSize: 12,
-                                                fontFamily:
-                                                    "Clash Display Regular",
-                                                fontWeight: FontWeight.w400,
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2.sp,
+                                                height: 20.sp,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 16.sp,
+                                                      right: 16.sp,
+                                                      top: 4.sp),
+                                                  child: AppText(
+                                                    text:
+                                                        "${controller.addressList[index]["locality"] ?? ""} ,${controller.addressList[index]["city"] != null ? controller.addressList[index]["city"]["name"] : ""}",
+                                                    color: subtitleColor,
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                        "Clash Display Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp,
+                                                    right: 16.sp,
+                                                    top: 4.sp),
+                                                child: AppText(
+                                                  text: controller
+                                                      .addressList[index]["zip"]
+                                                      .toString(),
+                                                  color: subtitleColor,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Clash Display Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
                                             /*   Row(
                                               children: [
                                                 Expanded(
@@ -873,8 +968,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                         height: 16.sp,
                                                         width: 16.sp,
                                                         child: Center(
-                                                            child:
-                                                                CircularProgressIndicator()),
+                                                            child: LfLogoLoader(size: 10, showGlow: false)),
                                                       ),
                                                     ),
                                                   )
@@ -981,6 +1075,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                           ],
                                         ),
                                       ),
+                                    ),
                                     );
                                   }),
                             )

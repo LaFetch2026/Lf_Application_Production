@@ -28,6 +28,7 @@
     </queries>
 
     <application
+        android:name=".MyApplication"
         android:label="LaFetch"
         android:icon="@mipmap/ic_launcher"
         android:networkSecurityConfig="@xml/network_security_config">
@@ -36,6 +37,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc" />
+
+        <!-- Netcore CE SDK App ID -->
+        <meta-data
+            android:name="SMT_APP_ID"
+            android:value="d07ff1c037673eaac1f62241450c3dc8" />
 
         <!-- Firebase Crashlytics -->
         <meta-data

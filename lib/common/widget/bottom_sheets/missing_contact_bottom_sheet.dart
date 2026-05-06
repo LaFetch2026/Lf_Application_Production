@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class MissingContactBottomSheet extends StatefulWidget {
   final bool needsEmail;
@@ -272,10 +273,7 @@ class _MissingContactBottomSheetState
                             ? SizedBox(
                                 height: 20.sp,
                                 width: 20.sp,
-                                child: const CircularProgressIndicator(
-                                  color: whiteColor,
-                                  strokeWidth: 2,
-                                ),
+                                child: const Center(child: LfLogoLoader(size: 12, showGlow: false)),
                               )
                             : Text(
                                 'Continue',

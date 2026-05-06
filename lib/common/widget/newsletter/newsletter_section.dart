@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../controllers/newsletter_controller.dart';
 import '../../../core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import '../../../models/newsletter_model.dart';
 
 /// Newsletter Section Widget
@@ -154,10 +155,7 @@ class _NewsletterCard extends StatelessWidget {
                     child: SizedBox(
                       width: 20.sp,
                       height: 20.sp,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.black54,
-                      ),
+                      child: const LfLogoLoader(size: 12, showGlow: false),
                     ),
                   ),
                 ),
@@ -272,10 +270,7 @@ class _NewsletterDetailSheet extends StatelessWidget {
                           height: 200.sp,
                           color: Colors.grey[300],
                           child: const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.black54,
-                            ),
+                            child: LfLogoLoader(size: 32, showGlow: false),
                           ),
                         ),
                         errorWidget: (context, url, error) => Container(

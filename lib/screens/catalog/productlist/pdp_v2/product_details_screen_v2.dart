@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
@@ -37,7 +38,10 @@ import '../../../wishlistscreen.dart';
 import '../../../../services/event_tracking_service.dart';
 import '../../../../common/widget/other/error_shake.dart';
 import '../../../../widgets/similar_products_carousel.dart';
+import '../../../../widgets/trending_now_section.dart';
 import '../../../../common/widget/newsletter/newsletter_section.dart';
+import '../../../../models/nudge_model.dart';
+import '../../../../widgets/nudge_badge_row.dart';
 import '../../../searchscreen.dart';
 import '../../../search_results_screen.dart';
 import '../../../bottomnavscreen.dart';
@@ -155,6 +159,13 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   // ── helpers ───────────────────────────────────────────────────────────────
 
+  List<Nudge> _productNudges() {
+    return (productController.productDetails['nudges'] as List<dynamic>?)
+            ?.map((e) => Nudge.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
+  }
+
   bool _isImageUrl(String url) {
     final p = Uri.tryParse(url)?.path.toLowerCase() ?? url.toLowerCase();
     return p.endsWith('.jpg') ||
@@ -238,9 +249,13 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     );
   }
 
-  void _showLoading() =>
-      Get.dialog(const Center(child: CircularProgressIndicator()),
-          barrierDismissible: false);
+  void _showLoading() => Get.dialog(
+      const Center(
+          child: LfLoaderWidget(
+        size: 32,
+        brandColor: Colors.grey,
+      )),
+      barrierDismissible: false);
   void _hideLoading() {
     if (Get.isDialogOpen ?? false) Get.back();
   }

@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../common/widget/other/common_widget.dart';
+import '../utils/audio_session_helper.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/login_controller.dart';
 import '../core/constant/constants.dart';
@@ -39,15 +41,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
   void initState() {
     super.initState();
 
-    _videoController = VideoPlayerController.asset(videoOnboard);
-    _initializeVideo = _videoController.initialize().then((_) {
-      if (mounted) {
-        _videoController
-          ..setLooping(true)
-          ..play();
-        setState(() {});
-      }
-    });
+    _initializeVideo = _initVideoWithAmbientSession();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -55,6 +49,21 @@ class WelcomeScreenState extends State<WelcomeScreen>
         systemNavigationBarColor: Colors.transparent,
       ));
     });
+  }
+
+  Future<void> _initVideoWithAmbientSession() async {
+    await configureAmbientAudioSession();
+    _videoController = VideoPlayerController.asset(
+      videoOnboard,
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+    await _videoController.initialize();
+    if (mounted) {
+      _videoController
+        ..setLooping(true)
+        ..play();
+      setState(() {});
+    }
   }
 
   @override
@@ -165,11 +174,10 @@ class WelcomeScreenState extends State<WelcomeScreen>
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: whiteColor,
-                          ),
-                        )
+                          child: LfLoaderWidget(
+                            size: 28,
+                            brandColor: Colors.grey,
+                          ))
                       : Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),

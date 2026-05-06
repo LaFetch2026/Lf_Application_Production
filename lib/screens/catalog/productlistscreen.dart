@@ -99,7 +99,7 @@ class ProductListScreenState extends State<ProductListScreen> {
               },
             ), */
             ProductAppbar(onPressedSearch: () async {
-              Get.to(SearchScreen());
+              Get.to(const SearchScreen(), preventDuplicates: true);
               analytics
                   .logEvent(name: "search_page", parameters: <String, Object>{
                 "page_name": "search_page",

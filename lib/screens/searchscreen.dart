@@ -1,18 +1,24 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../common/widget/lists/dummy_catalog_list.dart';
 import '../common/widget/lists/dummy_container.dart';
 import '../common/widget/text/app_text.dart';
+import '../controllers/catalog_controller.dart';
+import '../controllers/home_controller.dart';
 import '../controllers/search_controller.dart';
 import '../core/constant/constants.dart';
+import '../screens/Brands/categoryproduct.dart';
 import 'search_results_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -22,8 +28,13 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => SearchScreenState();
 }
 
-class SearchScreenState extends State<SearchScreen> {
-  final controller = Get.put(SearchScreenController());
+class SearchScreenState extends State<SearchScreen>
+    with TickerProviderStateMixin {
+  late SearchScreenController controller;
+  late CatalogController _catalogController;
+  late TabController _categoryTabController;
+  final RxInt _selectedGenderId = 0.obs;
+
   final RxString _query = ''.obs;
   Timer? _debounceSuggest;
 
@@ -113,7 +124,11 @@ class SearchScreenState extends State<SearchScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+      builder: (_) => const Center(
+          child: LfLoaderWidget(
+        size: 48,
+        brandColor: Colors.grey,
+      )),
     );
 
     await controller.getSearchData();
@@ -138,9 +153,110 @@ class SearchScreenState extends State<SearchScreen> {
     FocusScope.of(context).unfocus();
   }
 
+  // ---- Category tab handlers ----
+
+  void _onCategoryTabChanged(int index) {
+    final tabs = Get.find<HomeController>().genderTabs;
+    if (index < 0 || index >= tabs.length) return;
+    final tab = tabs[index];
+    final int genderId = tab['id'] is int
+        ? tab['id'] as int
+        : int.tryParse(tab['id']?.toString() ?? '') ?? 1;
+    _selectedGenderId.value = genderId;
+    _catalogController.selectCategoryGender.value = genderId;
+    _catalogController.categoryName.value = tab['name']?.toString() ?? '';
+    _catalogController.getCatalogData(genderId);
+    if (_categoryTabController.index != index) {
+      _categoryTabController.animateTo(index);
+    }
+  }
+
+  void _onCategorySwipe(DragEndDetails details) {
+    const double sensitivity = 300;
+    final velocity = details.primaryVelocity ?? 0;
+    if (velocity > sensitivity) {
+      // Swipe right → previous tab
+      if (_categoryTabController.index > 0) {
+        _onCategoryTabChanged(_categoryTabController.index - 1);
+      }
+    } else if (velocity < -sensitivity) {
+      // Swipe left → next tab
+      if (_categoryTabController.index < _categoryTabController.length - 1) {
+        _onCategoryTabChanged(_categoryTabController.index + 1);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    // Safe registration: reuse existing instance if still alive, otherwise create fresh.
+    if (Get.isRegistered<SearchScreenController>()) {
+      controller = Get.find<SearchScreenController>();
+    } else {
+      controller = Get.put(SearchScreenController());
+    }
+    // Clear any stale text/state from a previous session so the field
+    // starts empty and the query observable matches.
+    controller.searchController.clear();
+    controller.suggestions.clear();
+    _query.value = '';
+
+    // CatalogController lifecycle: reuse if registered, create otherwise.
+    if (Get.isRegistered<CatalogController>()) {
+      _catalogController = Get.find<CatalogController>();
+    } else {
+      _catalogController = Get.put(CatalogController());
+    }
+
+    final homeController = Get.find<HomeController>();
+    final tabCount =
+        homeController.genderTabs.isNotEmpty ? homeController.genderTabs.length : 1;
+    _categoryTabController = TabController(length: tabCount, vsync: this);
+
+    // Seed selected gender from first tab
+    if (homeController.genderTabs.isNotEmpty) {
+      final firstTab = homeController.genderTabs.first;
+      final int firstId = firstTab['id'] is int
+          ? firstTab['id'] as int
+          : int.tryParse(firstTab['id']?.toString() ?? '') ?? 1;
+      _selectedGenderId.value = firstId;
+    }
+
+    // Listen for genderTabs loading after screen open
+    ever(homeController.genderTabs, (tabs) {
+      if (tabs.isNotEmpty && mounted) {
+        final newLength = tabs.length;
+        if (_categoryTabController.length != newLength) {
+          _categoryTabController.dispose();
+          _categoryTabController =
+              TabController(length: newLength, vsync: this);
+          setState(() {});
+        }
+        // Seed selected gender if not yet set
+        if (_selectedGenderId.value == 0) {
+          final firstTab = tabs.first;
+          final int firstId = firstTab['id'] is int
+              ? firstTab['id'] as int
+              : int.tryParse(firstTab['id']?.toString() ?? '') ?? 1;
+          _selectedGenderId.value = firstId;
+        }
+      }
+    });
+
+    // Fetch catalog data if not already loaded
+    final int defaultGenderId = homeController.genderTabs.isNotEmpty
+        ? (homeController.genderTabs.first['id'] is int
+            ? homeController.genderTabs.first['id'] as int
+            : int.tryParse(
+                    homeController.genderTabs.first['id']?.toString() ?? '') ??
+                1)
+        : 1;
+
+    if (_catalogController.catalogList.isEmpty) {
+      _catalogController.getCatalogData(defaultGenderId);
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadRecent();
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -153,7 +269,15 @@ class SearchScreenState extends State<SearchScreen> {
   @override
   void dispose() {
     _debounceSuggest?.cancel();
+    _categoryTabController.dispose();
+    // Reset state but do NOT delete the controller — deleting it disposes
+    // the TextEditingController inside it, which causes a "disposed
+    // TextEditingController" crash the next time SearchScreen opens and
+    // tries to reuse the same controller instance.
     controller.resetFilters();
+    controller.suggestions.clear();
+    _query.value = '';
+    // Do NOT dispose CatalogController — cached data must persist.
     super.dispose();
   }
 
@@ -291,12 +415,10 @@ class SearchScreenState extends State<SearchScreen> {
                   if (_recent.isNotEmpty) {
                     children.add(_buildRecentSection());
                   }
+                  // Show category section when query is empty
+                  children.add(_buildCategorySection());
                 }
 
-                // Add category images at the end of content (scrollable)
-                children.add(_buildCategorySection());
-
-                // ✅ No top padding — flush under divider
                 return ListView(
                   padding: EdgeInsets.zero,
                   children: children,
@@ -311,7 +433,6 @@ class SearchScreenState extends State<SearchScreen> {
 
   Widget _buildSuggestionsList(List<Map<String, dynamic>> terms) {
     return Padding(
-      // ✅ start exactly under divider, no gap
       padding: EdgeInsets.fromLTRB(16.sp, 0, 16.sp, 0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -366,8 +487,7 @@ class SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
               ),
-              if (i < terms.length - 1)
-                SizedBox(height: 2.sp), // same spacing as before
+              if (i < terms.length - 1) SizedBox(height: 2.sp),
             ],
           );
         }),
@@ -377,7 +497,6 @@ class SearchScreenState extends State<SearchScreen> {
 
   Widget _buildSuggestShimmer() {
     return Padding(
-      // ✅ no top padding
       padding: EdgeInsets.fromLTRB(16.sp, 0, 16.sp, 8.sp),
       child: Column(
         children: List.generate(
@@ -397,36 +516,249 @@ class SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // ------------------ CATEGORY SECTION (Static, non-clickable) ------------------
+  // ------------------ CATEGORY SECTION ------------------
   Widget _buildCategorySection() {
-    final categories = [
-      {'image': 'assets/images/WOMEN.png'},
-      {'image': 'assets/images/MEN.png'},
-      {'image': 'assets/images/ACCESSORIES.png'},
-    ];
+    final homeController = Get.find<HomeController>();
 
-    return Container(
-      padding: EdgeInsets.fromLTRB(12.sp, 8.sp, 12.sp, 8.sp),
-      color: whiteColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: categories.map((category) {
-          return Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 3.sp),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Image.asset(
-                  category['image']!,
-                  height: 80.sp,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Gender chip row
+        Obx(() {
+          final tabs = homeController.genderTabs;
+          if (tabs.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return Padding(
+            padding: EdgeInsets.fromLTRB(12.sp, 12.sp, 12.sp, 8.sp),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(tabs.length, (index) {
+                  final tab = tabs[index];
+                  final int tabId = tab['id'] is int
+                      ? tab['id'] as int
+                      : int.tryParse(tab['id']?.toString() ?? '') ?? 0;
+                  final String tabName = tab['name']?.toString() ?? '';
+                  return Obx(() {
+                    final isSelected = _selectedGenderId.value == tabId;
+                    return Padding(
+                      padding: EdgeInsets.only(right: 8.sp),
+                      child: GestureDetector(
+                        onTap: () => _onCategoryTabChanged(index),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 8.sp),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? homeAppBarColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: homeAppBarColor,
+                              width: 1,
+                            ),
+                          ),
+                          child: AppText(
+                            text: tabName.toUpperCase(),
+                            fontFamily: 'Clash Display Semibold',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                            color: isSelected ? whiteColor : homeAppBarColor,
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+                }),
               ),
             ),
           );
-        }).toList(),
-      ),
+        }),
+
+        // Category list with swipe support
+        GestureDetector(
+          onHorizontalDragEnd: _onCategorySwipe,
+          behavior: HitTestBehavior.translucent,
+          child: Obx(() {
+            if (_catalogController.isCatalog.value) {
+              return const DummyCatalogList();
+            }
+
+            if (_catalogController.catalogList.isEmpty) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 40.sp),
+                child: const Center(
+                  child: AppText(
+                    text: 'No Categories Found',
+                    fontFamily: 'Clash Display Regular',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              primary: false,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                  horizontal: 16.sp, vertical: 8.sp),
+              itemCount: _catalogController.catalogList.length,
+              itemBuilder: (context, index) {
+                final item = _catalogController.catalogList[index]
+                    as Map<String, dynamic>;
+
+                final int categoryId = item['id'] is int
+                    ? item['id'] as int
+                    : int.tryParse(
+                            '${item['id'] ?? item['catId'] ?? item['categoryId']}') ??
+                        0;
+
+                final String categoryName =
+                    (item['name'] ?? item['title'] ?? '').toString();
+
+                return Container(
+                  margin: EdgeInsets.only(bottom: 12.sp),
+                  decoration: BoxDecoration(
+                    color: whiteBack,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () async {
+                        await _catalogController
+                            .getSubCategoryProducts(categoryId);
+
+                        if (!context.mounted) return;
+
+                        Navigator.push(
+                          context,
+                          scaleIn(
+                            CategoryProductScreen(
+                              categoryName: categoryName,
+                              screen: 'category',
+                              genderName:
+                                  _catalogController.categoryName.value,
+                              categoryId: categoryId,
+                              brandId: 0,
+                              genderType: _catalogController
+                                  .selectCategoryGender.value,
+                              categoryList: const [],
+                              collectionIds: const [],
+                              title: '',
+                            ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(12.sp),
+                        child: Row(
+                          children: [
+                            // Name + Explore hint
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(
+                                    text: categoryName.toUpperCase(),
+                                    fontFamily: 'Clash Display Semibold',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  SizedBox(height: 6.sp),
+                                  Row(
+                                    children: [
+                                      AppText(
+                                        text: 'Explore',
+                                        fontFamily: 'Clash Display Regular',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                        color: textHintColor,
+                                      ),
+                                      SizedBox(width: 4.sp),
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 10.sp,
+                                        color: textHintColor,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Category image
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color:
+                                        Colors.black.withValues(alpha: 0.08),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      (item['image'] ?? '').toString(),
+                                  width: 100.sp,
+                                  height: 110.sp,
+                                  fit: BoxFit.fill,
+                                  fadeInDuration:
+                                      const Duration(milliseconds: 200),
+                                  placeholder: (_, __) => Container(
+                                    width: 100.sp,
+                                    height: 110.sp,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      borderRadius:
+                                          BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  errorWidget: (_, __, ___) => Container(
+                                    width: 100.sp,
+                                    height: 110.sp,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      borderRadius:
+                                          BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(
+                                      Icons.category_outlined,
+                                      size: 24,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
+        ),
+      ],
     );
   }
 

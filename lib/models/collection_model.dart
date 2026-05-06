@@ -1,3 +1,5 @@
+import 'nudge_model.dart';
+
 // Collection Model
 class CollectionModel {
   final int id;
@@ -186,6 +188,7 @@ class Product {
   final List<String> imageUrls;
   final String createdAt;
   final ProductBrand brand;
+  final List<Nudge> nudges;
 
   Product({
     required this.id,
@@ -196,6 +199,7 @@ class Product {
     required this.imageUrls,
     required this.createdAt,
     required this.brand,
+    this.nudges = const [],
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -220,6 +224,10 @@ class Product {
       brand: json['brand'] != null
           ? ProductBrand.fromJson(json['brand'] as Map<String, dynamic>)
           : ProductBrand(name: ''),
+      nudges: (json['nudges'] as List<dynamic>?)
+              ?.map((e) => Nudge.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
@@ -233,6 +241,7 @@ class Product {
       'imageUrls': imageUrls,
       'createdAt': createdAt,
       'brand': brand.toJson(),
+      'nudges': nudges.map((e) => e.toJson()).toList(),
     };
   }
 

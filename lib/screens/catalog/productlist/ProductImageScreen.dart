@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class ProductImage_Screen extends StatefulWidget {
   final int curr;
@@ -86,7 +87,7 @@ class _ProductImage_ScreenState extends State<ProductImage_Screen> {
                     backgroundDecoration:
                         const BoxDecoration(color: Colors.black),
                     loadingBuilder: (_, __) => const Center(
-                      child: CircularProgressIndicator(),
+                      child: LfLogoLoader(size: 32, showGlow: false),
                     ),
                     builder: (context, index) {
                       final url = images[index];

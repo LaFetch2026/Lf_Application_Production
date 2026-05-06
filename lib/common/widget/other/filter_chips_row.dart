@@ -11,30 +11,38 @@ class ActiveFilterPill {
 }
 
 class FilterChipsRow extends StatelessWidget {
+  /// Server-returned chips (fresh from API).
   final List<FilterChipItem> chips;
-  final int? activeChipId;
-  final void Function(FilterChipItem chip) onChipTap;
 
-  /// Active filter pills shown before the API chips.
-  /// Each pill has a label and an onRemove callback.
+  /// Selected chip objects stored locally — shown as active pills at the front.
+  final List<FilterChipItem> selectedChips;
+
+  /// Kept for backwards compatibility — not used in rendering.
+  final Set<int> selectedChipIds;
+
+  final void Function(FilterChipItem chip) onChipTap;
   final List<ActiveFilterPill> activeFilters;
 
   const FilterChipsRow({
     super.key,
     required this.chips,
     required this.onChipTap,
-    this.activeChipId,
+    this.selectedChips = const [],
+    this.selectedChipIds = const {},
     this.activeFilters = const [],
   });
 
   @override
   Widget build(BuildContext context) {
-    final hasFilters = activeFilters.isNotEmpty;
-    final hasChips = chips.isNotEmpty;
+    // Dedup: selected chips first, then server chips that aren't already selected
+    final selectedIds = selectedChips.map((c) => c.id).toSet();
+    final serverChips =
+        chips.where((c) => !selectedIds.contains(c.id)).toList();
 
-    if (!hasFilters && !hasChips) return const SizedBox.shrink();
+    final totalCount =
+        activeFilters.length + selectedChips.length + serverChips.length;
 
-    final totalCount = activeFilters.length + chips.length;
+    if (totalCount == 0) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 10),
@@ -46,16 +54,24 @@ class FilterChipsRow extends StatelessWidget {
           itemCount: totalCount,
           separatorBuilder: (_, __) => const SizedBox(width: 8),
           itemBuilder: (context, index) {
-            // Active filter pills come first
+            // 1. Active filter pills
             if (index < activeFilters.length) {
-              final pill = activeFilters[index];
-              return _ActivePill(pill: pill);
+              return _ActivePill(pill: activeFilters[index]);
+            }
+            final i = index - activeFilters.length;
+
+            // 2. Selected chip pills (always visible, active styling)
+            if (i < selectedChips.length) {
+              return _ChipItem(
+                chip: selectedChips[i],
+                isActive: true,
+                onTap: onChipTap,
+              );
             }
 
-            // Then API chips
-            final chip = chips[index - activeFilters.length];
-            final isActive = chip.id == activeChipId;
-            return _ChipItem(chip: chip, isActive: isActive, onTap: onChipTap);
+            // 3. Server chips (new suggestions from API)
+            final chip = serverChips[i - selectedChips.length];
+            return _ChipItem(chip: chip, isActive: false, onTap: onChipTap);
           },
         ),
       ),
@@ -127,7 +143,7 @@ class _ChipItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
         decoration: BoxDecoration(
           color: isActive ? lightPurpleColor : Colors.white,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(30),
           border: Border.all(
             color: isActive ? lightPurpleColor : const Color(0xFFD1D5DB),
             width: 1,

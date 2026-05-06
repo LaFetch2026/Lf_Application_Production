@@ -1009,6 +1009,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../common/widget/appbar/allbrand_appbar.dart';
+import '../../utils/audio_session_helper.dart';
 import '../../common/widget/other/common_widget.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../controllers/brand_controller.dart';
@@ -1016,6 +1017,7 @@ import '../../controllers/home_controller.dart';
 import '../../controllers/product_controller.dart';
 import '../../core/constant/constants.dart';
 import '../cartscreen.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class AllBrandScreen extends StatefulWidget {
   final String screen;
@@ -1128,10 +1130,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     try {
       if (!mounted) return;
 
+      await configureMusicAudioSession();
       _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(videoUrl),
         videoPlayerOptions: VideoPlayerOptions(
-          mixWithOthers: true,
+          mixWithOthers: false,
           allowBackgroundPlayback: false,
         ),
       );
@@ -1255,10 +1258,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
           width: double.infinity,
           color: cardBg,
           child: const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2.5,
-            ),
+            child: LfLogoLoader(size: 32, showGlow: false),
           ),
         ),
         errorWidget: (context, url, error) {
@@ -1296,7 +1296,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       child: _isVideoInitialized
           ? null
           : const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: LfLogoLoader(size: 32, showGlow: false),
             ),
     );
   }
@@ -1534,10 +1534,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               width: double.infinity,
                               color: cardBg,
                               child: const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2.5,
-                                ),
+                                child: LfLogoLoader(size: 32, showGlow: false),
                               ),
                             ),
                             errorWidget: (context, url, error) {
@@ -1620,10 +1617,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       placeholder: (context, url) => Container(
                                         color: cardBg,
                                         child: const Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2.0,
-                                          ),
+                                          child: LfLogoLoader(size: 32, showGlow: false),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) {

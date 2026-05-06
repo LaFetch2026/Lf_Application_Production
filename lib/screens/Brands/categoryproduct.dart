@@ -20,6 +20,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../common/widget/appbar/productlist_appbar.dart';
 import '../../common/widget/cards/product_card.dart';
 import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/other/chip_shimmer_row.dart';
 import '../../common/widget/other/filter_chips_row.dart';
 import '../../controllers/catalog_controller.dart';
 import '../../controllers/cart_controller.dart';
@@ -27,6 +28,7 @@ import '../../controllers/product_controller.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../controllers/brand_controller.dart';
 import '../../core/constant/constants.dart';
+import '../../models/nudge_model.dart';
 
 class CategoryProductScreen extends StatefulWidget {
   final String categoryName;
@@ -88,6 +90,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
   String _appliedMaxPrice = "100000";
+  int _appliedMinDiscount = 0;
+  int _appliedMaxDiscount = 100;
   String _appliedSortOption = "recommended";
   bool _hasActiveFilters = false;
 
@@ -132,7 +136,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       "upper",
       "lower",
       "sortby",
-      "category"
+      "category",
+      "minDiscount",
+      "maxDiscount",
     ]) {
       await prefs.remove(k);
     }
@@ -140,7 +146,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   // ✅ Generate hash for current filter state
   String _generateFilterHash() {
-    return '${_appliedBrandIds.join(',')}_${_appliedColors.join(',')}_${_appliedSizes.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
+    return '${_appliedBrandIds.join(',')}_${_appliedColors.join(',')}_${_appliedSizes.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedMinDiscount}_${_appliedMaxDiscount}_$_hasActiveFilters';
   }
 
   // ✅ Generate hash for current sort state
@@ -354,6 +360,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
         minPrice: _appliedMinPrice,
         maxPrice: _appliedMaxPrice,
+        minDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+            ? null
+            : _appliedMinDiscount.toString(),
+        maxDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+            ? null
+            : _appliedMaxDiscount.toString(),
         sortOption:
             _appliedSortOption != "recommended" ? _appliedSortOption : null,
         catId: widget.categoryId,
@@ -435,6 +447,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print("   • sortChanged  → $sortChanged");
         print(
             "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
@@ -446,6 +459,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
+          minDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMinDiscount.toString(),
+          maxDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMaxDiscount.toString(),
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
           catId: widget
@@ -546,6 +565,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print(
             "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
@@ -555,6 +575,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
+          minDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMinDiscount.toString(),
+          maxDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMaxDiscount.toString(),
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
           catId: widget
@@ -669,6 +695,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    catalogController.clearChipSelection();
     super.dispose();
   }
 
@@ -802,6 +829,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             price: price,
                             mrp: mrp,
                             showExpress: widget.type == "express",
+                            nudges: (m['nudges'] as List<dynamic>?)
+                                    ?.map((e) => Nudge.fromJson(
+                                        e as Map<String, dynamic>))
+                                    .toList() ??
+                                [],
                             onTap: () async {
                               if (pid == 0) {
                                 getSnackBar("Product not available");
@@ -929,6 +961,14 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       ));
     }
 
+    // Discount pill — only show if non-default
+    if (_appliedMinDiscount > 0 || _appliedMaxDiscount < 100) {
+      pills.add(ActiveFilterPill(
+        label: '$_appliedMinDiscount%–$_appliedMaxDiscount%',
+        onRemove: () => _removeFilter(resetDiscount: true),
+      ));
+    }
+
     // Sort pill — only show if non-default
     if (_appliedSortOption != 'recommended') {
       final sortLabels = {
@@ -953,6 +993,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     String? color,
     String? size,
     bool resetPrice = false,
+    bool resetDiscount = false,
     bool resetSort = false,
   }) {
     setState(() {
@@ -963,13 +1004,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         _appliedMinPrice = '300';
         _appliedMaxPrice = '100000';
       }
+      if (resetDiscount) {
+        _appliedMinDiscount = 0;
+        _appliedMaxDiscount = 100;
+      }
       if (resetSort) _appliedSortOption = 'recommended';
 
       _hasActiveFilters = _appliedBrandIds.isNotEmpty ||
           _appliedColors.isNotEmpty ||
           _appliedSizes.isNotEmpty ||
           (int.tryParse(_appliedMinPrice) ?? 300) > 300 ||
-          (int.tryParse(_appliedMaxPrice) ?? 100000) < 100000;
+          (int.tryParse(_appliedMaxPrice) ?? 100000) < 100000 ||
+          _appliedMinDiscount > 0 ||
+          _appliedMaxDiscount < 100;
     });
     _applyFiltersAndSortDebounced();
   }
@@ -1022,6 +1069,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           m["mrp"] ??
           0,
       "displayMrp": m["displayMrp"] ?? m["mrp"] ?? m["original_price"] ?? 0,
+      "nudges": m["nudges"],
     };
   }
 
@@ -1101,12 +1149,17 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       double.parse(_appliedMinPrice).clamp(100.0, 50000.0),
       double.parse(_appliedMaxPrice).clamp(100.0, 50000.0),
     );
+    RangeValues discountRange = RangeValues(
+      _appliedMinDiscount.toDouble(),
+      _appliedMaxDiscount.toDouble(),
+    );
 
     final List<String> filterCategories = [
       "Brand",
       "Price Range",
       "Color",
-      "Size"
+      "Size",
+      "Discount",
     ];
 
     // ✅ Get brands from filter metadata
@@ -1170,6 +1223,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 selectedColors.clear();
                                 selectedSizes.clear();
                                 priceRange = const RangeValues(300, 100000);
+                                discountRange = const RangeValues(0, 100);
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -1407,7 +1461,58 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                       );
                                                     },
                                                   )
-                                            : const SizedBox(),
+                                            : selectedFilter == "Discount"
+                                                ? Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Text(
+                                                          "Select discount range",
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  "Clash Display Semibold",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 15)),
+                                                      const SizedBox(height: 8),
+                                                      RangeSlider(
+                                                        values: discountRange,
+                                                        min: 0,
+                                                        max: 100,
+                                                        divisions: 20,
+                                                        activeColor:
+                                                            appBarColor,
+                                                        onChanged: (v) =>
+                                                            setModalState(() {
+                                                          discountRange = v;
+                                                        }),
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                              "${discountRange.start.toInt()}%",
+                                                              style: const TextStyle(
+                                                                  fontFamily:
+                                                                      "Clash Display Regular",
+                                                                  color: Colors
+                                                                      .grey)),
+                                                          Text(
+                                                              "${discountRange.end.toInt()}%",
+                                                              style: const TextStyle(
+                                                                  fontFamily:
+                                                                      "Clash Display Regular",
+                                                                  color: Colors
+                                                                      .grey)),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  )
+                                                : const SizedBox(),
                           ),
                         ),
                       ]),
@@ -1462,12 +1567,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
+                                _appliedMinDiscount = discountRange.start.toInt();
+                                _appliedMaxDiscount = discountRange.end.toInt();
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||
                                         selectedColors.isNotEmpty ||
                                         selectedSizes.isNotEmpty ||
                                         priceRange.start > 300 ||
-                                        priceRange.end < 100000;
+                                        priceRange.end < 100000 ||
+                                        discountRange.start > 0 ||
+                                        discountRange.end < 100;
                               });
 
                               print("✅ Filters configured:");
@@ -1498,6 +1607,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     priceRange.end < 100000) {
                                   filterParts.add(
                                       "₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                }
+                                if (discountRange.start > 0 ||
+                                    discountRange.end < 100) {
+                                  filterParts.add(
+                                      "${discountRange.start.toInt()}%–${discountRange.end.toInt()}%");
                                 }
                                 getSnackBar(
                                     "Filtered by ${filterParts.join(', ')}");
@@ -1779,20 +1893,15 @@ class _FilterChipsSectionState extends State<_FilterChipsSection> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Reading these observables registers them with Obx so it rebuilds
-      // when chips or activeChipId change.
-      final chips = widget.catalogController.chips.toList();
-      final activeId = widget.catalogController.activeChipId.value;
-
-      // Also refresh pills here so a GetX-triggered rebuild picks up the
-      // latest filter state (e.g. after onChipTap clears a filter).
-      final pills = widget.buildPills();
-
+      if (widget.catalogController.isCategory.value) {
+        return const ChipShimmerRow();
+      }
       return FilterChipsRow(
-        chips: chips,
-        activeChipId: activeId,
+        chips: widget.catalogController.chips.toList(),
+        selectedChipIds: widget.catalogController.selectedChipIds,
+        selectedChips: widget.catalogController.selectedChips.toList(),
         onChipTap: widget.catalogController.onChipTap,
-        activeFilters: pills,
+        activeFilters: widget.buildPills(),
       );
     });
   }
