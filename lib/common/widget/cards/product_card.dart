@@ -392,6 +392,9 @@ class ProductGridCard extends StatelessWidget {
   /// Optional nudge badges to display on the top-left of the product image
   final List<Nudge> nudges;
 
+  /// LUXE dark theme — black bg, gold/white text
+  final bool isLuxe;
+
   const ProductGridCard({
     super.key,
     required this.imageUrl,
@@ -404,11 +407,15 @@ class ProductGridCard extends StatelessWidget {
     this.backgroundColor = const Color(0xFFF3F1F1),
     this.imageHeight,
     this.nudges = const [],
+    this.isLuxe = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final double imgHeight = imageHeight ?? 160.sp;
+    final effectiveBg = isLuxe ? const Color(0xFF1A1A1A) : backgroundColor;
+    final titleCol = isLuxe ? Colors.white : blackColor;
+    final brandCol = isLuxe ? const Color(0xFFAAAAAA) : const Color(0xFF6B7280);
 
     return PounceWrapper(
       onTap: () {
@@ -419,7 +426,7 @@ class ProductGridCard extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: effectiveBg,
               borderRadius: BorderRadius.circular(6.sp),
             ),
             child: Padding(
@@ -449,7 +456,7 @@ class ProductGridCard extends StatelessWidget {
                       fontFamily: "Clash Display Semibold",
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w700,
-                      color: blackColor,
+                      color: titleCol,
                     ),
                   ),
 
@@ -465,7 +472,7 @@ class ProductGridCard extends StatelessWidget {
                           fontFamily: "Clash Display Regular",
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w400,
-                          color: const Color(0xFF6B7280),
+                          color: brandCol,
                         ),
                       ),
                     ),
@@ -473,7 +480,7 @@ class ProductGridCard extends StatelessWidget {
                   // Price Row
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),
-                    child: _buildPriceSection(),
+                    child: _buildPriceSection(titleCol: titleCol),
                   ),
 
                   // Express Badge
@@ -557,19 +564,23 @@ class ProductGridCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceSection() {
+  Widget _buildPriceSection({Color? titleCol}) {
     final numPrice = price is num ? price! : 0;
     final numMrp = mrp is num ? mrp! : 0;
+
+    final priceCol = titleCol ?? (isLuxe ? Colors.white : blackColor);
+    final mrpCol = isLuxe ? const Color(0xFF888888) : const Color(0xFF9CA3AF);
+    final discCol = isLuxe ? const Color(0xFFD4AF37) : const Color(0xFF9575CD); // gold for LUXE
 
     // Case 1: Price is 0 or null - show only MRP (not crossed)
     if (numPrice == 0 && numMrp > 0) {
       return Text(
-        "₹ ${numMrp.toStringAsFixed(0)}",
+        "₹${numMrp.toStringAsFixed(0)}",
         style: TextStyle(
           fontFamily: "Clash Display Semibold",
           fontSize: 11.sp,
           fontWeight: FontWeight.w700,
-          color: blackColor,
+          color: priceCol,
         ),
       );
     }
@@ -583,21 +594,14 @@ class ProductGridCard extends StatelessWidget {
         mrpFontSize: 10,
         discountFontSize: 9,
         fontWeight: FontWeight.w700,
-        priceColor: blackColor,
-        mrpColor: const Color(0xFF9CA3AF),
-        discountColor: const Color(0xFF9575CD),
+        priceColor: priceCol,
+        mrpColor: mrpCol,
+        discountColor: discCol,
         spacing: 4,
       );
     }
 
-    // Case 3: No valid price
-    return Text(
-      "Price not available",
-      style: TextStyle(
-        fontFamily: "Clash Display Regular",
-        fontSize: 10.sp,
-        color: const Color(0xFF6B7280),
-      ),
-    );
+    // Case 3: No valid price — show nothing instead of "Price not available"
+    return const SizedBox.shrink();
   }
 }

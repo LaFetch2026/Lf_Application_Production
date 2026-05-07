@@ -921,6 +921,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             price: price,
                             mrp: mrp,
                             showExpress: widget.type == "express",
+                            isLuxe: isLuxeView,
                             nudges: (m['nudges'] as List<dynamic>?)
                                     ?.map((e) => Nudge.fromJson(
                                         e as Map<String, dynamic>))
@@ -1160,12 +1161,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       "imageUrls": m["imageUrls"] is List
           ? m["imageUrls"]
           : (m["images"] is List ? m["images"] : []),
-      "displayPrice": m["displayPrice"] ??
+      "displayPrice": m["basePrice"] ??
+          m["displayPrice"] ??
           m["price"] ??
           m["selling_price"] ??
           m["mrp"] ??
           0,
-      "displayMrp": m["displayMrp"] ?? m["mrp"] ?? m["original_price"] ?? 0,
+      "displayMrp": m["mrp"] ?? m["displayMrp"] ?? m["original_price"] ?? 0,
       "nudges": m["nudges"],
     };
   }
