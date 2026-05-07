@@ -1352,30 +1352,45 @@ class ProductController extends BaseController {
 
     // Filter products where price >= luxury threshold
     final luxeProducts = products.where((product) {
-      if (product is! Map<String, dynamic>) return false;
-
-      // Get product price from multiple possible fields
-      final price = product['displayPrice'] ??
-          product['basePrice'] ??
-          product['price'] ??
-          product['netAmount'] ??
-          product['msp'] ??
-          0;
-
       num numPrice = 0;
-      if (price is num) {
-        numPrice = price;
-      } else if (price is String) {
-        numPrice = num.tryParse(price) ?? 0;
+
+      // Handle Product objects (from CollectionModel)
+      if (product is Product) {
+        numPrice = product.basePrice;
+        final isLuxe = numPrice >= defaultLuxuryThreshold;
+        if (isLuxe) {
+          print(
+              "✅ LUXE: ${product.title} - ₹${numPrice.toInt()}");
+        }
+        return isLuxe;
       }
 
-      // Product is LUXE if price >= threshold
-      final isLuxe = numPrice >= defaultLuxuryThreshold;
-      if (isLuxe) {
-        print(
-            "✅ LUXE: ${product['title'] ?? product['name']} - ₹${numPrice.toInt()}");
+      // Handle Map objects (from API responses)
+      if (product is Map<String, dynamic>) {
+        // Get product price from multiple possible fields
+        final price = product['displayPrice'] ??
+            product['basePrice'] ??
+            product['price'] ??
+            product['netAmount'] ??
+            product['msp'] ??
+            0;
+
+        if (price is num) {
+          numPrice = price;
+        } else if (price is String) {
+          numPrice = num.tryParse(price) ?? 0;
+        }
+
+        // Product is LUXE if price >= threshold
+        final isLuxe = numPrice >= defaultLuxuryThreshold;
+        if (isLuxe) {
+          print(
+              "✅ LUXE: ${product['title'] ?? product['name']} - ₹${numPrice.toInt()}");
+        }
+        return isLuxe;
       }
-      return isLuxe;
+
+      return false;
     }).toList();
 
     print(
@@ -1383,6 +1398,61 @@ class ProductController extends BaseController {
     return luxeProducts;
   }
 
+  /// Fetch LUXE products for a specific collection using API segment=luxury filter
+  /// Returns up to 8 luxury products (price >= ₹7000)
+  Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(int collectionId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      // Use segment=luxury to get only luxury products (price >= ₹7000)
+      final uri = Uri.parse(
+        '${ApiConstants.baseUrl}/filter-products?collectionId=$collectionId&segment=luxury&page=1',
+      );
+
+      print('📤 Fetching LUXE products for collection $collectionId: $uri');
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+
+        // Handle multiple possible response shapes
+        List<dynamic> rawProducts = [];
+        final data = body['data'];
+        if (data is List) {
+          rawProducts = data;
+        } else if (data is Map) {
+          rawProducts = data['products'] ??
+              data['items'] ??
+              data['results'] ??
+              [];
+        } else {
+          rawProducts = body['products'] ?? body['items'] ?? [];
+        }
+
+        final luxeProducts = rawProducts
+            .whereType<Map<String, dynamic>>()
+            .take(8)
+            .toList();
+
+        print('✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId');
+        return luxeProducts;
+      } else {
+        print('⚠️ LUXE API error for collection $collectionId: ${response.statusCode} — ${response.body.substring(0, response.body.length.clamp(0, 200))}');
+        return [];
+      }
+    } catch (e) {
+      print('❌ Error fetching LUXE products for collection $collectionId: $e');
+      return [];
+    }
+  }
   /// Calculate minimum variant price and MRP for display in product lists
   static Map<String, dynamic> calculateDisplayPrices(
       Map<String, dynamic> product) {

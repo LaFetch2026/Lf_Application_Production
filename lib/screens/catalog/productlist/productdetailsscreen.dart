@@ -937,6 +937,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 imageUrl: url,
                 width: double.infinity,
                 height: double.infinity,
+                memCacheWidth: MediaQuery.of(context).size.width.toInt(),
+                memCacheHeight:
+                    (MediaQuery.of(context).size.height * 0.54).toInt(),
                 progressIndicatorBuilder: (context, url, _) => DummyContainer(
                   height: MediaQuery.of(context).size.height * 0.54,
                   width: MediaQuery.of(context).size.width,
@@ -2405,7 +2408,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               ? const SizedBox(
                                                   height: 16,
                                                   width: 16,
-                                                  child: Center(child: LfLogoLoader(size: 10, showGlow: false)),
+                                                  child: Center(
+                                                      child: LfLogoLoader(
+                                                          size: 10,
+                                                          showGlow: false)),
                                                 )
                                               : Container(
                                                   padding: EdgeInsets.symmetric(

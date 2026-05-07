@@ -46,35 +46,35 @@ class _CollectionsSectionState extends State<CollectionsSection> {
             (index) => widget.collectionRowBuilder(index),
           ),
 
-          // View All Button
-          if (collections.length > 2)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              child: GestureDetector(
-                onTap: () {
-                  isExpanded.value = !isExpanded.value;
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFFD6D4D0)),
-                    borderRadius: BorderRadius.circular(8.r),
-                    color: Colors.white,
-                  ),
-                  child: Center(
-                    child: Text(
-                      isExpanded.value ? 'View Less' : 'View All',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: colorPrimary,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          // // View All Button
+          // if (collections.length > 2)
+          //   Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          //     child: GestureDetector(
+          //       onTap: () {
+          //         isExpanded.value = !isExpanded.value;
+          //       },
+          //       child: Container(
+          //         width: double.infinity,
+          //         padding: EdgeInsets.symmetric(vertical: 12.h),
+          //         decoration: BoxDecoration(
+          //           border: Border.all(color: const Color(0xFFD6D4D0)),
+          //           borderRadius: BorderRadius.circular(8.r),
+          //           color: Colors.white,
+          //         ),
+          //         child: Center(
+          //           child: Text(
+          //             isExpanded.value ? 'View Less' : 'View All',
+          //             style: TextStyle(
+          //               fontSize: 14.sp,
+          //               fontWeight: FontWeight.w600,
+          //               color: colorPrimary,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
 
           // LUXE Section
           LuxeSection(

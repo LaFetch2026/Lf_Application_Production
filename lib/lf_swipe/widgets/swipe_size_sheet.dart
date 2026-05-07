@@ -1,4 +1,5 @@
 // ignore_for_file: deprecated_member_use
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -229,12 +230,14 @@ class _SwipeSizeSheetState extends State<_SwipeSizeSheet> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.sp),
                   child: widget.product.imageUrl.isNotEmpty
-                      ? Image.network(
-                          widget.product.imageUrl,
+                      ? CachedNetworkImage(
+                          imageUrl: widget.product.imageUrl,
                           width: 52.sp,
                           height: 52.sp,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
+                          memCacheWidth: 200,
+                          memCacheHeight: 200,
+                          errorWidget: (_, __, ___) => Container(
                               width: 52.sp,
                               height: 52.sp,
                               color: Colors.grey[200]),

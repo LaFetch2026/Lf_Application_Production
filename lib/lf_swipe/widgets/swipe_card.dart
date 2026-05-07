@@ -49,11 +49,13 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
   int _currentImageIndex = 0;
 
   late final AnimationController _flyController;
-  Animation<Offset>? _flyAnimation; // nullable — only set when _flyOff() is called
+  Animation<Offset>?
+      _flyAnimation; // nullable — only set when _flyOff() is called
 
   // Used for the spring-back animation on dismiss/failure
   late final AnimationController _resetController;
-  Animation<Offset>? _resetAnimation; // nullable — only set when resetSwipeUp() is called
+  Animation<Offset>?
+      _resetAnimation; // nullable — only set when resetSwipeUp() is called
 
   // Overlay animation controller (NEW)
   late final AnimationController _overlayController;
@@ -81,7 +83,8 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
       if (mounted) setState(() {});
     });
 
-    _resetController = AnimationController(vsync: this, duration: _resetDuration);
+    _resetController =
+        AnimationController(vsync: this, duration: _resetDuration);
     _resetController.addListener(() {
       if (mounted) setState(() {});
     });
@@ -116,7 +119,8 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
     final flyUpAnimation = Tween<Offset>(
       begin: _dragOffset,
       end: const Offset(0, -700),
-    ).animate(CurvedAnimation(parent: flyUpController, curve: Curves.easeInCubic));
+    ).animate(
+        CurvedAnimation(parent: flyUpController, curve: Curves.easeInCubic));
     flyUpController.addListener(() {
       if (mounted) {
         setState(() => _dragOffset = flyUpAnimation.value);
@@ -140,7 +144,8 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
     _resetAnimation = Tween<Offset>(
       begin: startOffset,
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _resetController, curve: Curves.elasticOut));
+    ).animate(
+        CurvedAnimation(parent: _resetController, curve: Curves.elasticOut));
     _resetController.forward(from: 0).then((_) {
       if (mounted) {
         setState(() {
@@ -155,7 +160,7 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
   /// Called by the controller to show text or icon overlay after a swipe action.
   void showOverlay(OverlayType type, OverlayConfig config) {
     if (!mounted) return;
-    
+
     _currentOverlayType = type;
     _overlayConfig = config;
     _overlayController.duration = config.duration;
@@ -206,14 +211,15 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
 
   void _flyOff(SwipeAction action, Offset exit) {
     _isFlying = true;
-    _flyAnimation = Tween<Offset>(begin: _dragOffset, end: exit)
-        .animate(CurvedAnimation(parent: _flyController, curve: Curves.easeOut));
+    _flyAnimation = Tween<Offset>(begin: _dragOffset, end: exit).animate(
+        CurvedAnimation(parent: _flyController, curve: Curves.easeOut));
     _flyController.forward(from: 0).then((_) => widget.onSwiped(action));
   }
 
   Offset get _drag {
     if (_isFlying && _flyAnimation != null) return _flyAnimation!.value;
-    if (_resetController.isAnimating && _resetAnimation != null) return _resetAnimation!.value;
+    if (_resetController.isAnimating && _resetAnimation != null)
+      return _resetAnimation!.value;
     return _dragOffset;
   }
 
@@ -241,7 +247,8 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
   // ── Price ─────────────────────────────────────────────────────────────────
 
   String _fmt(double v) =>
-      NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0).format(v);
+      NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0)
+          .format(v);
 
   int? get _discount {
     final mrp = widget.product.mrp;
@@ -380,8 +387,11 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
                 child: CachedNetworkImage(
                   imageUrl: images[_currentImageIndex],
                   fit: BoxFit.cover,
+                  memCacheWidth: 1200,
+                  memCacheHeight: 1200,
                   placeholder: (_, __) => Container(color: Colors.grey[200]),
-                  errorWidget: (_, __, ___) => Container(color: Colors.grey[200]),
+                  errorWidget: (_, __, ___) =>
+                      Container(color: Colors.grey[200]),
                 ),
               ),
 
@@ -430,7 +440,9 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
 
             // Bottom gradient
             Positioned(
-              left: 0, right: 0, bottom: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               child: Container(
                 height: 200.sp,
                 decoration: const BoxDecoration(
@@ -445,7 +457,9 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
 
             // Product info
             Positioned(
-              left: 16.sp, right: 56.sp, bottom: 20.sp,
+              left: 16.sp,
+              right: 56.sp,
+              bottom: 20.sp,
               child: _ProductInfo(
                 product: p,
                 discount: discount,
@@ -594,7 +608,8 @@ class _ProductInfo extends StatelessWidget {
               if (discount != null) ...[
                 SizedBox(width: 5.sp),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
                   decoration: BoxDecoration(
                     color: _likeColor,
                     borderRadius: BorderRadius.circular(4.sp),

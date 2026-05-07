@@ -47,6 +47,7 @@ import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
+import '../../../models/collection_model.dart';
 import '../../../models/nudge_model.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
 import '../../../core/utils/image_helper.dart';
@@ -1338,440 +1339,47 @@ class HomeScreenState extends State<HomeScreen>
                                           ),
                                         ),
 
-                                      // ✅ View All Button
-                                      if (collections.length > 2)
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16.w, vertical: 12.h),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _showAllCollections =
-                                                    !_showAllCollections;
-                                              });
-                                            },
-                                            child: Container(
-                                              width: double.infinity,
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 12.h),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: const Color(
-                                                        0xFFD6D4D0)),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.r),
-                                                color: Colors.white,
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  _showAllCollections
-                                                      ? 'View Less'
-                                                      : 'View All',
-                                                  style: TextStyle(
-                                                    fontSize: 14.sp,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: colorPrimary,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                      // // ✅ View All Button
+                                      // if (collections.length > 2)
+                                      //   Padding(
+                                      //     padding: EdgeInsets.symmetric(
+                                      //         horizontal: 16.w, vertical: 12.h),
+                                      //     child: GestureDetector(
+                                      //       onTap: () {
+                                      //         setState(() {
+                                      //           _showAllCollections =
+                                      //               !_showAllCollections;
+                                      //         });
+                                      //       },
+                                      //       child: Container(
+                                      //         width: double.infinity,
+                                      //         padding: EdgeInsets.symmetric(
+                                      //             vertical: 12.h),
+                                      //         decoration: BoxDecoration(
+                                      //           border: Border.all(
+                                      //               color: const Color(
+                                      //                   0xFFD6D4D0)),
+                                      //           borderRadius:
+                                      //               BorderRadius.circular(8.r),
+                                      //           color: Colors.white,
+                                      //         ),
+                                      //         child: Center(
+                                      //           child: Text(
+                                      //             _showAllCollections
+                                      //                 ? 'View Less'
+                                      //                 : 'View All',
+                                      //             style: TextStyle(
+                                      //               fontSize: 14.sp,
+                                      //               fontWeight: FontWeight.w600,
+                                      //               color: colorPrimary,
+                                      //             ),
+                                      //           ),
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   ),
 
-                                      // ✅ LUXE Section (segment=luxury, limit=8)
-                                      Obx(() {
-                                        print(
-                                            "🔍 LUXE UI - luxeList length: ${productController.luxeList.length}");
-                                        if (productController
-                                            .luxeList.isEmpty) {
-                                          print("🔍 LUXE UI - HIDING (empty)");
-                                          return const SizedBox.shrink();
-                                        }
-
-                                        // Show loading indicator while fetching
-                                        if (productController
-                                            .isLuxeLoading.value) {
-                                          return Container(
-                                            color: Colors.white,
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 24.h),
-                                            child: const Center(
-                                              child: LfLoaderWidget(
-                                                size: 16,
-                                                brandColor: Colors.grey,
-                                              ),
-                                            ),
-                                          );
-                                        }
-
-                                        print(
-                                            "🔍 LUXE UI - RENDERING ${productController.luxeList.length} products");
-
-                                        return Container(
-                                          color: Colors.white,
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              // Category Title with Underline - CLICKABLE
-                                              GestureDetector(
-                                                onTap: () {
-                                                  // Navigate to LUXE category page with black background
-                                                  Get.to(
-                                                    CategoryProductScreen(
-                                                      categoryName: 'LUXE',
-                                                      categoryId: 0,
-                                                      brandId: 0,
-                                                      genderType: homeController
-                                                          .homeGenderValue
-                                                          .value,
-                                                      collectionIds: [],
-                                                      genderName: homeController
-                                                          .genderText.value,
-                                                      type: 'luxe',
-                                                      screen: 'luxe',
-                                                      categoryList: [],
-                                                      title: 'LUXE',
-                                                    ),
-                                                  );
-                                                },
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 16.w,
-                                                      vertical: 12.h),
-                                                  child: Text(
-                                                    'LUXE',
-                                                    style: TextStyle(
-                                                      fontSize: 18.sp,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Colors.black,
-                                                      letterSpacing: 0.4,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              // LUXE Products Horizontal Scroll
-                                              SizedBox(
-                                                height: 280.h,
-                                                child: ListView.separated(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 16.w),
-                                                  itemCount: productController
-                                                          .luxeList.length +
-                                                      1, // +1 for View All
-                                                  separatorBuilder: (_, __) =>
-                                                      SizedBox(width: 8.w),
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    // Last item is View All link
-                                                    if (index ==
-                                                        productController
-                                                            .luxeList.length) {
-                                                      return GestureDetector(
-                                                        onTap: () {
-                                                          Get.to(
-                                                            CategoryProductScreen(
-                                                              categoryName:
-                                                                  'LUXE',
-                                                              categoryId: 0,
-                                                              brandId: 0,
-                                                              genderType:
-                                                                  homeController
-                                                                      .homeGenderValue
-                                                                      .value,
-                                                              collectionIds: [],
-                                                              genderName:
-                                                                  homeController
-                                                                      .genderText
-                                                                      .value,
-                                                              type: 'luxe',
-                                                              screen: 'luxe',
-                                                              categoryList: [],
-                                                              title: 'LUXE',
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: Container(
-                                                          width: 150.w,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8.r),
-                                                            color: Colors.white,
-                                                            border: Border.all(
-                                                                color: const Color(
-                                                                    0xFFD6D4D0),
-                                                                width: 1),
-                                                          ),
-                                                          child: Center(
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Text(
-                                                                  'View All',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        14.sp,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    height:
-                                                                        4.h),
-                                                                Icon(
-                                                                  Icons
-                                                                      .arrow_forward,
-                                                                  size: 16.sp,
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
-
-                                                    final product =
-                                                        productController
-                                                            .luxeList[index];
-                                                    final productId =
-                                                        product['id'] ?? 0;
-                                                    final productName =
-                                                        product['name'] ??
-                                                            product['title'] ??
-                                                            'Product';
-                                                    final productImage =
-                                                        product['image'] ??
-                                                            product['images']
-                                                                ?[0] ??
-                                                            product[
-                                                                'imageUrl'] ??
-                                                            '';
-                                                    final productPrice = product[
-                                                            'price'] ??
-                                                        product['basePrice'] ??
-                                                        product[
-                                                            'displayPrice'] ??
-                                                        0;
-                                                    final productMrp = product[
-                                                            'mrp'] ??
-                                                        product[
-                                                            'compareAtPrice'] ??
-                                                        product['displayMrp'] ??
-                                                        0;
-
-                                                    return GestureDetector(
-                                                      onTap: () {
-                                                        // Navigate to Product Detail Page
-                                                        if (productId > 0) {
-                                                          Get.to(
-                                                            ProductDetailsScreenV2(
-                                                              productId:
-                                                                  productId,
-                                                              type: 'luxe',
-                                                            ),
-                                                          );
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        width: 150.w,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.r),
-                                                          color: Colors.white,
-                                                          border: Border.all(
-                                                              color: const Color(
-                                                                  0xFFE0E0E0),
-                                                              width: 1),
-                                                        ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            // Product Image with LUXE Badge
-                                                            Stack(
-                                                              children: [
-                                                                Container(
-                                                                  height: 150.h,
-                                                                  width: double
-                                                                      .infinity,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              8.r),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              8.r),
-                                                                    ),
-                                                                    color: const Color(
-                                                                        0xFFF5F5F5),
-                                                                  ),
-                                                                  child: productImage
-                                                                          .isNotEmpty
-                                                                      ? CachedNetworkImage(
-                                                                          imageUrl:
-                                                                              productImage,
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                          placeholder: (context, url) =>
-                                                                              Container(
-                                                                            color:
-                                                                                const Color(0xFFF5F5F5),
-                                                                          ),
-                                                                          errorWidget: (context, url, error) =>
-                                                                              Container(
-                                                                            color:
-                                                                                const Color(0xFFF5F5F5),
-                                                                            child:
-                                                                                const Icon(Icons.image_not_supported),
-                                                                          ),
-                                                                        )
-                                                                      : Container(
-                                                                          color:
-                                                                              const Color(0xFFF5F5F5),
-                                                                          child:
-                                                                              const Icon(Icons.image_not_supported),
-                                                                        ),
-                                                                ),
-                                                                // LUXE Badge
-                                                                Positioned(
-                                                                  top: 8.h,
-                                                                  right: 8.w,
-                                                                  child:
-                                                                      Container(
-                                                                    padding: EdgeInsets.symmetric(
-                                                                        horizontal:
-                                                                            6.w,
-                                                                        vertical:
-                                                                            3.h),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              4.r),
-                                                                    ),
-                                                                    child: Text(
-                                                                      'LUXE',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            10.sp,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            // Product Details
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(8
-                                                                            .w),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    // Product Name
-                                                                    Text(
-                                                                      productName,
-                                                                      maxLines:
-                                                                          2,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            11.sp,
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                        color: Colors
-                                                                            .black,
-                                                                      ),
-                                                                    ),
-                                                                    // Price
-                                                                    Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Text(
-                                                                          '₹${_formatPrice(productPrice)}',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontSize:
-                                                                                12.sp,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color:
-                                                                                Colors.black,
-                                                                          ),
-                                                                        ),
-                                                                        if (productMrp >
-                                                                                0 &&
-                                                                            productMrp >
-                                                                                productPrice)
-                                                                          Text(
-                                                                            '₹${_formatPrice(productMrp)}',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 10.sp,
-                                                                              color: const Color(0xFF999999),
-                                                                              decoration: TextDecoration.lineThrough,
-                                                                            ),
-                                                                          ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              SizedBox(height: 12.h),
-                                            ],
-                                          ),
-                                        );
-                                      }),
+                                      // LUXE section is now shown inside each collection (after View All button)
                                     ],
                                   );
                                 }),
@@ -2484,6 +2092,7 @@ class _SectionStrip extends StatelessWidget {
   final VoidCallback onExploreAll;
   final int seed;
   final bool skipShuffle;
+  final int collectionId;
 
   const _SectionStrip({
     super.key,
@@ -2492,6 +2101,7 @@ class _SectionStrip extends StatelessWidget {
     required this.onProductTap,
     required this.onExploreAll,
     required this.seed,
+    required this.collectionId,
     this.skipShuffle = false,
   });
 
@@ -2661,7 +2271,124 @@ class _SectionStrip extends StatelessWidget {
             ),
           ),
         ),
+
+        // ✅ LUXE SECTION INSIDE COLLECTION (after View All button)
+        SizedBox(height: 16.sp),
+        _buildLuxeSection(
+            collectionId: collectionId, dark: dark, onExploreAll: onExploreAll),
       ],
+    );
+  }
+
+  /// Build LUXE section for this specific collection
+  /// Fetches LUXE products using ?segment=luxury API filter
+  Widget _buildLuxeSection({
+    required int collectionId,
+    required bool dark,
+    required VoidCallback onExploreAll,
+  }) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: Get.find<ProductController>()
+          .fetchCollectionLuxeProducts(collectionId),
+      builder: (context, snapshot) {
+        // Show nothing while loading
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        }
+
+        // Show nothing if error or no data
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final luxeProducts = snapshot.data!.take(8).toList();
+
+        if (luxeProducts.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // LUXE Heading
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
+                child: GestureDetector(
+                  onTap: onExploreAll,
+                  child: Text(
+                    'LUXE',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ),
+              ),
+              // LUXE Products Horizontal Scroll
+              SizedBox(
+                height: 280.sp,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  itemCount: luxeProducts.length + 1, // +1 for View All
+                  separatorBuilder: (_, __) => SizedBox(width: 10.sp),
+                  itemBuilder: (context, index) {
+                    // Last item is View All card
+                    if (index == luxeProducts.length) {
+                      return GestureDetector(
+                        onTap: onExploreAll,
+                        child: Container(
+                          width: 150.sp,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.sp),
+                            color: Colors.black,
+                            border: Border.all(color: Colors.black, width: 1),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'VIEW ALL',
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                                SizedBox(height: 6.sp),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  size: 18.sp,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    final product = luxeProducts[index];
+                    return SizedBox(
+                      width: 150.sp,
+                      child: _buildProductCard(product),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 16.sp),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -4413,6 +4140,7 @@ class _CollectionSectionState extends State<_CollectionSection> {
               onProductTap: widget.onProductTap,
               onExploreAll: widget.onExploreAll,
               seed: widget.seed,
+              collectionId: widget.collectionId,
               skipShuffle: _sortBy != 'none',
             ),
 

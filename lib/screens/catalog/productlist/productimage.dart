@@ -29,8 +29,11 @@ class ProductImageScreenState extends State<ProductImageScreen> {
   int _curr = 0;
   final productController = Get.put(ProductController());
   PageController pageController = PageController();
-  late VideoPlayerController videoController;
-  late Future<void> _initializeVideoPlayerFuture;
+  VideoPlayerController? _videoController;
+  Future<void>? _initializeVideoPlayerFuture;
+
+  /// Track which index is currently a video to dispose when swiping away
+  int? _currentVideoIndex;
 
   @override
   void initState() {
@@ -55,21 +58,24 @@ class ProductImageScreenState extends State<ProductImageScreen> {
             ),
           ));
         } else {
+          // Video item - only initialize when this page becomes active
           productController.isVideoPlaying.value = true;
-          _initializeVideoPlayerFuture = _initVideoAmbient(widget.list[i]["name"]);
-          videoController.setLooping(true);
+          _initializeVideoPlayerFuture =
+              _initVideoAmbient(widget.list[i]["name"], i);
 
           list.add(
             FutureBuilder(
               future: _initializeVideoPlayerFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    _videoController != null &&
+                    _videoController!.value.isInitialized) {
                   return Obx(() => Stack(
                         fit: StackFit.expand,
                         children: [
                           AspectRatio(
-                            aspectRatio: videoController.value.aspectRatio,
-                            child: VideoPlayer(videoController),
+                            aspectRatio: _videoController!.value.aspectRatio,
+                            child: VideoPlayer(_videoController!),
                           ),
                           IconButton(
                             icon: CircleAvatar(
@@ -81,12 +87,12 @@ class ProductImageScreenState extends State<ProductImageScreen> {
                               ),
                             ),
                             onPressed: () {
-                              if (videoController.value.isPlaying) {
-                                videoController.pause();
+                              if (_videoController!.value.isPlaying) {
+                                _videoController!.pause();
                                 productController.isVideoPlaying.value = true;
                               } else {
                                 productController.isVideoPlaying.value = false;
-                                videoController.play();
+                                _videoController!.play();
                               }
                             },
                           ),
@@ -108,13 +114,34 @@ class ProductImageScreenState extends State<ProductImageScreen> {
     return list;
   }
 
-  Future<void> _initVideoAmbient(String url) async {
+  Future<void> _initVideoAmbient(String url, int index) async {
+    // Dispose any existing controller before creating new one
+    await _disposeCurrentVideoController();
+
     await configureAmbientAudioSession();
-    videoController = VideoPlayerController.networkUrl(
+    _videoController = VideoPlayerController.networkUrl(
       Uri.parse(url),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
     );
-    await videoController.initialize();
+    _currentVideoIndex = index;
+    await _videoController!.initialize();
+    _videoController!.setLooping(true);
+    _videoController!.play();
+  }
+
+  Future<void> _disposeCurrentVideoController() async {
+    if (_videoController != null) {
+      await _videoController!.pause();
+      await _videoController!.dispose();
+      _videoController = null;
+      _currentVideoIndex = null;
+    }
+  }
+
+  /// Call when swiping away from a video page to pause/dispose
+  Future<void> _onVideoPageLeft() async {
+    await _disposeCurrentVideoController();
+    productController.isVideoPlaying.value = true;
   }
 
   bool isImage(String path) {
@@ -124,8 +151,7 @@ class ProductImageScreenState extends State<ProductImageScreen> {
 
   @override
   void dispose() {
-    productController.isVideoPlaying.value = true;
-    videoController.dispose();
+    _disposeCurrentVideoController();
     super.dispose();
   }
 
@@ -160,15 +186,18 @@ class ProductImageScreenState extends State<ProductImageScreen> {
                                         allowImplicitScrolling: true,
                                         scrollDirection: Axis.horizontal,
                                         controller: pageController,
-                                        onPageChanged: (number) {
+                                        onPageChanged: (number) async {
                                           _curr = number;
                                           print(_curr);
                                           setState(() {});
-                                          if (videoController.value.isPlaying) {
-                                            videoController.pause();
-                                            productController
-                                                .isVideoPlaying.value = true;
+
+                                          // If leaving a video page, dispose its controller
+                                          if (_currentVideoIndex != null &&
+                                              _currentVideoIndex != number) {
+                                            await _onVideoPageLeft();
                                           }
+
+                                          // If entering a video page, the FutureBuilder will handle init
                                         },
                                         children: getListForPageView()),
                                   )),

@@ -91,8 +91,16 @@ class _ProductImage_ScreenState extends State<ProductImage_Screen> {
                     ),
                     builder: (context, index) {
                       final url = images[index];
+                      // Medium-res for memory safety (1500px) - still allows 2-3x zoom
+                      // while preventing OOM from loading massive original images
+                      final mediumResProvider = ResizeImage(
+                        CachedNetworkImageProvider(url),
+                        width: 1500,
+                        height: 1500,
+                        policy: ResizeImagePolicy.fit,
+                      );
                       return PhotoViewGalleryPageOptions(
-                        imageProvider: CachedNetworkImageProvider(url),
+                        imageProvider: mediumResProvider,
                         heroAttributes: PhotoViewHeroAttributes(tag: url),
                         initialScale: PhotoViewComputedScale.contained,
                         minScale: PhotoViewComputedScale.contained,

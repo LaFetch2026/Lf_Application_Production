@@ -43,7 +43,7 @@ class SwipeFeedController extends GetxController {
   // ── Undo / rewind ─────────────────────────────────────────────────────────
   /// The last swiped product — used for local rewind (re-insert at top).
   final Rx<SwipeProduct?> lastSwiped = Rx(null);
-  
+
   /// Observable for undo button visibility (true when history is not empty)
   final canUndo = false.obs;
 
@@ -57,7 +57,7 @@ class SwipeFeedController extends GetxController {
   // ── Swipe-up card animation callbacks (set by SwipeFeedScreen) ───────────
   VoidCallback? onSwipeUpFlyUp;
   VoidCallback? onSwipeUpReset;
-  
+
   /// Callback to display overlay on the top card (set by SwipeFeedScreen)
   void Function(OverlayType, OverlayConfig)? onShowOverlay;
 
@@ -94,7 +94,8 @@ class SwipeFeedController extends GetxController {
   bool _skipSeenFilter = false;
 
   Future<void> fetchBatch() async {
-    debugPrint('[SwipeFeedController] fetchBatch called — isFetching=${isFetching.value}, isExhausted=${isExhausted.value}, cards=${cards.length}, skipSeenFilter=$_skipSeenFilter');
+    debugPrint(
+        '[SwipeFeedController] fetchBatch called — isFetching=${isFetching.value}, isExhausted=${isExhausted.value}, cards=${cards.length}, skipSeenFilter=$_skipSeenFilter');
     if (isFetching.value || isExhausted.value) {
       debugPrint('[SwipeFeedController] fetchBatch SKIPPED');
       return;
@@ -112,7 +113,8 @@ class SwipeFeedController extends GetxController {
       // If personalized feed returned nothing, retry without seen-product filter
       // (the user has seen everything — show fresh products from the full catalog).
       if (results.isEmpty && !_skipSeenFilter) {
-        debugPrint('[SwipeFeedController] Personalized feed empty — retrying without seen filter');
+        debugPrint(
+            '[SwipeFeedController] Personalized feed empty — retrying without seen filter');
         _skipSeenFilter = true;
         results = await SwipeFeedService.instance.fetchBatch(
           genderFilter: genderFilter.value,
@@ -120,7 +122,8 @@ class SwipeFeedController extends GetxController {
         );
       }
 
-      debugPrint('[SwipeFeedController] fetchBatch got ${results.length} products');
+      debugPrint(
+          '[SwipeFeedController] fetchBatch got ${results.length} products');
 
       if (results.isEmpty) {
         isExhausted.value = true;
@@ -170,11 +173,11 @@ class SwipeFeedController extends GetxController {
         final overlayType = _overlayManager.getOverlayType(action);
         final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
         onShowOverlay?.call(overlayType, overlayConfig);
-        
-        // Add to undo history
-        _undoManager.addToHistory(product);
+
+        // Add to undo history (lightweight: only ID + action)
+        _undoManager.addToHistory(product, SwipeActionType.likeProduct);
         canUndo.value = _undoManager.canUndo;
-        
+
         // Instant removal — don't wait for API
         lastSwiped.value = product;
         _removeTopCard(product);
@@ -193,11 +196,11 @@ class SwipeFeedController extends GetxController {
         final overlayType = _overlayManager.getOverlayType(action);
         final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
         onShowOverlay?.call(overlayType, overlayConfig);
-        
-        // Add to undo history
-        _undoManager.addToHistory(product);
+
+        // Add to undo history (lightweight: only ID + action)
+        _undoManager.addToHistory(product, SwipeActionType.dislikeProduct);
         canUndo.value = _undoManager.canUndo;
-        
+
         // Instant removal
         lastSwiped.value = product;
         _removeTopCard(product);
@@ -218,11 +221,11 @@ class SwipeFeedController extends GetxController {
         final overlayType = _overlayManager.getOverlayType(action);
         final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
         onShowOverlay?.call(overlayType, overlayConfig);
-        
-        // Add to undo history
-        _undoManager.addToHistory(product);
+
+        // Add to undo history (lightweight: only ID + action)
+        _undoManager.addToHistory(product, SwipeActionType.swipeDown);
         canUndo.value = _undoManager.canUndo;
-        
+
         // OPEN_PDP — fire event, navigate, card stays
         SwipeCartService.swipeAction(
           productId: product.id,
@@ -252,15 +255,17 @@ class SwipeFeedController extends GetxController {
       final overlayType = _overlayManager.getOverlayType(SwipeAction.swipeUp);
       final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
       onShowOverlay?.call(overlayType, overlayConfig);
-      
-      // Add to undo history
-      _undoManager.addToHistory(product);
+
+      // Add to undo history (lightweight: only ID + action)
+      _undoManager.addToHistory(product, SwipeActionType.swipeUp);
       canUndo.value = _undoManager.canUndo;
-      
+
       lastSwiped.value = product;
       onSwipeUpFlyUp?.call();
       _triggerCartFlash();
-      try { Get.find<CartController>().getCartData(forceRefresh: true); } catch (_) {}
+      try {
+        Get.find<CartController>().getCartData(forceRefresh: true);
+      } catch (_) {}
       _removeTopCard(product);
       maybePrefetch();
       return;
@@ -284,18 +289,21 @@ class SwipeFeedController extends GetxController {
         case SwipeSizeResult.added:
           // confirmVariant was called inside the sheet and succeeded
           // Get overlay type and config
-          final overlayType = _overlayManager.getOverlayType(SwipeAction.swipeUp);
+          final overlayType =
+              _overlayManager.getOverlayType(SwipeAction.swipeUp);
           final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
           onShowOverlay?.call(overlayType, overlayConfig);
-          
-          // Add to undo history
-          _undoManager.addToHistory(product);
+
+          // Add to undo history (lightweight: only ID + action)
+          _undoManager.addToHistory(product, SwipeActionType.swipeUp);
           canUndo.value = _undoManager.canUndo;
-          
+
           lastSwiped.value = product;
           onSwipeUpFlyUp?.call();
           _triggerCartFlash();
-          try { Get.find<CartController>().getCartData(forceRefresh: true); } catch (_) {}
+          try {
+            Get.find<CartController>().getCartData(forceRefresh: true);
+          } catch (_) {}
           _removeTopCard(product);
           maybePrefetch();
           break;
@@ -303,14 +311,15 @@ class SwipeFeedController extends GetxController {
         case SwipeSizeResult.wishlisted:
           // User added to wishlist from the out-of-stock sheet — remove card
           // Get overlay type and config
-          final overlayType = _overlayManager.getOverlayType(SwipeAction.likeProduct);
+          final overlayType =
+              _overlayManager.getOverlayType(SwipeAction.likeProduct);
           final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
           onShowOverlay?.call(overlayType, overlayConfig);
-          
-          // Add to undo history
-          _undoManager.addToHistory(product);
+
+          // Add to undo history (lightweight: only ID + action)
+          _undoManager.addToHistory(product, SwipeActionType.likeProduct);
           canUndo.value = _undoManager.canUndo;
-          
+
           lastSwiped.value = product;
           onSwipeUpFlyUp?.call();
           _triggerWishlistFlash();
@@ -339,22 +348,27 @@ class SwipeFeedController extends GetxController {
     // Single-size product or auto-added product
     // If success is false but needsVariantPick and isOutOfStock are also false,
     // this is likely a single-size product that was successfully added
-    if (!actionResult.success && !actionResult.needsVariantPick && !actionResult.isOutOfStock) {
-      debugPrint('[SwipeFeedController] Single-size product added to cart (no variant needed)');
-      
+    if (!actionResult.success &&
+        !actionResult.needsVariantPick &&
+        !actionResult.isOutOfStock) {
+      debugPrint(
+          '[SwipeFeedController] Single-size product added to cart (no variant needed)');
+
       // Treat as success
       final overlayType = _overlayManager.getOverlayType(SwipeAction.swipeUp);
       final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
       onShowOverlay?.call(overlayType, overlayConfig);
-      
-      // Add to undo history
-      _undoManager.addToHistory(product);
+
+      // Add to undo history (lightweight: only ID + action)
+      _undoManager.addToHistory(product, SwipeActionType.swipeUp);
       canUndo.value = _undoManager.canUndo;
-      
+
       lastSwiped.value = product;
       onSwipeUpFlyUp?.call();
       _triggerCartFlash();
-      try { Get.find<CartController>().getCartData(forceRefresh: true); } catch (_) {}
+      try {
+        Get.find<CartController>().getCartData(forceRefresh: true);
+      } catch (_) {}
       _removeTopCard(product);
       maybePrefetch();
       return;
@@ -391,10 +405,10 @@ class SwipeFeedController extends GetxController {
     if (product != null) {
       // Re-insert at top of cards list
       cards.insert(0, product);
-      
+
       // Update undo button visibility
       canUndo.value = _undoManager.canUndo;
-      
+
       // Update lastSwiped for consistency
       lastSwiped.value = product;
     }
@@ -424,7 +438,9 @@ class SwipeFeedController extends GetxController {
       }
 
       final existing = _wishlistCtrl.wishlistList.firstWhereOrNull(
-        (b) => (b['name'] as String?)?.toLowerCase() == kSwipeBoardName.toLowerCase(),
+        (b) =>
+            (b['name'] as String?)?.toLowerCase() ==
+            kSwipeBoardName.toLowerCase(),
       );
 
       int boardId;
@@ -434,7 +450,9 @@ class SwipeFeedController extends GetxController {
         await _wishlistCtrl.createBoard(kSwipeBoardName);
         await _wishlistCtrl.fetchBoards();
         final created = _wishlistCtrl.wishlistList.firstWhereOrNull(
-          (b) => (b['name'] as String?)?.toLowerCase() == kSwipeBoardName.toLowerCase(),
+          (b) =>
+              (b['name'] as String?)?.toLowerCase() ==
+              kSwipeBoardName.toLowerCase(),
         );
         if (created == null) return;
         boardId = created['id'] as int;

@@ -45,14 +45,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // ── Netcore CE push routing check ────────────────────────────────────────
   // Check if this notification is from Netcore before processing with FCM.
   try {
-    final isNetcore = await SmartechPush().isNotificationFromSmartech(message.data.toString());
+    final isNetcore = await SmartechPush()
+        .isNotificationFromSmartech(message.data.toString());
     if (isNetcore) {
       print("🔔 Background: Netcore notification — delegating to SmartechPush");
       SmartechPush().handlePushNotification(message.data.toString());
       return; // Do NOT show local notification for Netcore messages
     }
   } catch (e) {
-    print("⚠️ Background: Netcore routing check failed: $e — defaulting to FCM handler");
+    print(
+        "⚠️ Background: Netcore routing check failed: $e — defaulting to FCM handler");
     // Fall through to existing FCM handler on error
   }
 
@@ -100,8 +102,10 @@ Future<void> main() async {
   // Flutter's default cache is unbounded in practice; cap it to prevent OOM
   // on low-to-mid-range devices. LRU eviction keeps the most-recently-used
   // images in memory and silently drops the rest — fully transparent to the UI.
-  PaintingBinding.instance.imageCache.maximumSize = 100;          // max 100 decoded images
-  PaintingBinding.instance.imageCache.maximumSizeBytes = 50 << 20; // 50 MB hard cap
+  PaintingBinding.instance.imageCache.maximumSize =
+      100; // max 100 decoded images
+  PaintingBinding.instance.imageCache.maximumSizeBytes =
+      50 << 20; // 50 MB hard cap
 
   // -------------------------------------------------------
   // CLEAN UP GetX on hot restart/reload
@@ -346,14 +350,17 @@ Future<void> _initPushNotifications(prefs) async {
       // If the notification is from Netcore, delegate to SmartechPush and skip
       // the existing FCM local notification display.
       try {
-        final isNetcore = await SmartechPush().isNotificationFromSmartech(message.data.toString());
+        final isNetcore = await SmartechPush()
+            .isNotificationFromSmartech(message.data.toString());
         if (isNetcore) {
-          print("🔔 Netcore notification detected — delegating to SmartechPush");
+          print(
+              "🔔 Netcore notification detected — delegating to SmartechPush");
           SmartechPush().handlePushNotification(message.data.toString());
           return; // Do NOT show local notification for Netcore messages
         }
       } catch (e) {
-        print("⚠️ Netcore routing check failed: $e — defaulting to FCM handler");
+        print(
+            "⚠️ Netcore routing check failed: $e — defaulting to FCM handler");
         // Fall through to existing FCM handler on error
       }
 
@@ -490,7 +497,8 @@ class RouteStackObserver extends NavigatorObserver {
     super.didPush(route, previousRoute);
     _stackDepth++;
     if (kDebugMode) {
-      print('📍 Route PUSHED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+      print(
+          '📍 Route PUSHED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
     }
   }
 
@@ -499,7 +507,8 @@ class RouteStackObserver extends NavigatorObserver {
     super.didPop(route, previousRoute);
     _stackDepth--;
     if (kDebugMode) {
-      print('📍 Route POPPED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+      print(
+          '📍 Route POPPED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
     }
   }
 
@@ -508,7 +517,8 @@ class RouteStackObserver extends NavigatorObserver {
     super.didRemove(route, previousRoute);
     _stackDepth--;
     if (kDebugMode) {
-      print('📍 Route REMOVED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+      print(
+          '📍 Route REMOVED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
     }
   }
 
@@ -516,7 +526,8 @@ class RouteStackObserver extends NavigatorObserver {
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
     if (kDebugMode) {
-      print('📍 Route REPLACED: ${oldRoute?.settings.name ?? oldRoute?.runtimeType} → ${newRoute?.settings.name ?? newRoute?.runtimeType} | Stack depth: $_stackDepth');
+      print(
+          '📍 Route REPLACED: ${oldRoute?.settings.name ?? oldRoute?.runtimeType} → ${newRoute?.settings.name ?? newRoute?.runtimeType} | Stack depth: $_stackDepth');
     }
   }
 }
