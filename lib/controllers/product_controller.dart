@@ -248,7 +248,8 @@ class ProductController extends BaseController {
   RxList<dynamic> luxuriousList = <dynamic>[].obs;
   RxList<dynamic> standardList = <dynamic>[].obs;
   RxList<dynamic> luxeList = <dynamic>[].obs;
-  RxList<dynamic> allLuxeList = <dynamic>[].obs; // Full list for LUXE category page
+  RxList<dynamic> allLuxeList =
+      <dynamic>[].obs; // Full list for LUXE category page
   RxBool isLuxeLoading = false.obs;
   final RxBool isCatProducts = false.obs;
   final RxList<Map<String, dynamic>> catProductList =
@@ -289,6 +290,7 @@ class ProductController extends BaseController {
   // shake animation trigger
   RxInt sizeShakeTrigger = 0.obs;
   RxInt colorShakeTrigger = 0.obs;
+  final Map<int, List<Map<String, dynamic>>> _luxeCache = {};
 
 // Method to update images based on selected color
   void updateImagesForSelectedColor() {
@@ -1160,11 +1162,11 @@ class ProductController extends BaseController {
     }
 
     isLuxeLoading.value = true;
-    final base = ApiConstants.baseUrl;
+    const base = ApiConstants.baseUrl;
     final uri = Uri.parse("$base/products").replace(
       queryParameters: {
         'segment': 'luxury',
-        'limit': '8',
+        'limit': '4',
         'status': '1',
       },
     );
@@ -1230,8 +1232,7 @@ class ProductController extends BaseController {
             }
           }
         } on TimeoutException {
-          print(
-              "⚠️ LUXE API Timeout - Retry $retryCount/$maxRetries");
+          print("⚠️ LUXE API Timeout - Retry $retryCount/$maxRetries");
           retryCount++;
           if (retryCount < maxRetries) {
             // Exponential backoff: 500ms, 1s, 2s
@@ -1253,26 +1254,28 @@ class ProductController extends BaseController {
       print("❌ Error loading LUXE products: $e");
       print("Stack trace: $stackTrace");
       luxeList.clear();
-      await FirebaseCrashlytics.instance.recordError(e, stackTrace, fatal: false);
+      await FirebaseCrashlytics.instance
+          .recordError(e, stackTrace, fatal: false);
     } finally {
       isLuxeLoading.value = false;
-      
+
       // ✅ FALLBACK: If API failed and luxeList is empty, try client-side filtering
       if (luxeList.isEmpty && homeProductList.isNotEmpty) {
         print("⚠️ LUXE API failed, trying client-side filtering fallback...");
         try {
           // Get products from first collection
           final firstCollection = homeProductList.first;
-          final collectionProducts = firstCollection.products
-              .map((p) => p.toJson())
-              .toList();
-          
-          final filteredLuxe = filterLuxeProductsFromCollection(collectionProducts);
-          
+          final collectionProducts =
+              firstCollection.products.map((p) => p.toJson()).toList();
+
+          final filteredLuxe =
+              filterLuxeProductsFromCollection(collectionProducts);
+
           if (filteredLuxe.isNotEmpty) {
             luxeList.assignAll(filteredLuxe.take(8).toList());
-            print("✅ Fallback: Loaded ${luxeList.length} LUXE products from collection");
-            
+            print(
+                "✅ Fallback: Loaded ${luxeList.length} LUXE products from collection");
+
             // Cache the fallback results
             await CacheManager.save(
               key: 'luxe_products_v1',
@@ -1285,6 +1288,18 @@ class ProductController extends BaseController {
       }
     }
   }
+
+  // Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(
+  //     int collectionId) async {
+  //   // ✅ Return cached result immediately — no rebuild, no re-fetch
+  //   if (_luxeCache.containsKey(collectionId)) {
+  //     return _luxeCache[collectionId]!;
+  //   }
+
+  //   final result = await _actualApiCall(collectionId);
+  //   _luxeCache[collectionId] = result;
+  //   return result;
+  // }
 
   /// Fetch ALL LUXE products (no limit) for the LUXE category page
   Future<void> fetchAllLuxeProducts({bool forceRefresh = false}) async {
@@ -1335,7 +1350,8 @@ class ProductController extends BaseController {
     } catch (e, stackTrace) {
       print("❌ Error loading all LUXE products: $e");
       allLuxeList.clear();
-      await FirebaseCrashlytics.instance.recordError(e, stackTrace, fatal: false);
+      await FirebaseCrashlytics.instance
+          .recordError(e, stackTrace, fatal: false);
     }
   }
 
@@ -1359,8 +1375,7 @@ class ProductController extends BaseController {
         numPrice = product.basePrice;
         final isLuxe = numPrice >= defaultLuxuryThreshold;
         if (isLuxe) {
-          print(
-              "✅ LUXE: ${product.title} - ₹${numPrice.toInt()}");
+          print("✅ LUXE: ${product.title} - ₹${numPrice.toInt()}");
         }
         return isLuxe;
       }
@@ -1400,7 +1415,14 @@ class ProductController extends BaseController {
 
   /// Fetch LUXE products for a specific collection using API segment=luxury filter
   /// Returns up to [limit] luxury products (price >= ₹7000)
-  Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(int collectionId, {int limit = 8}) async {
+  Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(
+      int collectionId,
+      {int limit = 8}) async {
+    //Luxe Cache
+    if (_luxeCache.containsKey(collectionId)) {
+      return _luxeCache[collectionId]!;
+    }
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
@@ -1428,23 +1450,23 @@ class ProductController extends BaseController {
         if (data is List) {
           rawProducts = data;
         } else if (data is Map) {
-          rawProducts = data['products'] ??
-              data['items'] ??
-              data['results'] ??
-              [];
+          rawProducts =
+              data['products'] ?? data['items'] ?? data['results'] ?? [];
         } else {
           rawProducts = body['products'] ?? body['items'] ?? [];
         }
 
-        final luxeProducts = rawProducts
-            .whereType<Map<String, dynamic>>()
-            .take(limit)
-            .toList();
+        final luxeProducts =
+            rawProducts.whereType<Map<String, dynamic>>().take(limit).toList();
 
-        print('✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId');
+        print(
+            '✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId');
+        _luxeCache[collectionId] = luxeProducts;
+
         return luxeProducts;
       } else {
-        print('⚠️ LUXE API error for collection $collectionId: ${response.statusCode} — ${response.body.substring(0, response.body.length.clamp(0, 200))}');
+        print(
+            '⚠️ LUXE API error for collection $collectionId: ${response.statusCode} — ${response.body.substring(0, response.body.length.clamp(0, 200))}');
         return [];
       }
     } catch (e) {
@@ -1452,6 +1474,7 @@ class ProductController extends BaseController {
       return [];
     }
   }
+
   /// Calculate minimum variant price and MRP for display in product lists
   static Map<String, dynamic> calculateDisplayPrices(
       Map<String, dynamic> product) {

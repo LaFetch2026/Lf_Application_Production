@@ -2085,7 +2085,7 @@ class _NewInSection extends StatelessWidget {
   }
 }
 
-class _SectionStrip extends StatelessWidget {
+class _SectionStrip extends StatefulWidget {
   final List<Map<String, dynamic>> products;
   final bool dark;
   final void Function(int productId) onProductTap;
@@ -2104,6 +2104,20 @@ class _SectionStrip extends StatelessWidget {
     required this.collectionId,
     this.skipShuffle = false,
   });
+
+  @override
+  State<_SectionStrip> createState() => _SectionStripState();
+}
+
+class _SectionStripState extends State<_SectionStrip> {
+  late final Future<List<Map<String, dynamic>>> _luxeFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _luxeFuture = Get.find<ProductController>()
+        .fetchCollectionLuxeProducts(widget.collectionId);
+  }
 
   String resolveBrandName(Map<String, dynamic> p) {
     if (p['brand'] is Map && p['brand']?['name'] != null) {
@@ -2169,7 +2183,7 @@ class _SectionStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = List<Map<String, dynamic>>.from(products);
+    final items = List<Map<String, dynamic>>.from(widget.products);
     // ✅ Shuffle disabled - products maintain their original order
     // if (!skipShuffle) {
     //   items.shuffle(Random(seed));
@@ -2243,15 +2257,15 @@ class _SectionStrip extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.sp),
           child: GestureDetector(
-            onTap: onExploreAll,
+            onTap: widget.onExploreAll,
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 12.sp),
               decoration: BoxDecoration(
-                color: dark ? Colors.black : Colors.white,
+                color: widget.dark ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(8.sp),
                 border: Border.all(
-                  color: dark ? Colors.white : const Color(0xFFD6D4D0),
+                  color: widget.dark ? Colors.white : const Color(0xFFD6D4D0),
                   width: 1.sp,
                 ),
               ),
@@ -2263,7 +2277,7 @@ class _SectionStrip extends StatelessWidget {
                     fontFamily: "Clash Display Semibold",
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: dark ? Colors.white : colorPrimary,
+                    color: widget.dark ? Colors.white : colorPrimary,
                     letterSpacing: 0.3,
                   ),
                 ),
@@ -2275,7 +2289,9 @@ class _SectionStrip extends StatelessWidget {
         // ✅ LUXE SECTION INSIDE COLLECTION (after View All button)
         SizedBox(height: 16.sp),
         _buildLuxeSection(
-            collectionId: collectionId, dark: dark, onExploreAll: onExploreAll),
+            collectionId: widget.collectionId,
+            dark: widget.dark,
+            onExploreAll: widget.onExploreAll),
       ],
     );
   }
@@ -2308,8 +2324,9 @@ class _SectionStrip extends StatelessWidget {
     }
 
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: Get.find<ProductController>()
-          .fetchCollectionLuxeProducts(collectionId),
+      // future: Get.find<ProductController>()
+      //     .fetchCollectionLuxeProducts(collectionId),
+      future: _luxeFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();
@@ -2444,12 +2461,12 @@ class _SectionStrip extends StatelessWidget {
         final padding = 6.sp;
 
         return PounceWrapper(
-          onTap: () => onProductTap(id),
+          onTap: () => widget.onProductTap(id),
           child: Stack(
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: dark
+                  color: widget.dark
                       ? const Color.fromARGB(255, 47, 47, 47)
                       : const Color.fromARGB(255, 243, 241, 241),
                   borderRadius: BorderRadius.circular(8.sp),
@@ -2506,7 +2523,8 @@ class _SectionStrip extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: "Clash Display Semibold",
                                 fontSize: 10.sp,
-                                color: dark ? Colors.white : Colors.black,
+                                color:
+                                    widget.dark ? Colors.white : Colors.black,
                               ),
                             ),
                             if (brandName.isNotEmpty)
@@ -2517,7 +2535,7 @@ class _SectionStrip extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: "Clash Display",
                                   fontSize: 8.sp,
-                                  color: dark
+                                  color: widget.dark
                                       ? Colors.white.withOpacity(0.85)
                                       : Colors.black.withOpacity(0.7),
                                 ),
@@ -2536,7 +2554,7 @@ class _SectionStrip extends StatelessWidget {
                                           fontFamily: "Clash Display Semibold",
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w700,
-                                          color: dark
+                                          color: widget.dark
                                               ? Colors.white
                                               : Colors.black,
                                         ),
@@ -4618,7 +4636,7 @@ class _NewlyLaunchedBrandsSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Subtitle: "JUST IN"
-                AppText(
+                const AppText(
                   text: "JUST IN",
                   fontFamily: "Clash Display Regular",
                   color: const Color(0xFF6B7280),
@@ -4629,7 +4647,7 @@ class _NewlyLaunchedBrandsSection extends StatelessWidget {
                 // Title: "NEWLY LAUNCHED BRANDS"
                 Row(
                   children: [
-                    AppText(
+                    const AppText(
                       text: "NEWLY LAUNCHED BRANDS",
                       fontFamily: "Clash Display Semibold",
                       color: blackColor,
