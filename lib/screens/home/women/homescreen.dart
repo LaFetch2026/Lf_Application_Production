@@ -2353,7 +2353,7 @@ class _SectionStripState extends State<_SectionStrip> {
               // LUXE Heading — tapping goes to LUXE category page
               Padding(
                 padding:
-                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
+                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
                 child: GestureDetector(
                   onTap: goToLuxePage,
                   child: Text(
@@ -4093,6 +4093,9 @@ class _CollectionSectionState extends State<_CollectionSection> {
                           style: TextStyle(
                             fontFamily: "Clash Display Semibold",
                             fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor:
+                                widget.dark ? Colors.white : Colors.black,
                             fontSize: 18.sp,
                             color: widget.dark ? Colors.white : Colors.black,
                             letterSpacing: 0.4,
@@ -4645,7 +4648,7 @@ class _NewlyLaunchedBrandsSection extends StatelessWidget {
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                 ),
-                SizedBox(height: 4.sp),
+                // SizedBox(height: 4.sp),
                 // Title: "NEWLY LAUNCHED BRANDS"
                 Row(
                   children: [
