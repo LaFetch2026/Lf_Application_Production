@@ -470,14 +470,20 @@ class SwipeFeedController extends GetxController {
   void _triggerWishlistFlash() {
     wishlistFlash.value = true;
     Future.delayed(const Duration(milliseconds: 900), () {
+      if (isClosed) return; // ✅ FIXED: Check if controller is closed
       wishlistFlash.value = false;
+    }).catchError((e) {
+      print('⚠️ Error in _triggerWishlistFlash: $e');
     });
   }
 
   void _triggerCartFlash() {
     cartFlash.value = true;
     Future.delayed(const Duration(milliseconds: 700), () {
+      if (isClosed) return; // ✅ FIXED: Check if controller is closed
       cartFlash.value = false;
+    }).catchError((e) {
+      print('⚠️ Error in _triggerCartFlash: $e');
     });
   }
 

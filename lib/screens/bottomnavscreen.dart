@@ -103,7 +103,14 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   @override
   void dispose() {
-    _videoAdController?.dispose();
+    print('🗑️ BottomNavScreen.dispose() — disposing video ad controller');
+    try {
+      _videoAdController?.pause();
+      _videoAdController?.dispose();
+    } catch (e) {
+      print('⚠️ Error disposing video ad controller: $e');
+    }
+    _videoAdController = null;
     super.dispose();
   }
 

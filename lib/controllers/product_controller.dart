@@ -1399,13 +1399,12 @@ class ProductController extends BaseController {
   }
 
   /// Fetch LUXE products for a specific collection using API segment=luxury filter
-  /// Returns up to 8 luxury products (price >= ₹7000)
-  Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(int collectionId) async {
+  /// Returns up to [limit] luxury products (price >= ₹7000)
+  Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(int collectionId, {int limit = 8}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
 
-      // Use segment=luxury to get only luxury products (price >= ₹7000)
       final uri = Uri.parse(
         '${ApiConstants.baseUrl}/filter-products?collectionId=$collectionId&segment=luxury&page=1',
       );
@@ -1439,7 +1438,7 @@ class ProductController extends BaseController {
 
         final luxeProducts = rawProducts
             .whereType<Map<String, dynamic>>()
-            .take(8)
+            .take(limit)
             .toList();
 
         print('✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId');

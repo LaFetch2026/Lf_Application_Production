@@ -233,12 +233,11 @@ class QuickScreenState extends State<QuickScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true, // ✅ FIXED: Always allow back navigation immediately
       onPopInvokedWithResult: (bool didPop, dynamic result) {
-        if (!didPop) {
-          Get.offAll(() => const BottomNavScreen(
-                index: 0,
-              ));
+        if (didPop) {
+          // Back was pressed and navigation succeeded
+          // Navigation already handled by PopScope
         }
       },
       child: ImageFiltered(

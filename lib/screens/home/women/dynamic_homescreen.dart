@@ -162,8 +162,14 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen>
 
   @override
   void dispose() {
+    print('🗑️ DynamicHomeScreen.dispose() — disposing ${_videoControllers.length} video controllers');
     for (final c in _videoControllers.values) {
-      c.dispose();
+      try {
+        c.pause();
+        c.dispose();
+      } catch (e) {
+        print('⚠️ Error disposing video controller: $e');
+      }
     }
     _videoControllers.clear();
     super.dispose();

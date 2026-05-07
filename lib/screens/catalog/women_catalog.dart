@@ -185,10 +185,11 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     return PopScope(
-      canPop: false,
+      canPop: true, // ✅ FIXED: Always allow back navigation immediately
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          Get.offAll(() => const BottomNavScreen(index: 0));
+        if (didPop) {
+          // Back was pressed and navigation succeeded
+          // Navigation already handled by PopScope
         }
       },
       child: Scaffold(

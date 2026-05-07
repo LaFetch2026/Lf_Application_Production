@@ -68,7 +68,13 @@ class WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   void dispose() {
-    _videoController.dispose();
+    print('🗑️ WelcomeScreen.dispose() — disposing video controller');
+    try {
+      _videoController.pause();
+      _videoController.dispose();
+    } catch (e) {
+      print('⚠️ Error disposing video controller: $e');
+    }
     super.dispose();
   }
 

@@ -231,22 +231,25 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true, // ✅ FIXED: Always allow back navigation immediately
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
-        if (!didPop) {
-          final prefs = await SharedPreferences.getInstance();
-          prefs.remove("brandList");
-          prefs.remove("colorList");
-          prefs.remove("sizeList");
-          prefs.remove("upper");
-          prefs.remove("lower");
-          prefs.remove("sortby");
-          productController.size_ids.clear();
-          productController.color_ids.clear();
-          productController.brand_ids.clear();
-          Get.offAll(() => const BottomNavScreen(
-            index: 0,
-          ));
+        if (didPop) {
+          // Back was pressed and navigation succeeded - clean up state
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            prefs.remove("brandList");
+            prefs.remove("colorList");
+            prefs.remove("sizeList");
+            prefs.remove("upper");
+            prefs.remove("lower");
+            prefs.remove("sortby");
+            productController.size_ids.clear();
+            productController.color_ids.clear();
+            productController.brand_ids.clear();
+          } catch (e) {
+            print('⚠️ Error cleaning up preferences: $e');
+          }
+          // Navigation already happened via didPop=true
         }
       },
       child: Scaffold(

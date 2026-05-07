@@ -896,10 +896,14 @@ class CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: widget.backgroundcolor != homeAppBarColor,
+      canPop: true, // ✅ FIXED: Always allow back navigation immediately
       onPopInvokedWithResult: (bool didPop, dynamic result) {
-        if (!didPop && widget.backgroundcolor == homeAppBarColor) {
-          Get.offAll(() => const BottomNavScreen(index: 0));
+        if (didPop) {
+          // Back was pressed and navigation succeeded
+          if (widget.backgroundcolor == homeAppBarColor) {
+            // If we're in the dark theme (from express shopping), go to home
+            Get.offAll(() => const BottomNavScreen(index: 0));
+          }
         }
       },
       child: Scaffold(

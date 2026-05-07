@@ -329,16 +329,28 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       final isLuxeView = widget.type == 'luxe' || widget.segment == 'luxury';
 
       if (isLuxeView) {
-        // For LUXE view, fetch ALL luxury products using segment=luxury filter
-        print("🎯 Loading LUXE products (segment=luxury, all)...");
-        await productController.fetchAllLuxeProducts();
+        // For LUXE view, fetch luxury products scoped to the collection if provided
+        final collectionId = widget.collectionIds.isNotEmpty
+            ? int.tryParse(widget.collectionIds.first?.toString() ?? '') ?? 0
+            : 0;
+
+        print("🎯 Loading LUXE products for collectionId=$collectionId...");
+
+        if (collectionId > 0) {
+          // Fetch LUXE products scoped to this specific collection
+          final luxeProducts = await productController
+              .fetchCollectionLuxeProducts(collectionId, limit: 100);
+          productController.allLuxeList.assignAll(luxeProducts);
+        } else {
+          // No collection — fetch all luxury products globally
+          await productController.fetchAllLuxeProducts();
+        }
 
         // If API returns nothing, try client-side filtering from collections
         if (productController.allLuxeList.isEmpty) {
           print(
               "⚠️ No LUXE products from API, trying client-side filtering...");
 
-          // Collect all products from all collections
           List<dynamic> allCollectionProducts = [];
           for (final collection in productController.homeProductList) {
             allCollectionProducts
