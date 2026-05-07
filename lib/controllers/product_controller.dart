@@ -290,7 +290,7 @@ class ProductController extends BaseController {
   // shake animation trigger
   RxInt sizeShakeTrigger = 0.obs;
   RxInt colorShakeTrigger = 0.obs;
-  final Map<int, List<Map<String, dynamic>>> _luxeCache = {};
+  final Map<String, List<Map<String, dynamic>>> _luxeCache = {};
 
 // Method to update images based on selected color
   void updateImagesForSelectedColor() {
@@ -1417,10 +1417,16 @@ class ProductController extends BaseController {
   /// Returns up to [limit] luxury products (price >= ₹7000)
   Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(
       int collectionId,
-      {int limit = 8}) async {
-    //Luxe Cache
-    if (_luxeCache.containsKey(collectionId)) {
-      return _luxeCache[collectionId]!;
+      {int limit = 4,
+      int gender = 0}) async {
+    // //Luxe Cache
+    // if (_luxeCache.containsKey(collectionId)) {
+    //   return _luxeCache[collectionId]!;
+    // }
+
+    final cacheKey = '${collectionId}_$gender'; // ✅ cache per collection+gender
+    if (_luxeCache.containsKey(cacheKey)) {
+      return _luxeCache[cacheKey]!;
     }
 
     try {
@@ -1461,7 +1467,8 @@ class ProductController extends BaseController {
 
         print(
             '✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId');
-        _luxeCache[collectionId] = luxeProducts;
+        // _luxeCache[collectionId] = luxeProducts;
+        _luxeCache[cacheKey] = luxeProducts;
 
         return luxeProducts;
       } else {

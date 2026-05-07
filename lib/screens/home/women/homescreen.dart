@@ -2115,8 +2115,10 @@ class _SectionStripState extends State<_SectionStrip> {
   @override
   void initState() {
     super.initState();
+    final gender = Get.find<HomeController>().homeGenderValue.value;
+
     _luxeFuture = Get.find<ProductController>()
-        .fetchCollectionLuxeProducts(widget.collectionId);
+        .fetchCollectionLuxeProducts(widget.collectionId, gender: gender);
   }
 
   String resolveBrandName(Map<String, dynamic> p) {
