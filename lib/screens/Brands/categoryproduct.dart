@@ -335,21 +335,22 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
         // If API returns nothing, try client-side filtering from collections
         if (productController.allLuxeList.isEmpty) {
-          print("⚠️ No LUXE products from API, trying client-side filtering...");
-          
+          print(
+              "⚠️ No LUXE products from API, trying client-side filtering...");
+
           // Collect all products from all collections
           List<dynamic> allCollectionProducts = [];
           for (final collection in productController.homeProductList) {
-            allCollectionProducts.addAll(
-              collection.products.map((p) => p.toJson()).toList()
-            );
+            allCollectionProducts
+                .addAll(collection.products.map((p) => p.toJson()).toList());
           }
-          
+
           if (allCollectionProducts.isNotEmpty) {
             final filteredLuxe = productController
                 .filterLuxeProductsFromCollection(allCollectionProducts);
             productController.allLuxeList.assignAll(filteredLuxe);
-            print("✅ Loaded ${productController.allLuxeList.length} LUXE products from collections");
+            print(
+                "✅ Loaded ${productController.allLuxeList.length} LUXE products from collections");
           }
         }
 
@@ -726,10 +727,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // ✅ Determine if this is a LUXE view
       final isLuxeView = widget.type == 'luxe' || widget.segment == 'luxury';
-      
+
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: isLuxeView ? const Color(0xFF000000) : statusBarColor,
-        statusBarIconBrightness: isLuxeView ? Brightness.light : Brightness.dark,
+        statusBarIconBrightness:
+            isLuxeView ? Brightness.light : Brightness.dark,
         systemNavigationBarColor: statusBarColor,
         systemNavigationBarIconBrightness: Brightness.dark,
       ));
@@ -740,7 +742,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   void dispose() {
     _debounceTimer?.cancel();
     catalogController.clearChipSelection();
-    
+
     // ✅ Restore default status bar colors when navigating away
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: statusBarColor,
@@ -748,7 +750,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       systemNavigationBarColor: statusBarColor,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    
+
     super.dispose();
   }
 
@@ -818,42 +820,43 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
           // Category Title and Description for LUXE
           if (isLuxeView)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'LUXE',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      decoration: TextDecoration.underline,
-                      decorationColor: const Color(0xFF9C27B0),
-                      decorationThickness: 2.0,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    'Discover our most exclusive luxury collection',
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Text(
+            //         'LUXE',
+            //         style: TextStyle(
+            //           fontSize: 20.sp,
+            //           fontWeight: FontWeight.bold,
+            //           fontFamily: 'Clash Display',
+            //           color: Colors.white,
+            //           decoration: TextDecoration.underline,
+            //           decorationColor: const Color(0xFF9C27B0),
+            //           decorationThickness: 2.0,
+            //         ),
+            //       ),
+            //       SizedBox(height: 8.h),
+            //       Text(
+            //         'Discover our most exclusive luxury collection',
+            //         style: TextStyle(
+            //           fontSize: 13.sp,
+            //           color: Colors.white70,
+            //           fontWeight: FontWeight.w400,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
-          // Filter Chips Row
-          // Uses a StatefulBuilder so both setState (filter pills) and
-          // GetX reactive (chips/activeChipId) changes trigger a rebuild.
-          _FilterChipsSection(
-            catalogController: catalogController,
-            buildPills: _buildActiveFilterPills,
-          ),
+            // Filter Chips Row
+            // Uses a StatefulBuilder so both setState (filter pills) and
+            // GetX reactive (chips/activeChipId) changes trigger a rebuild.
+            _FilterChipsSection(
+              catalogController: catalogController,
+              buildPills: _buildActiveFilterPills,
+            ),
 
           /// ✅ Product Grid with skeleton loading
           Expanded(
@@ -960,12 +963,14 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
           /// ✅ Bottom bar
           Container(
-            color: statusBarColor,
+            color: isLuxeView ? Colors.black : statusBarColor,
             padding:
                 EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
             child: Column(
               children: [
-                Container(height: 1.sp, color: dividerColor),
+                Container(
+                    height: 1.sp,
+                    color: isLuxeView ? const Color(0xFF333333) : dividerColor),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.sp),
                   child: Row(
@@ -974,6 +979,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       _activeBottomButton(
                         icon: sortBySvgImage,
                         label: "SORT BY",
+                        isLuxe: isLuxeView,
                         onTap: () async {
                           await _showSortBottomSheet(
                             context,
@@ -983,17 +989,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           );
                         },
                       ),
-                      _divider(),
+                      _divider(isLuxe: isLuxeView),
                       _activeTextOnlyButton(
                         "CATEGORY",
                         subtitle: widget.genderName.toUpperCase(),
+                        isLuxe: isLuxeView,
                         onTap: () {},
                       ),
-                      _divider(),
+                      _divider(isLuxe: isLuxeView),
                       _activeBottomButton(
                         icon: filterSvgImage,
                         label: "FILTERS",
                         vector: true,
+                        isLuxe: isLuxeView,
                         onTap: () async {
                           await _showFilterBottomSheet(context);
                         },
@@ -1191,14 +1199,17 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         ),
       );
 
-  Widget _divider() =>
-      Container(width: 1.sp, color: dividerColor, height: 46.sp);
+  Widget _divider({bool isLuxe = false}) => Container(
+      width: 1.sp,
+      color: isLuxe ? const Color(0xFF444444) : dividerColor,
+      height: 46.sp);
 
   Widget _activeBottomButton({
     required String icon,
     required String label,
     required VoidCallback onTap,
     bool vector = false,
+    bool isLuxe = false,
   }) =>
       GestureDetector(
         onTap: onTap,
@@ -1210,13 +1221,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 icon,
                 height: vector ? 11.sp : 19.sp,
                 width: vector ? 17.sp : 15.sp,
+                colorFilter: isLuxe
+                    ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                    : null,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 5.sp),
                 child: Text(
                   label,
-                  style: const TextStyle(
-                    color: Color(0xFF374151),
+                  style: TextStyle(
+                    color: isLuxe ? Colors.white : const Color(0xFF374151),
                     fontSize: 13,
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
@@ -1832,15 +1846,17 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   }
 
   Widget _activeTextOnlyButton(String label,
-          {String? subtitle, required VoidCallback onTap}) =>
+          {String? subtitle,
+          required VoidCallback onTap,
+          bool isLuxe = false}) =>
       GestureDetector(
           onTap: onTap,
           child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
               child: Column(children: [
                 Text(label,
-                    style: const TextStyle(
-                        color: Color(0xFF374151),
+                    style: TextStyle(
+                        color: isLuxe ? Colors.white : const Color(0xFF374151),
                         fontSize: 13,
                         fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500)),
@@ -1848,12 +1864,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   Padding(
                       padding: EdgeInsets.only(top: 1.sp),
                       child: Text(subtitle!,
-                          style: const TextStyle(
+                          style: TextStyle(
                               decoration: TextDecoration.underline,
                               fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               fontSize: 10,
-                              color: appBarColor)))
+                              color: isLuxe ? Colors.white70 : appBarColor)))
               ])));
 }
 

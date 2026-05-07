@@ -2287,44 +2287,63 @@ class _SectionStrip extends StatelessWidget {
     required bool dark,
     required VoidCallback onExploreAll,
   }) {
+    // Navigate to LUXE category page with full black experience
+    void goToLuxePage() {
+      final homeController = Get.find<HomeController>();
+      Get.to(
+        CategoryProductScreen(
+          categoryName: 'LUXE',
+          categoryId: 0,
+          brandId: 0,
+          genderType: homeController.homeGenderValue.value,
+          collectionIds: [collectionId],
+          genderName: homeController.genderText.value,
+          type: 'luxe',
+          screen: 'luxe',
+          categoryList: [],
+          title: 'LUXE',
+          segment: 'luxury',
+        ),
+      );
+    }
+
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: Get.find<ProductController>()
           .fetchCollectionLuxeProducts(collectionId),
       builder: (context, snapshot) {
-        // Show nothing while loading
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox.shrink();
         }
-
-        // Show nothing if error or no data
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox.shrink();
         }
 
         final luxeProducts = snapshot.data!.take(8).toList();
+        if (luxeProducts.isEmpty) return const SizedBox.shrink();
 
-        if (luxeProducts.isEmpty) {
-          return const SizedBox.shrink();
-        }
+        // Match background to the collection's dark flag
+        final bgColor = dark ? Colors.black : Colors.white;
+        final textColor = dark ? Colors.white : Colors.black;
 
         return Container(
-          color: Colors.white,
+          color: bgColor,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // LUXE Heading
+              // LUXE Heading — tapping goes to LUXE category page
               Padding(
                 padding:
                     EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
                 child: GestureDetector(
-                  onTap: onExploreAll,
+                  onTap: goToLuxePage,
                   child: Text(
                     'LUXE',
                     style: TextStyle(
                       fontSize: 18.sp,
+                      fontFamily: 'Clash Display Bold',
                       fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                      color: textColor,
                       letterSpacing: 0.4,
                     ),
                   ),
@@ -2336,19 +2355,22 @@ class _SectionStrip extends StatelessWidget {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                  itemCount: luxeProducts.length + 1, // +1 for View All
+                  itemCount: luxeProducts.length + 1,
                   separatorBuilder: (_, __) => SizedBox(width: 10.sp),
                   itemBuilder: (context, index) {
-                    // Last item is View All card
+                    // Last item — View All card (inverted colors vs bg)
                     if (index == luxeProducts.length) {
                       return GestureDetector(
-                        onTap: onExploreAll,
+                        onTap: goToLuxePage,
                         child: Container(
                           width: 150.sp,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.sp),
-                            color: Colors.black,
-                            border: Border.all(color: Colors.black, width: 1),
+                            color: dark ? Colors.white : Colors.black,
+                            border: Border.all(
+                              color: dark ? Colors.white : Colors.black,
+                              width: 1,
+                            ),
                           ),
                           child: Center(
                             child: Column(
@@ -2359,7 +2381,7 @@ class _SectionStrip extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 13.sp,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                    color: dark ? Colors.black : Colors.white,
                                     letterSpacing: 1.0,
                                   ),
                                 ),
@@ -2367,7 +2389,7 @@ class _SectionStrip extends StatelessWidget {
                                 Icon(
                                   Icons.arrow_forward,
                                   size: 18.sp,
-                                  color: Colors.white,
+                                  color: dark ? Colors.black : Colors.white,
                                 ),
                               ],
                             ),

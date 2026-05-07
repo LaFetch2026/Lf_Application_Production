@@ -40,24 +40,24 @@ class _LuxeSectionState extends State<LuxeSection> {
   Future<void> _initializeLuxeProducts() async {
     try {
       await productController.fetchLuxeProducts();
-      
+
       // If no products from API, try client-side filtering from collections
       if (productController.luxeList.isEmpty) {
         print("⚠️ No LUXE products from API, trying client-side filtering...");
-        
+
         // Get products from first collection
         if (productController.homeProductList.isNotEmpty) {
           final firstCollection = productController.homeProductList.first;
-          final collectionProducts = firstCollection.products
-              .map((p) => p.toJson())
-              .toList();
-          
+          final collectionProducts =
+              firstCollection.products.map((p) => p.toJson()).toList();
+
           final filteredLuxe = productController
               .filterLuxeProductsFromCollection(collectionProducts);
-          
+
           if (filteredLuxe.isNotEmpty) {
             productController.luxeList.assignAll(filteredLuxe.take(8).toList());
-            print("✅ Loaded ${productController.luxeList.length} LUXE products from collection");
+            print(
+                "✅ Loaded ${productController.luxeList.length} LUXE products from collection");
           }
         }
       }
