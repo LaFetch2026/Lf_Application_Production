@@ -126,15 +126,9 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen>
     print('✅ DynamicHomeScreen: injected ${items.length} tabs → '
         '${dynamicTabs.map((t) => t['name']).join(', ')}');
 
-    // Pre-init video controllers for known slugs
-    for (final item in items) {
-      final slug = item.shopSlug?.toLowerCase();
-      if (slug != null &&
-          _kSlugVideoUrls.containsKey(slug) &&
-          !_videoControllers.containsKey(slug)) {
-        _initVideo(slug, _kSlugVideoUrls[slug]!);
-      }
-    }
+    // CRASH FIX: Removed pre-init of all video controllers.
+    // HomeScreen now handles lazy init of section videos on tab switch.
+    // This prevents MediaCodec exhaustion from too many concurrent instances.
   }
 
   Future<void> _initVideo(String slug, String url) async {
@@ -162,7 +156,8 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen>
 
   @override
   void dispose() {
-    print('🗑️ DynamicHomeScreen.dispose() — disposing ${_videoControllers.length} video controllers');
+    print(
+        '🗑️ DynamicHomeScreen.dispose() — disposing ${_videoControllers.length} video controllers');
     for (final c in _videoControllers.values) {
       try {
         c.pause();

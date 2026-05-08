@@ -47,11 +47,16 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final wishlistController = Get.put(WishlistController());
   final catalogController = Get.find<CatalogController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  late VideoPlayerController videoController;
+  VideoPlayerController? videoController;
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   int _appliedMinDiscount = 0;
   int _appliedMaxDiscount = 100;
+
+  // CRASH FIX: Track current product and page for lazy video initialization
+  int _currentProductIndex = -1;
+  int _currentPageIndex = -1;
+  String? _currentVideoUrl;
 
   //late Future<void> _initializeVideoPlayerFuture;
 
@@ -84,7 +89,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   @override
   void dispose() {
     productController.isVideoPlaying.value = true;
-    videoController.dispose();
+    videoController?.dispose();
     catalogController.clearChipSelection();
     super.dispose();
   }
@@ -127,62 +132,28 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
             ),
           ));
         } else {
-          //  productController.isVideoPlaying.productController = true;
-          videoController = VideoPlayerController.networkUrl(
-            Uri.parse(
-              productController.productCategoryList[index]["images"][i]["name"],
-            ),
-          );
+          // CRASH FIX: Don't create controller here - lazy init on page change
+          // Previous code created controller for every video, causing MediaCodec exhaustion
+          final videoUrl =
+              productController.productCategoryList[index]["images"][i]["name"];
 
-          //  _initializeVideoPlayerFuture = videoController.initialize();
-          //  videoController.setLooping(true);
-
-          /*   list.add(
-            FutureBuilder(
-              future: _initializeVideoPlayerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Obx(() => Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          AspectRatio(
-                            aspectRatio: videoController.productController.aspectRatio,
-                            child: VideoPlayer(videoController),
-                          ),
-                          IconButton(
-                            icon: CircleAvatar(
-                              backgroundColor: blue,
-                              child: Icon(
-                                !productController.isVideoPlaying.productController
-                                    ? Icons.pause
-                                    : Icons.play_arrow,
-                              ),
-                            ),
-                            onPressed: () {
-                              if (videoController.productController.isPlaying) {
-                                videoController.pause();
-                                productController.isVideoPlaying.productController = true;
-                              } else {
-                                productController.isVideoPlaying.productController = false;
-                                videoController.play();
-                              }
-                            },
-                          ),
-                        ],
-                      ));
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            ),
-          );
-          */
-
-          list.add(ProductVideo(
-            videoController: videoController,
-          ));
+          // Only show ProductVideo if this is the current page with an initialized controller
+          if (_currentProductIndex == index &&
+              _currentPageIndex == i &&
+              videoController != null &&
+              _currentVideoUrl == videoUrl) {
+            list.add(ProductVideo(
+              videoController: videoController!,
+            ));
+          } else {
+            // Show placeholder for non-current pages or uninitialized videos
+            list.add(Container(
+              color: Colors.black.withOpacity(0.04),
+              child: const Center(
+                child: Icon(Icons.videocam, size: 40, color: Colors.grey),
+              ),
+            ));
+          }
         }
       }
     } else {
@@ -362,7 +333,52 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                         Axis
                                                                             .horizontal,
                                                                     onPageChanged:
-                                                                        (number) {
+                                                                        (number) async {
+                                                                      // CRASH FIX: Lazy video init - dispose old, create new on page change
+                                                                      if (videoController !=
+                                                                          null) {
+                                                                        videoController
+                                                                            ?.dispose();
+                                                                        videoController =
+                                                                            null;
+                                                                      }
+
+                                                                      // Check if new page is a video
+                                                                      final images =
+                                                                          productController.productCategoryList[index]
+                                                                              [
+                                                                              "images"];
+                                                                      if (number <
+                                                                              images
+                                                                                  .length &&
+                                                                          !isImage(images[number]
+                                                                              [
+                                                                              "name"])) {
+                                                                        // New page is a video - create controller
+                                                                        _currentVideoUrl =
+                                                                            images[number]["name"];
+                                                                        videoController =
+                                                                            VideoPlayerController.networkUrl(
+                                                                          Uri.parse(
+                                                                              _currentVideoUrl!),
+                                                                          videoPlayerOptions:
+                                                                              VideoPlayerOptions(mixWithOthers: true),
+                                                                        );
+                                                                        await videoController
+                                                                            ?.initialize();
+                                                                        videoController
+                                                                            ?.setLooping(true);
+                                                                        videoController
+                                                                            ?.play();
+                                                                      }
+
+                                                                      _currentProductIndex =
+                                                                          index;
+                                                                      _currentPageIndex =
+                                                                          number;
+                                                                      setState(
+                                                                          () {});
+
                                                                       productController
                                                                           .curr
                                                                           .value = number;

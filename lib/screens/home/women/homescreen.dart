@@ -199,13 +199,13 @@ class HomeScreenState extends State<HomeScreen>
             homeController.banner2List.isNotEmpty ||
             productController.homeProductList.isNotEmpty;
 
-        // Initialize section video controllers early — must happen before any
-        // early return so all 3 controllers are always initialized regardless
-        // of whether API data is cached.
-        for (final entry in _sectionVideoUrls.entries) {
-          if (!_sectionVideoControllers.containsKey(entry.key)) {
-            _initSectionVideoController(entry.key, entry.value);
-          }
+        // CRASH FIX: Only initialize the active tab's video controller.
+        // Previous code initialized all 3, causing MediaCodec exhaustion.
+        final currentGenderId = homeController.homeGenderValue.value;
+        if (_sectionVideoUrls.containsKey(currentGenderId) &&
+            !_sectionVideoControllers.containsKey(currentGenderId)) {
+          _initSectionVideoController(
+              currentGenderId, _sectionVideoUrls[currentGenderId]!);
         }
 
         if (_dataLoaded && hasExistingData && !_isInitialLoad) {
@@ -525,6 +525,22 @@ class HomeScreenState extends State<HomeScreen>
     // Only trigger if actually changed
     if (homeController.homeGenderValue.value != genderId) {
       _changeGenderTab(index);
+      // CRASH FIX: Dispose old video controller and init new one on tab switch
+      _switchSectionVideoController(genderId);
+    }
+  }
+
+  // CRASH FIX: Dispose old section video and init new one on tab switch
+  void _switchSectionVideoController(int newGenderId) {
+    // Dispose all existing section video controllers
+    for (final c in _sectionVideoControllers.values) {
+      c.dispose();
+    }
+    _sectionVideoControllers.clear();
+
+    // Initialize only the new active tab's video
+    if (_sectionVideoUrls.containsKey(newGenderId)) {
+      _initSectionVideoController(newGenderId, _sectionVideoUrls[newGenderId]!);
     }
   }
 
@@ -1338,48 +1354,6 @@ class HomeScreenState extends State<HomeScreen>
                                                 size: 32, showGlow: false),
                                           ),
                                         ),
-
-                                      // // ✅ View All Button
-                                      // if (collections.length > 2)
-                                      //   Padding(
-                                      //     padding: EdgeInsets.symmetric(
-                                      //         horizontal: 16.w, vertical: 12.h),
-                                      //     child: GestureDetector(
-                                      //       onTap: () {
-                                      //         setState(() {
-                                      //           _showAllCollections =
-                                      //               !_showAllCollections;
-                                      //         });
-                                      //       },
-                                      //       child: Container(
-                                      //         width: double.infinity,
-                                      //         padding: EdgeInsets.symmetric(
-                                      //             vertical: 12.h),
-                                      //         decoration: BoxDecoration(
-                                      //           border: Border.all(
-                                      //               color: const Color(
-                                      //                   0xFFD6D4D0)),
-                                      //           borderRadius:
-                                      //               BorderRadius.circular(8.r),
-                                      //           color: Colors.white,
-                                      //         ),
-                                      //         child: Center(
-                                      //           child: Text(
-                                      //             _showAllCollections
-                                      //                 ? 'View Less'
-                                      //                 : 'View All',
-                                      //             style: TextStyle(
-                                      //               fontSize: 14.sp,
-                                      //               fontWeight: FontWeight.w600,
-                                      //               color: colorPrimary,
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ),
-
-                                      // LUXE section is now shown inside each collection (after View All button)
                                     ],
                                   );
                                 }),
@@ -2186,114 +2160,127 @@ class _SectionStripState extends State<_SectionStrip> {
   @override
   Widget build(BuildContext context) {
     final items = List<Map<String, dynamic>>.from(widget.products);
-    // ✅ Shuffle disabled - products maintain their original order
-    // if (!skipShuffle) {
-    //   items.shuffle(Random(seed));
-    // }
 
-    // ✅ Show maximum 8 products in 2 rows (4 each) - both rows scroll independently
-    // ✅ Reduced from 12 to 8 to prevent memory overload
-    final pick = items.take(8).toList();
+    final pick = items.take(7).toList();
 
-    // ✅ Dynamic layout based on product count
     final totalProducts = pick.length;
     final showTwoRows = totalProducts > 4;
 
-    // Split into rows dynamically
     final row1Products = showTwoRows ? pick.take(4).toList() : pick;
     final row2Products =
-        showTwoRows ? pick.skip(4).take(4).toList() : <Map<String, dynamic>>[];
+        showTwoRows ? pick.skip(4).toList() : <Map<String, dynamic>>[];
 
-    // ✅ Calculate responsive heights based on screen size
     final screenWidth = ScreenUtil().screenWidth;
-    final cardWidth = screenWidth * 0.38; // 38% of screen width
-    final rowHeight = cardWidth * 1.65; // Maintain aspect ratio
+    final cardWidth = (screenWidth * 0.38).clamp(140.0, 170.0);
+    final rowHeight = (cardWidth * 1.65).clamp(220.0, 280.0);
+
+    Widget buildCardSlot(Map<String, dynamic> product) {
+      return SizedBox(
+        width: cardWidth,
+        height: rowHeight,
+        child: _buildProductCard(product),
+      );
+    }
+
+    Widget _buildViewAllButton() {
+      return GestureDetector(
+        onTap: widget.onExploreAll,
+        child: Container(
+          width: cardWidth,
+          height: rowHeight / 2,
+          decoration: BoxDecoration(
+            color: widget.dark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16.sp),
+            border: Border.all(
+              color: widget.dark ? Colors.white : Colors.black,
+              width: 2.sp,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(14.sp),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: widget.dark ? Colors.white : Colors.black,
+                ),
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 18.sp,
+                  color: widget.dark ? Colors.black : Colors.white,
+                ),
+              ),
+              SizedBox(height: 12.sp),
+              Text(
+                "VIEW ALL\nPRODUCTS",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: "Clash Display Semibold",
+                  fontSize: 11.sp,
+                  color: widget.dark ? Colors.white : Colors.black,
+                  letterSpacing: 0.3,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Row 1 - First products (independent scroll)
-        SizedBox(
-          height: rowHeight.clamp(220.0, 280.0), // ✅ Clamp for min/max bounds
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 16.sp),
-            itemCount: showTwoRows ? row1Products.length : row1Products.length,
-            separatorBuilder: (_, __) => SizedBox(width: 10.sp),
-            itemBuilder: (context, index) {
-              return SizedBox(
-                width: cardWidth.clamp(140.0, 170.0), // ✅ Responsive card width
-                child: _buildProductCard(row1Products[index]),
-              );
-            },
-          ),
-        ),
-
-        // ✅ Only show Row 2 if there are more than 4 products
-        if (showTwoRows) ...[
-          SizedBox(height: 10.sp),
-
-          // Row 2 - Next products (independent scroll)
-          SizedBox(
-            height: rowHeight.clamp(220.0, 280.0), // ✅ Clamp for min/max bounds
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 16.sp),
-              itemCount: row2Products.length,
-              separatorBuilder: (_, __) => SizedBox(width: 10.sp),
-              itemBuilder: (context, index) {
-                return SizedBox(
-                  width:
-                      cardWidth.clamp(140.0, 170.0), // ✅ Responsive card width
-                  child: _buildProductCard(row2Products[index]),
-                );
-              },
-            ),
-          ),
-        ],
-
-        // ✅ VIEW ALL BUTTON BELOW ALL ROWS
-        SizedBox(height: 12.sp),
-        Padding(
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          child: GestureDetector(
-            onTap: widget.onExploreAll,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 12.sp),
-              decoration: BoxDecoration(
-                color: widget.dark ? Colors.black : Colors.white,
-                borderRadius: BorderRadius.circular(8.sp),
-                border: Border.all(
-                  color: widget.dark ? Colors.white : const Color(0xFFD6D4D0),
-                  width: 1.sp,
-                ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Row 1 — always 4 products
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (int i = 0; i < row1Products.length; i++) ...[
+                    if (i != 0) SizedBox(width: 10.sp),
+                    buildCardSlot(row1Products[i]),
+                  ],
+                  // If only 1 row, View All goes here at the end
+                  if (!showTwoRows) ...[
+                    SizedBox(width: 10.sp),
+                    // buildViewAllSlot(),
+                    _buildViewAllButton(),
+                  ],
+                ],
               ),
-              child: Center(
-                child: Text(
-                  "VIEW ALL",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: "Clash Display Semibold",
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: widget.dark ? Colors.white : colorPrimary,
-                    letterSpacing: 0.3,
-                  ),
+              if (showTwoRows) ...[
+                SizedBox(height: 10.sp),
+                // Row 2 — up to 3 products + View All card in 4th slot
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (int i = 0; i < row2Products.length; i++) ...[
+                      if (i != 0) SizedBox(width: 10.sp),
+                      buildCardSlot(row2Products[i]),
+                    ],
+                    SizedBox(width: row2Products.isNotEmpty ? 10.sp : 0),
+                    // buildViewAllSlot(), // always 4th slot = under last of row 1
+                    _buildViewAllButton(),
+                  ],
                 ),
-              ),
-            ),
+              ],
+            ],
           ),
         ),
-
-        // ✅ LUXE SECTION INSIDE COLLECTION (after View All button)
         SizedBox(height: 16.sp),
         _buildLuxeSection(
-            collectionId: widget.collectionId,
-            dark: widget.dark,
-            onExploreAll: widget.onExploreAll),
+          collectionId: widget.collectionId,
+          dark: widget.dark,
+          onExploreAll: widget.onExploreAll,
+        ),
       ],
     );
   }
@@ -2325,9 +2312,54 @@ class _SectionStripState extends State<_SectionStrip> {
       );
     }
 
+    Widget _buildViewAllButton() {
+      return GestureDetector(
+        onTap: goToLuxePage,
+        child: Container(
+          width: 240,
+          height: 120,
+          decoration: BoxDecoration(
+            color: widget.dark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16.sp),
+            border: Border.all(
+              color: widget.dark ? Colors.white : Colors.black,
+              width: 2.sp,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(14.sp),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: widget.dark ? Colors.white : Colors.black,
+                ),
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 18.sp,
+                  color: widget.dark ? Colors.black : Colors.white,
+                ),
+              ),
+              SizedBox(height: 12.sp),
+              Text(
+                "VIEW ALL\nPRODUCTS",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: "Clash Display Semibold",
+                  fontSize: 11.sp,
+                  color: widget.dark ? Colors.white : Colors.black,
+                  letterSpacing: 0.3,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return FutureBuilder<List<Map<String, dynamic>>>(
-      // future: Get.find<ProductController>()
-      //     .fetchCollectionLuxeProducts(collectionId),
       future: _luxeFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2360,6 +2392,9 @@ class _SectionStripState extends State<_SectionStrip> {
                     'LUXE',
                     style: TextStyle(
                       fontSize: 18.sp,
+                      decoration: TextDecoration.underline,
+                      decorationColor:
+                          widget.dark ? Colors.white : Colors.black,
                       fontFamily: 'Clash Display Bold',
                       fontWeight: FontWeight.w600,
                       color: textColor,
@@ -2370,7 +2405,7 @@ class _SectionStripState extends State<_SectionStrip> {
               ),
               // LUXE Products Horizontal Scroll
               SizedBox(
-                height: 280.sp,
+                height: 200.sp,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: 16.sp),
@@ -2378,41 +2413,49 @@ class _SectionStripState extends State<_SectionStrip> {
                   separatorBuilder: (_, __) => SizedBox(width: 10.sp),
                   itemBuilder: (context, index) {
                     // Last item — View All card (inverted colors vs bg)
+                    // if (index == luxeProducts.length) {
+                    //   // return GestureDetector(
+                    //   //   onTap: goToLuxePage,
+                    //   //   child: Container(
+                    //   //     width: 150.sp,
+                    //   //     decoration: BoxDecoration(
+                    //   //       borderRadius: BorderRadius.circular(8.sp),
+                    //   //       color: dark ? Colors.white : Colors.black,
+                    //   //       border: Border.all(
+                    //   //         color: dark ? Colors.white : Colors.black,
+                    //   //         width: 1,
+                    //   //       ),
+                    //   //     ),
+                    //   //     child: Center(
+                    //   //       child: Column(
+                    //   //         mainAxisAlignment: MainAxisAlignment.center,
+                    //   //         children: [
+                    //   //           Text(
+                    //   //             'VIEW ALL',
+                    //   //             style: TextStyle(
+                    //   //               fontSize: 13.sp,
+                    //   //               fontWeight: FontWeight.w700,
+                    //   //               color: dark ? Colors.black : Colors.white,
+                    //   //               letterSpacing: 1.0,
+                    //   //             ),
+                    //   //           ),
+                    //   //           SizedBox(height: 6.sp),
+                    //   //           Icon(
+                    //   //             Icons.arrow_forward,
+                    //   //             size: 18.sp,
+                    //   //             color: dark ? Colors.black : Colors.white,
+                    //   //           ),
+                    //   //         ],
+                    //   //       ),
+                    //   //     ),
+                    //   //   ),
+                    //   // );
+                    // }
                     if (index == luxeProducts.length) {
-                      return GestureDetector(
-                        onTap: goToLuxePage,
-                        child: Container(
-                          width: 150.sp,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.sp),
-                            color: dark ? Colors.white : Colors.black,
-                            border: Border.all(
-                              color: dark ? Colors.white : Colors.black,
-                              width: 1,
-                            ),
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'VIEW ALL',
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: dark ? Colors.black : Colors.white,
-                                    letterSpacing: 1.0,
-                                  ),
-                                ),
-                                SizedBox(height: 6.sp),
-                                Icon(
-                                  Icons.arrow_forward,
-                                  size: 18.sp,
-                                  color: dark ? Colors.black : Colors.white,
-                                ),
-                              ],
-                            ),
-                          ),
+                      return SizedBox(
+                        width: 150.sp,
+                        child: Center(
+                          child: _buildViewAllButton(),
                         ),
                       );
                     }

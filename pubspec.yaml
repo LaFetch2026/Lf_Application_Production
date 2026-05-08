@@ -2,7 +2,7 @@ name: lafetch
 description: A new Flutter project.
 publish_to: "none"
 
-version: 2.0.0+68
+version: 2.0.0+69
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -77,6 +77,10 @@ dependencies:
   audio_session: ^0.1.21
   video_player: ^2.7.0
   webview_flutter: ^4.13.0
+
+dependency_overrides:
+  video_player_android:
+    path: packages/video_player_android
 
 dev_dependencies:
   flutter_lints: ^2.0.0
