@@ -1419,12 +1419,7 @@ class ProductController extends BaseController {
       int collectionId,
       {int limit = 4,
       int gender = 0}) async {
-    // //Luxe Cache
-    // if (_luxeCache.containsKey(collectionId)) {
-    //   return _luxeCache[collectionId]!;
-    // }
-
-    final cacheKey = '${collectionId}_$gender'; // ✅ cache per collection+gender
+    final cacheKey = 'luxe_${collectionId}_$gender';
     if (_luxeCache.containsKey(cacheKey)) {
       return _luxeCache[cacheKey]!;
     }
@@ -1467,7 +1462,6 @@ class ProductController extends BaseController {
 
         print(
             '✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId');
-        // _luxeCache[collectionId] = luxeProducts;
         _luxeCache[cacheKey] = luxeProducts;
 
         return luxeProducts;
@@ -1478,6 +1472,68 @@ class ProductController extends BaseController {
       }
     } catch (e) {
       print('❌ Error fetching LUXE products for collection $collectionId: $e');
+      return [];
+    }
+  }
+
+  /// Fetch AFFORDABLE products for a specific collection using API segment=affordable filter
+  /// Returns up to [limit] affordable products (price < ₹7000)
+  Future<List<Map<String, dynamic>>> fetchCollectionAffordableProducts(
+      int collectionId,
+      {int limit = 8,
+      int gender = 0}) async {
+    final cacheKey = 'affordable_${collectionId}_$gender';
+    if (_luxeCache.containsKey(cacheKey)) {
+      return _luxeCache[cacheKey]!;
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final uri = Uri.parse(
+        '${ApiConstants.baseUrl}/filter-products?collectionId=$collectionId&segment=affordable&page=1',
+      );
+
+      print('📤 Fetching affordable products for collection $collectionId: $uri');
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+
+        List<dynamic> rawProducts = [];
+        final data = body['data'];
+        if (data is List) {
+          rawProducts = data;
+        } else if (data is Map) {
+          rawProducts =
+              data['products'] ?? data['items'] ?? data['results'] ?? [];
+        } else {
+          rawProducts = body['products'] ?? body['items'] ?? [];
+        }
+
+        final affordableProducts =
+            rawProducts.whereType<Map<String, dynamic>>().take(limit).toList();
+
+        print(
+            '✅ Loaded ${affordableProducts.length} affordable products for collection $collectionId');
+        _luxeCache[cacheKey] = affordableProducts;
+
+        return affordableProducts;
+      } else {
+        print(
+            '⚠️ Affordable API error for collection $collectionId: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('❌ Error fetching affordable products for collection $collectionId: $e');
       return [];
     }
   }

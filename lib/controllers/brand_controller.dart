@@ -544,6 +544,45 @@ class BrandController extends BaseController {
           .map((b) => b.map((k, v) => MapEntry(k.toString(), v)))
           .toList();
 
+      // ✅ If sort=new returned empty, retry without sort to get all brands
+      if (brandsMapped.isEmpty && queryParams.containsKey('sort')) {
+        print("⚠️ sort=new returned empty — retrying without sort param");
+        final fallbackParams = Map<String, String>.from(queryParams)
+          ..remove('sort');
+        final fallbackUri = baseUri.replace(
+          path: baseUri.path.endsWith('/')
+              ? '${baseUri.path}brands'
+              : '${baseUri.path}/brands',
+          queryParameters: fallbackParams,
+        );
+        final fallbackResponse = await http
+            .get(fallbackUri, headers: headers)
+            .timeout(const Duration(seconds: 20));
+        if (fallbackResponse.statusCode == 200) {
+          final fallbackDecoded = json.decode(fallbackResponse.body);
+          final List<dynamic> fallbackRaw =
+              (fallbackDecoded is Map && fallbackDecoded['data'] is List)
+                  ? fallbackDecoded['data'] as List
+                  : const [];
+          final fallbackMapped = fallbackRaw
+              .whereType<Map>()
+              .map((b) => b.map((k, v) => MapEntry(k.toString(), v)))
+              .toList();
+          if (fallbackMapped.isNotEmpty) {
+            if (page == 1) {
+              newlyLaunchedBrands.clear();
+              newlyLaunchedBrands.addAll(fallbackMapped);
+            } else {
+              newlyLaunchedBrands.addAll(fallbackMapped);
+            }
+            newlyLaunchedPage.value = page;
+            hasMoreNewlyLaunched.value = false;
+            print("✅ Fallback: loaded ${fallbackMapped.length} brands");
+            return;
+          }
+        }
+      }
+
       // ✅ Extract pagination info from response
       final paginationData = decoded is Map ? decoded['pagination'] : null;
       if (paginationData is Map) {

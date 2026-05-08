@@ -2085,14 +2085,20 @@ class _SectionStrip extends StatefulWidget {
 
 class _SectionStripState extends State<_SectionStrip> {
   late final Future<List<Map<String, dynamic>>> _luxeFuture;
+  late final Future<List<Map<String, dynamic>>> _affordableFuture;
 
   @override
   void initState() {
     super.initState();
     final gender = Get.find<HomeController>().homeGenderValue.value;
+    final pc = Get.find<ProductController>();
 
-    _luxeFuture = Get.find<ProductController>()
-        .fetchCollectionLuxeProducts(widget.collectionId, gender: gender);
+    _luxeFuture =
+        pc.fetchCollectionLuxeProducts(widget.collectionId, gender: gender);
+    _affordableFuture = pc.fetchCollectionAffordableProducts(
+        widget.collectionId,
+        gender: gender,
+        limit: 8);
   }
 
   String resolveBrandName(Map<String, dynamic> p) {
@@ -2159,17 +2165,6 @@ class _SectionStripState extends State<_SectionStrip> {
 
   @override
   Widget build(BuildContext context) {
-    final items = List<Map<String, dynamic>>.from(widget.products);
-
-    final pick = items.take(7).toList();
-
-    final totalProducts = pick.length;
-    final showTwoRows = totalProducts > 4;
-
-    final row1Products = showTwoRows ? pick.take(4).toList() : pick;
-    final row2Products =
-        showTwoRows ? pick.skip(4).toList() : <Map<String, dynamic>>[];
-
     final screenWidth = ScreenUtil().screenWidth;
     final cardWidth = (screenWidth * 0.38).clamp(140.0, 170.0);
     final rowHeight = (cardWidth * 1.65).clamp(220.0, 280.0);
@@ -2182,7 +2177,7 @@ class _SectionStripState extends State<_SectionStrip> {
       );
     }
 
-    Widget _buildViewAllButton() {
+    Widget buildViewAllButton() {
       return GestureDetector(
         onTap: widget.onExploreAll,
         child: Container(
@@ -2229,59 +2224,74 @@ class _SectionStripState extends State<_SectionStrip> {
       );
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Row 1 — always 4 products
-              Row(
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _affordableFuture,
+      builder: (context, snapshot) {
+        // Use affordable products from API if available, else fall back to widget.products
+        final List<Map<String, dynamic>> sourceProducts =
+            (snapshot.hasData && snapshot.data!.isNotEmpty)
+                ? snapshot.data!
+                : widget.products;
+
+        final items = List<Map<String, dynamic>>.from(sourceProducts);
+        final pick = items.take(7).toList();
+        final totalProducts = pick.length;
+        final showTwoRows = totalProducts > 4;
+        final row1Products = showTwoRows ? pick.take(4).toList() : pick;
+        final row2Products =
+            showTwoRows ? pick.skip(4).toList() : <Map<String, dynamic>>[];
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (int i = 0; i < row1Products.length; i++) ...[
-                    if (i != 0) SizedBox(width: 10.sp),
-                    buildCardSlot(row1Products[i]),
-                  ],
-                  // If only 1 row, View All goes here at the end
-                  if (!showTwoRows) ...[
-                    SizedBox(width: 10.sp),
-                    // buildViewAllSlot(),
-                    _buildViewAllButton(),
+                  // Row 1 — always up to 4 products
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (int i = 0; i < row1Products.length; i++) ...[
+                        if (i != 0) SizedBox(width: 10.sp),
+                        buildCardSlot(row1Products[i]),
+                      ],
+                      if (!showTwoRows) ...[
+                        SizedBox(width: 10.sp),
+                        buildViewAllButton(),
+                      ],
+                    ],
+                  ),
+                  if (showTwoRows) ...[
+                    SizedBox(height: 10.sp),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (int i = 0; i < row2Products.length; i++) ...[
+                          if (i != 0) SizedBox(width: 10.sp),
+                          buildCardSlot(row2Products[i]),
+                        ],
+                        SizedBox(width: row2Products.isNotEmpty ? 10.sp : 0),
+                        buildViewAllButton(),
+                      ],
+                    ),
                   ],
                 ],
               ),
-              if (showTwoRows) ...[
-                SizedBox(height: 10.sp),
-                // Row 2 — up to 3 products + View All card in 4th slot
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (int i = 0; i < row2Products.length; i++) ...[
-                      if (i != 0) SizedBox(width: 10.sp),
-                      buildCardSlot(row2Products[i]),
-                    ],
-                    SizedBox(width: row2Products.isNotEmpty ? 10.sp : 0),
-                    // buildViewAllSlot(), // always 4th slot = under last of row 1
-                    _buildViewAllButton(),
-                  ],
-                ),
-              ],
-            ],
-          ),
-        ),
-        SizedBox(height: 16.sp),
-        _buildLuxeSection(
-          collectionId: widget.collectionId,
-          dark: widget.dark,
-          onExploreAll: widget.onExploreAll,
-        ),
-      ],
+            ),
+            SizedBox(height: 16.sp),
+            _buildLuxeSection(
+              collectionId: widget.collectionId,
+              dark: widget.dark,
+              onExploreAll: widget.onExploreAll,
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -4606,13 +4616,12 @@ class _NewlyLaunchedBrandsSection extends StatelessWidget {
     return Obx(() {
       // Show loading state
       if (brandController.isLoadingNewlyLaunched.value) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Skeleton header
-              Padding(
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+              child: Padding(
                 padding: EdgeInsets.only(bottom: 12.sp),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -4637,29 +4646,29 @@ class _NewlyLaunchedBrandsSection extends StatelessWidget {
                   ],
                 ),
               ),
-              // Skeleton brand cards
-              SizedBox(
-                height: 120.sp,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 4,
-                  itemBuilder: (_, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(right: 12.sp),
-                      child: Container(
-                        width: 100.sp,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.04),
-                          borderRadius: BorderRadius.circular(8.sp),
-                        ),
+            ),
+            SizedBox(
+              height: 100.sp,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 4,
+                itemBuilder: (_, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: 16.sp),
+                    child: Container(
+                      width: 80.sp,
+                      height: 80.sp,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                        shape: BoxShape.circle,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         );
       }
 
@@ -4670,197 +4679,139 @@ class _NewlyLaunchedBrandsSection extends StatelessWidget {
 
       final brands = brandController.newlyLaunchedBrands;
       final currentPage = brandController.newlyLaunchedPage.value;
-      final totalPages = brandController.newlyLaunchedTotalPages.value;
-      final canGoPrev = currentPage > 1;
-      final canGoNext = currentPage < totalPages;
 
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.sp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header: Subtitle + Title + Navigation
-            Column(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.sp),
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Subtitle: "JUST IN"
-                const AppText(
+                AppText(
                   text: "JUST IN",
                   fontFamily: "Clash Display Regular",
-                  color: const Color(0xFF6B7280),
+                  color: Color(0xFF6B7280),
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                 ),
-                // SizedBox(height: 4.sp),
-                // Title: "NEWLY LAUNCHED BRANDS"
                 Row(
                   children: [
-                    const AppText(
+                    AppText(
                       text: "NEWLY LAUNCHED BRANDS",
                       fontFamily: "Clash Display Semibold",
                       color: blackColor,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
-                    const Spacer(),
-                    // Navigation buttons
-                    _NavCircleButton(
-                      icon: Icons.chevron_left,
-                      enabled: canGoPrev,
-                      onTap: canGoPrev
-                          ? () => brandController.prevNewlyLaunchedPage()
-                          : null,
-                    ),
-                    SizedBox(width: 6.sp),
-                    _NavCircleButton(
-                      icon: Icons.chevron_right,
-                      enabled: canGoNext,
-                      onTap: canGoNext
-                          ? () => brandController.nextNewlyLaunchedPage()
-                          : null,
-                    ),
+                    Spacer(),
                   ],
                 ),
               ],
             ),
-            SizedBox(height: 12.sp),
+          ),
+          SizedBox(height: 12.sp),
+          SizedBox(
+            height: 110.sp,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: brands.length,
+              itemBuilder: (context, index) {
+                final brand = brands[index];
+                final brandId = brand['id'] is int
+                    ? brand['id'] as int
+                    : int.tryParse(brand['id']?.toString() ?? '') ?? 0;
+                final brandName = brand['name']?.toString() ?? '';
+                final logoUrl = brand['logo']?.toString() ?? '';
 
-            // Horizontal scrollable brand carousel
-            SizedBox(
-              height: 140.sp,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                itemCount: brands.length,
-                itemBuilder: (context, index) {
-                  final brand = brands[index];
-                  final brandId = brand['id'] is int
-                      ? brand['id'] as int
-                      : int.tryParse(brand['id']?.toString() ?? '') ?? 0;
-                  final brandName = brand['name']?.toString() ?? '';
-                  final logoUrl = brand['logo']?.toString() ?? '';
-
-                  return Padding(
-                    padding: EdgeInsets.only(right: 12.sp),
-                    child: GestureDetector(
-                      onTap: () async {
-                        // Log analytics event
-                        await analytics.logEvent(
-                          name: 'newly_launched_brand_tap',
-                          parameters: {
-                            'brand_id': brandId,
-                            'brand_name': brandName,
-                            'page': currentPage,
-                          },
-                        );
-
-                        // Navigate to brand details
-                        Get.to(
-                          () => AllBrandScreen(
-                            id: brandId,
-                            screen: 'brand',
-                            slug: '',
-                          ),
-                        );
+                return GestureDetector(
+                  onTap: () async {
+                    await analytics.logEvent(
+                      name: 'newly_launched_brand_tap',
+                      parameters: {
+                        'brand_id': brandId,
+                        'brand_name': brandName,
+                        'page': currentPage,
                       },
-                      child: Container(
-                        width: 100.sp,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0xFFE5E7EB),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8.sp),
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Brand logo
-                            if (logoUrl.isNotEmpty)
-                              Padding(
-                                padding: EdgeInsets.all(8.sp),
-                                child: CachedNetworkImage(
-                                  imageUrl: ImageHelper.toWebP(logoUrl),
-                                  height: 60.sp,
-                                  width: 80.sp,
-                                  fit: BoxFit.contain,
-                                  progressIndicatorBuilder:
-                                      (context, url, downloadProgress) {
-                                    return Container(
-                                      height: 60.sp,
-                                      width: 80.sp,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.04),
-                                        borderRadius:
-                                            BorderRadius.circular(4.sp),
-                                      ),
-                                    );
-                                  },
-                                  errorWidget: (context, url, error) {
-                                    return Container(
-                                      height: 60.sp,
-                                      width: 80.sp,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.04),
-                                        borderRadius:
-                                            BorderRadius.circular(4.sp),
-                                      ),
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.image_not_supported,
-                                          size: 24.sp,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            else
-                              Container(
-                                height: 60.sp,
-                                width: 80.sp,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.04),
-                                  borderRadius: BorderRadius.circular(4.sp),
-                                ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.store,
-                                    size: 24.sp,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            SizedBox(height: 6.sp),
-                            // Brand name
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4.sp),
-                              child: Text(
-                                brandName,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: "Clash Display Regular",
-                                  fontSize: 10.sp,
-                                  color: blackColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                    );
+                    Get.to(
+                      () => AllBrandScreen(
+                        id: brandId,
+                        screen: 'brand',
+                        slug: '',
                       ),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16.sp),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 80.sp,
+                          width: 80.sp,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFFE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: logoUrl.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: ImageHelper.toWebP(logoUrl),
+                                    height: 72.sp,
+                                    width: 72.sp,
+                                    fit: BoxFit.cover,
+                                    placeholder: (_, __) => Container(
+                                      color: Colors.black.withOpacity(0.04),
+                                    ),
+                                    errorWidget: (_, __, ___) => Container(
+                                      color: Colors.black.withOpacity(0.04),
+                                      child: Icon(
+                                        Icons.image_not_supported,
+                                        size: 24.sp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    color: Colors.black.withOpacity(0.04),
+                                    child: Icon(
+                                      Icons.store,
+                                      size: 24.sp,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        SizedBox(height: 6.sp),
+                        SizedBox(
+                          width: 80.sp,
+                          child: Text(
+                            brandName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: "Clash Display Regular",
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w500,
+                              color: blackColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-            SizedBox(height: 16.sp),
-          ],
-        ),
+          ),
+          SizedBox(height: 16.sp),
+        ],
       );
     });
   }
