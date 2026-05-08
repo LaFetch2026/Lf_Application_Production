@@ -387,7 +387,7 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
                 child: CachedNetworkImage(
                   imageUrl: images[_currentImageIndex],
                   fit: BoxFit.cover,
-                  memCacheWidth: 1200,
+                  // memCacheWidth: 1200,
                   memCacheHeight: 1200,
                   placeholder: (_, __) => Container(color: Colors.grey[200]),
                   errorWidget: (_, __, ___) =>
