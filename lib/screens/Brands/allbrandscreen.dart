@@ -1623,7 +1623,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       placeholder: (context, url) => Container(
                                         color: cardBg,
                                         child: const Center(
-                                          child: LfLogoLoader(size: 32, showGlow: false),
+                                          child: LfLogoLoader(
+                                              size: 32, showGlow: false),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) {
@@ -1899,7 +1900,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           color: whiteColor,
                           borderRadius: BorderRadius.circular(8.sp),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: AppText(
                             text: "EXPLORE ALL",
                             fontFamily: "Clash Display",

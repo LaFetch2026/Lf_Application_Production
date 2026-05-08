@@ -62,9 +62,13 @@ class CatalogController extends BaseController {
 
   void _syncSelectedChips() {
     selectedChips.assignAll(
-      selectedChipIds.map((id) => _selectedChipObjects[id]).whereType<FilterChipItem>().toList(),
+      selectedChipIds
+          .map((id) => _selectedChipObjects[id])
+          .whereType<FilterChipItem>()
+          .toList(),
     );
-    print('🔹 _syncSelectedChips: selectedChips=${selectedChips.map((c) => c.label).toList()}');
+    print(
+        '🔹 _syncSelectedChips: selectedChips=${selectedChips.map((c) => c.label).toList()}');
   }
 
   /// Clears all chip selections. Call this when the screen is disposed.
@@ -107,6 +111,16 @@ class CatalogController extends BaseController {
   // ignore: unused_field
   String? _lastKey;
   int _lastLimit = 20;
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  /// Total pages from the last /filter-products response
+  RxInt totalPages = 1.obs;
+
+  /// Total product count from the last /filter-products response
+  RxInt totalProductCount = 0.obs;
+
+  /// Current page being displayed (for pagination UI)
+  RxInt currentDisplayedPage = 1.obs;
 
   // ✅ Track which genders have already loaded catalog data
   final Set<int> _loadedCatalogGenders = {};
@@ -556,13 +570,16 @@ class CatalogController extends BaseController {
       }
 
       // Add discount params with defensive guard for invalid ranges
-      if (minDiscount != null && minDiscount.isNotEmpty &&
-          maxDiscount != null && maxDiscount.isNotEmpty) {
+      if (minDiscount != null &&
+          minDiscount.isNotEmpty &&
+          maxDiscount != null &&
+          maxDiscount.isNotEmpty) {
         final minDiscountInt = int.tryParse(minDiscount);
         final maxDiscountInt = int.tryParse(maxDiscount);
-        
+
         // Only include if valid and minDiscount <= maxDiscount
-        if (minDiscountInt != null && maxDiscountInt != null &&
+        if (minDiscountInt != null &&
+            maxDiscountInt != null &&
             minDiscountInt <= maxDiscountInt) {
           queryParams['minDiscount'] = minDiscount;
           queryParams['maxDiscount'] = maxDiscount;
@@ -690,6 +707,18 @@ class CatalogController extends BaseController {
               .toList();
           _lastServerChips = parsedChips;
           chips.assignAll(parsedChips);
+        }
+
+        // ── Parse pagination data ────────────────────────────────────────
+        if (data is Map) {
+          final pagination = data['pagination'] as Map<String, dynamic>?;
+          if (pagination != null) {
+            totalPages.value = pagination['totalPages'] ?? 1;
+            totalProductCount.value = pagination['totalCount'] ?? 0;
+            currentDisplayedPage.value = pagination['currentPage'] ?? page;
+            print(
+                "📄 Pagination: page ${currentDisplayedPage.value} of ${totalPages.value}, total: ${totalProductCount.value}");
+          }
         }
 
         print("✅ Products loaded: ${transformed.length}");
@@ -820,14 +849,24 @@ class CatalogController extends BaseController {
       }
 
       getFilterAndSortProducts(
-        brandIds: _lastBrandIds, colors: _lastColors, sizes: _lastSizes,
-        minPrice: _lastMinPrice, maxPrice: _lastMaxPrice,
-        minDiscount: _lastMinDiscount, maxDiscount: _lastMaxDiscount,
+        brandIds: _lastBrandIds,
+        colors: _lastColors,
+        sizes: _lastSizes,
+        minPrice: _lastMinPrice,
+        maxPrice: _lastMaxPrice,
+        minDiscount: _lastMinDiscount,
+        maxDiscount: _lastMaxDiscount,
         sortOption: _lastSortOption,
-        superCatId: _lastSuperCatId, catId: _lastCatId, subCatId: newSubCatId,
-        brandId: _lastBrandId, collectionId: _lastCollectionId,
+        superCatId: _lastSuperCatId,
+        catId: _lastCatId,
+        subCatId: newSubCatId,
+        brandId: _lastBrandId,
+        collectionId: _lastCollectionId,
         contextualCategoryId: newContextualCategoryId,
-        key: _lastKey, page: 1, limit: _lastLimit, appendResults: false,
+        key: _lastKey,
+        page: 1,
+        limit: _lastLimit,
+        appendResults: false,
       );
       return;
     }
@@ -846,14 +885,24 @@ class CatalogController extends BaseController {
     }
 
     getFilterAndSortProducts(
-      brandIds: _lastBrandIds, colors: _lastColors, sizes: _lastSizes,
-      minPrice: _lastMinPrice, maxPrice: _lastMaxPrice,
-      minDiscount: _lastMinDiscount, maxDiscount: _lastMaxDiscount,
+      brandIds: _lastBrandIds,
+      colors: _lastColors,
+      sizes: _lastSizes,
+      minPrice: _lastMinPrice,
+      maxPrice: _lastMaxPrice,
+      minDiscount: _lastMinDiscount,
+      maxDiscount: _lastMaxDiscount,
       sortOption: _lastSortOption,
-      superCatId: _lastSuperCatId, catId: _lastCatId, subCatId: newSubCatId,
-      brandId: _lastBrandId, collectionId: _lastCollectionId,
+      superCatId: _lastSuperCatId,
+      catId: _lastCatId,
+      subCatId: newSubCatId,
+      brandId: _lastBrandId,
+      collectionId: _lastCollectionId,
       contextualCategoryId: newContextualCategoryId,
-      key: _lastKey, page: 1, limit: _lastLimit, appendResults: false,
+      key: _lastKey,
+      page: 1,
+      limit: _lastLimit,
+      appendResults: false,
     );
   }
 
