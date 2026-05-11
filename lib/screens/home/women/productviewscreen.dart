@@ -51,7 +51,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   final wishlistController = Get.put(WishlistController());
   final controller = Get.put(CartController());
   final brandController = Get.put(BrandController());
-  final catalogController = Get.put(CatalogController(), permanent: false);
+  
+  // ✅ Use a unique tag for each collection to get a separate controller instance
+  late final String _catalogControllerTag;
+  late final CatalogController catalogController;
+  
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -140,6 +144,21 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   void initState() {
     super.initState();
 
+    // ✅ Create a unique controller instance for this collection
+    // This ensures each collection has its own filter state
+    _catalogControllerTag = 'catalog_${productController.collectionId.value}_${widget.genderName}';
+    
+    // ✅ Delete old instance if it exists, then create a new one
+    try {
+      Get.delete<CatalogController>(tag: _catalogControllerTag);
+    } catch (_) {}
+    
+    catalogController = Get.put(
+      CatalogController(),
+      tag: _catalogControllerTag,
+      permanent: false,
+    );
+
     final g = widget.genderName.trim().toLowerCase();
     if (g == 'men') {
       productController.categoryFilter.value = 1;
@@ -168,11 +187,10 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     // ✅ CRITICAL FIX: Clear API filter results cache
     catalogController.categoryProductList.clear();
 
-    // ✅ Set loading state BEFORE postFrameCallback to show skeleton on first build
-    if (widget.searchResults == null &&
-        productController.collectionId.value > 0) {
-      catalogController.isCategory.value = true;
-    }
+    // ✅ Clear chips from previous navigation
+    catalogController.chips.clear();
+    catalogController.selectedChips.clear();
+    catalogController.selectedChipIds.clear();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       wishlistController.getWishlistData();
@@ -1718,18 +1736,26 @@ class _FilterChipsSectionState extends State<_FilterChipsSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      if (widget.catalogController.isCategory.value) {
-        return const ChipShimmerRow();
-      }
-      return FilterChipsRow(
-        chips: widget.catalogController.chips.toList(),
-        selectedChipIds: widget.catalogController.selectedChipIds,
-        selectedChips: widget.catalogController.selectedChips.toList(),
-        onChipTap: widget.catalogController.onChipTap,
-        activeFilters: widget.buildPills(),
-        isDarkMode: widget.isDarkMode,
-      );
-    });
+    // ✅ Use GetBuilder with the controller's tag to watch for updates
+    return GetBuilder<CatalogController>(
+      tag: widget.catalogController.hashCode.toString(), // Use controller instance as identifier
+      builder: (controller) {
+        // ✅ Always show chips if they exist
+        final chipsList = controller.chips.toList();
+        
+        if (chipsList.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        
+        return FilterChipsRow(
+          chips: chipsList,
+          selectedChipIds: controller.selectedChipIds,
+          selectedChips: controller.selectedChips.toList(),
+          onChipTap: controller.onChipTap,
+          activeFilters: widget.buildPills(),
+          isDarkMode: widget.isDarkMode,
+        );
+      },
+    );
   }
 }

@@ -331,6 +331,8 @@ class CatalogController extends BaseController {
         }).toList();
 
         categoryProductList.assignAll(transformed);
+        print('✅ Products updated: ${transformed.length} items');
+        update(); // ✅ Notify GetBuilder listeners
       } else if (response.statusCode == 401) {
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Authentication failed");
@@ -743,6 +745,7 @@ class CatalogController extends BaseController {
     } finally {
       isSorting.value = false;
       isCategory.value = false;
+      update(); // ✅ Notify GetBuilder listeners
     }
   }
 
@@ -816,8 +819,6 @@ class CatalogController extends BaseController {
           _lastServerChips = parsed;
           chips.assignAll(parsed);
           print('✅ Chips loaded: ${parsed.length}');
-          print(
-              '✅ chips.value is now: ${chips.value.map((c) => c.label).toList()}');
         } else {
           print('⚠️ data is not a Map: ${data.runtimeType}');
         }
@@ -836,8 +837,11 @@ class CatalogController extends BaseController {
   /// clears the other, then re-issues the product query while preserving all
   /// other active filter parameters.
   void onChipTap(FilterChipItem chip) {
+    print('🔹 onChipTap called for chip: ${chip.label} (id: ${chip.id})');
+    
     if (selectedChipIds.contains(chip.id)) {
       // Deselect
+      print('🔹 Deselecting chip: ${chip.label}');
       selectedChipIds.remove(chip.id);
       _selectedChipObjects.remove(chip.id);
       _syncSelectedChips();
@@ -880,6 +884,7 @@ class CatalogController extends BaseController {
     }
 
     // Select
+    print('🔹 Selecting chip: ${chip.label}');
     selectedChipIds.add(chip.id);
     _selectedChipObjects[chip.id] = chip;
     _syncSelectedChips();
@@ -912,6 +917,9 @@ class CatalogController extends BaseController {
       limit: _lastLimit,
       appendResults: false,
     );
+    
+    // ✅ Notify GetBuilder listeners that chips have changed
+    update();
   }
 
   /// Sets the stored filter parameters directly.

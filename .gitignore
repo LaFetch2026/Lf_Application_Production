@@ -52,6 +52,7 @@ app.*.map.json
 test_algolia.dart
 
 .kiro/
+.gemini/
 
 CHANGES_SUMMARY.md
 CRASH_FIXES_SUMMARY.md

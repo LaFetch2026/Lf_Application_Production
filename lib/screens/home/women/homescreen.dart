@@ -14,6 +14,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/common/widget/lists/dummy_product_list.dart';
+import 'package:lafetch/common/widget/other/filter_chips_row.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
@@ -1838,12 +1839,30 @@ class _SectionStrip extends StatefulWidget {
 class _SectionStripState extends State<_SectionStrip> {
   late final Future<List<Map<String, dynamic>>> _luxeFuture;
   late final Future<List<Map<String, dynamic>>> _affordableFuture;
+  
+  // ✅ Use a unique tag for each collection to get a separate controller instance
+  late final String _tag;
+  late final CatalogController catalogController;
 
   @override
   void initState() {
     super.initState();
     final gender = Get.find<HomeController>().homeGenderValue.value;
     final pc = Get.find<ProductController>();
+
+    // ✅ Initialize unique tag for this collection
+    _tag = 'collection_${widget.collectionId}_$gender';
+    
+    // ✅ Delete old instance if it exists, then create a new one
+    try {
+      Get.delete<CatalogController>(tag: _tag);
+    } catch (_) {}
+    
+    catalogController = Get.put(
+      CatalogController(),
+      tag: _tag,
+      permanent: false,
+    );
 
     // ✅ Pass catId to filter luxe/affordable products by category
     _luxeFuture = pc.fetchCollectionLuxeProducts(
@@ -1857,6 +1876,22 @@ class _SectionStripState extends State<_SectionStrip> {
       limit: 8,
       catId: widget.catId,
     );
+
+    // ✅ Fetch chips for this collection
+    catalogController.fetchChipsForCategory(
+      collectionId: widget.collectionId,
+      superCatId: gender,
+      segment: 'affordable',
+    );
+  }
+
+  @override
+  void dispose() {
+    // ✅ Clean up the controller when the widget is disposed
+    try {
+      Get.delete<CatalogController>(tag: _tag);
+    } catch (_) {}
+    super.dispose();
   }
 
   String resolveBrandName(Map<String, dynamic> p) {
@@ -1982,72 +2017,101 @@ class _SectionStripState extends State<_SectionStrip> {
       );
     }
 
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _affordableFuture,
-      builder: (context, snapshot) {
-        // Use affordable products from API if available, else fall back to widget.products
-        final List<Map<String, dynamic>> sourceProducts =
-            (snapshot.hasData && snapshot.data!.isNotEmpty)
-                ? snapshot.data!
-                : widget.products;
+    return GetBuilder<CatalogController>(
+      init: catalogController,
+      tag: _tag,
+      builder: (controller) {
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _affordableFuture,
+          builder: (context, snapshot) {
+            // ✅ Use filtered products if chips are selected, else use snapshot/widget data
+            final bool hasFilters = controller.selectedChipIds.isNotEmpty;
+            final List<Map<String, dynamic>> sourceProducts = hasFilters
+                ? controller.categoryProductList
+                    .whereType<Map<String, dynamic>>()
+                    .toList()
+                : (snapshot.hasData && snapshot.data!.isNotEmpty)
+                    ? snapshot.data!
+                    : widget.products;
 
-        final items = List<Map<String, dynamic>>.from(sourceProducts);
-        final pick = items.take(7).toList();
-        final totalProducts = pick.length;
-        final showTwoRows = totalProducts > 4;
-        final row1Products = showTwoRows ? pick.take(4).toList() : pick;
-        final row2Products =
-            showTwoRows ? pick.skip(4).toList() : <Map<String, dynamic>>[];
+            final items = List<Map<String, dynamic>>.from(sourceProducts);
+            final pick = items.take(7).toList();
+            final totalProducts = pick.length;
+            final showTwoRows = totalProducts > 4;
+            final row1Products = showTwoRows ? pick.take(4).toList() : pick;
+            final row2Products =
+                showTwoRows ? pick.skip(4).toList() : <Map<String, dynamic>>[];
 
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 16.sp),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Row 1 — always up to 4 products
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (int i = 0; i < row1Products.length; i++) ...[
-                        if (i != 0) SizedBox(width: 10.sp),
-                        buildCardSlot(row1Products[i]),
-                      ],
-                      if (!showTwoRows) ...[
-                        SizedBox(width: 10.sp),
-                        buildViewAllButton(),
-                      ],
-                    ],
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ✅ Filter Chips Row
+                if (controller.chips.isNotEmpty)
+                  FilterChipsRow(
+                    chips: controller.chips.toList(),
+                    selectedChipIds: controller.selectedChipIds,
+                    selectedChips: controller.selectedChips.toList(),
+                    onChipTap: controller.onChipTap,
+                    activeFilters: [],
+                    isDarkMode: widget.dark,
                   ),
-                  if (showTwoRows) ...[
-                    SizedBox(height: 10.sp),
-                    Row(
+                
+                // ✅ Show loading state when filtering
+                if (controller.isCategory.value && hasFilters)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.sp),
+                    child: const LfLogoLoader(size: 24, showGlow: false),
+                  )
+                else
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        for (int i = 0; i < row2Products.length; i++) ...[
-                          if (i != 0) SizedBox(width: 10.sp),
-                          buildCardSlot(row2Products[i]),
+                        // Row 1 — always up to 4 products
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            for (int i = 0; i < row1Products.length; i++) ...[
+                              if (i != 0) SizedBox(width: 10.sp),
+                              buildCardSlot(row1Products[i]),
+                            ],
+                            if (!showTwoRows) ...[
+                              SizedBox(width: 10.sp),
+                              buildViewAllButton(),
+                            ],
+                          ],
+                        ),
+                        if (showTwoRows) ...[
+                          SizedBox(height: 10.sp),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              for (int i = 0; i < row2Products.length; i++) ...[
+                                if (i != 0) SizedBox(width: 10.sp),
+                                buildCardSlot(row2Products[i]),
+                              ],
+                              SizedBox(
+                                  width: row2Products.isNotEmpty ? 10.sp : 0),
+                              buildViewAllButton(),
+                            ],
+                          ),
                         ],
-                        SizedBox(width: row2Products.isNotEmpty ? 10.sp : 0),
-                        buildViewAllButton(),
                       ],
                     ),
-                  ],
-                ],
-              ),
-            ),
-            SizedBox(height: 16.sp),
-            _buildLuxeSection(
-              collectionId: widget.collectionId,
-              dark: widget.dark,
-              onExploreAll: widget.onExploreAll,
-            ),
-          ],
+                  ),
+                SizedBox(height: 16.sp),
+                _buildLuxeSection(
+                  collectionId: widget.collectionId,
+                  dark: widget.dark,
+                  onExploreAll: widget.onExploreAll,
+                ),
+              ],
+            );
+          },
         );
       },
     );
