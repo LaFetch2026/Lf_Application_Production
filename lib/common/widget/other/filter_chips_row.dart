@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constant/constants.dart';
 import '../../../models/filter_chip_item.dart';
 
-/// A single active filter pill — shown at the front of the chip row.
 class ActiveFilterPill {
   final String label;
   final VoidCallback onRemove;
@@ -11,15 +10,9 @@ class ActiveFilterPill {
 }
 
 class FilterChipsRow extends StatelessWidget {
-  /// Server-returned chips (fresh from API).
   final List<FilterChipItem> chips;
-
-  /// Selected chip objects stored locally — shown as active pills at the front.
   final List<FilterChipItem> selectedChips;
-
-  /// Kept for backwards compatibility — not used in rendering.
   final Set<int> selectedChipIds;
-
   final void Function(FilterChipItem chip) onChipTap;
   final List<ActiveFilterPill> activeFilters;
 
@@ -34,7 +27,6 @@ class FilterChipsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dedup: selected chips first, then server chips that aren't already selected
     final selectedIds = selectedChips.map((c) => c.id).toSet();
     final serverChips =
         chips.where((c) => !selectedIds.contains(c.id)).toList();
@@ -45,22 +37,20 @@ class FilterChipsRow extends StatelessWidget {
     if (totalCount == 0) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(top: 6, bottom: 10),
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
       child: SizedBox(
-        height: 34,
+        height: 32,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: totalCount,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, __) => const SizedBox(width: 6),
           itemBuilder: (context, index) {
-            // 1. Active filter pills
             if (index < activeFilters.length) {
               return _ActivePill(pill: activeFilters[index]);
             }
             final i = index - activeFilters.length;
 
-            // 2. Selected chip pills (always visible, active styling)
             if (i < selectedChips.length) {
               return _ChipItem(
                 chip: selectedChips[i],
@@ -69,7 +59,6 @@ class FilterChipsRow extends StatelessWidget {
               );
             }
 
-            // 3. Server chips (new suggestions from API)
             final chip = serverChips[i - selectedChips.length];
             return _ChipItem(chip: chip, isActive: false, onTap: onChipTap);
           },
@@ -89,33 +78,37 @@ class _ActivePill extends StatelessWidget {
     return GestureDetector(
       onTap: pill.onRemove,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: lightPurpleColor,
+          // color: lightPurpleColor,
+          color: blackColor,
           borderRadius: BorderRadius.circular(999),
           boxShadow: [
             BoxShadow(
-              color: lightPurpleColor.withOpacity(0.3),
-              blurRadius: 6,
+              // color: lightPurpleColor.withOpacity(0.22),
+              color: blackColor.withOpacity(0.22),
+              blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               pill.label,
               style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
                 color: Colors.white,
-                fontFamily: 'ClashDisplay',
-                letterSpacing: 0.1,
+                fontFamily: 'InstrumentSans',
+                letterSpacing: 0.2,
+                height: 1,
               ),
             ),
-            const SizedBox(width: 4),
-            const Icon(Icons.close, size: 13, color: Colors.white),
+            const SizedBox(width: 5),
+            const Icon(Icons.close_rounded, size: 12, color: Colors.white70),
           ],
         ),
       ),
@@ -139,52 +132,69 @@ class _ChipItem extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(chip),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: isActive ? lightPurpleColor : Colors.white,
-          borderRadius: BorderRadius.circular(30),
+          // color: isActive ? lightPurpleColor : const Color(0xFFF9F9FB),
+          color: isActive ? blackColor : const Color(0xFFF9F9FB),
+          borderRadius: BorderRadius.circular(999),
           border: Border.all(
-            color: isActive ? lightPurpleColor : const Color(0xFFD1D5DB),
+            // color: isActive ? lightPurpleColor : const Color(0xFFE5E7EB),
+            color: isActive ? blackColor : const Color(0xFFE5E7EB),
             width: 1,
           ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: lightPurpleColor.withOpacity(0.25),
-                    blurRadius: 6,
+                    // color: lightPurpleColor.withOpacity(0.2),
+                    color: blackColor.withOpacity(0.2),
+                    blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ]
-              : null,
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
         ),
         child: Center(
           child: isActive
               ? Row(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
                       chip.label,
                       style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white,
-                        fontFamily: 'ClashDisplay',
-                        letterSpacing: 0.1,
+                        fontFamily: 'InstrumentSans',
+                        letterSpacing: 0.2,
+                        height: 1,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.close, size: 13, color: Colors.white),
+                    const SizedBox(width: 5),
+                    const Icon(
+                      Icons.close_rounded,
+                      size: 12,
+                      color: Colors.white70,
+                    ),
                   ],
                 )
               : Text(
                   chip.label,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF374151),
-                    fontFamily: 'ClashDisplay',
-                    letterSpacing: 0.1,
+                    color: Color(0xFF6B7280),
+                    fontFamily: 'InstrumentSans',
+                    letterSpacing: 0.2,
+                    height: 1,
                   ),
                 ),
         ),

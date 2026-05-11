@@ -755,6 +755,7 @@ class CatalogController extends BaseController {
     int? superCatId,
     int? collectionId,
     int? brandId,
+    String? segment,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -778,6 +779,9 @@ class CatalogController extends BaseController {
       }
       if (brandId != null && brandId > 0) {
         params['brandId'] = brandId.toString();
+      }
+      if (segment != null && segment.isNotEmpty) {
+        params['segment'] = segment;
       }
 
       final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')

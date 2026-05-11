@@ -186,7 +186,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                                 child: Padding(
                                   padding: EdgeInsets.all(0),
                                   child: Container(
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: homeAppBarColor,
                                     ),
@@ -194,7 +194,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                                       child: Text(
                                         controller.cartTotalValue.value
                                             .toString(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 8,
                                             color: whiteColor,
                                             fontFamily:
@@ -206,7 +206,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                                 ),
                               ),
                             )
-                          : SizedBox(
+                          : const SizedBox(
                               height: 0,
                             ))
                     ],

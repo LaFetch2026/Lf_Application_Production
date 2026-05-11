@@ -36,7 +36,10 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
       color: homeAppBarColor,
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 16.sp),
+            left: 16.sp,
+            top: statusBarHeight + 8.sp,
+            right: 10.sp,
+            bottom: 16.sp),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -144,11 +147,10 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                                     child: Text(
                                       controller.cartTotalValue.value
                                           .toString(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 8,
                                           color: homeAppBarColor,
-                                          fontFamily:
-                                              "Libre Franklin Regular",
+                                          fontFamily: "Libre Franklin Regular",
                                           fontWeight: FontWeight.w400),
                                     ),
                                   ), // inner content
@@ -156,7 +158,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                               ),
                             ),
                           )
-                        : SizedBox(
+                        : const SizedBox(
                             height: 0,
                           ))
                   ],

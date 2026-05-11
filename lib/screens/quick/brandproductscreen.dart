@@ -281,7 +281,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                           }),
                           title: Text(
                             entry.value,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: whiteColor,
                               fontSize: 16,
                               fontFamily: "Clash Display Regular",
@@ -579,7 +579,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Select price range",
             style: TextStyle(
               color: whiteColor,
@@ -613,7 +613,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
             children: [
               Text(
                 "₹${priceRange.start.toInt()}",
-                style: TextStyle(
+                style: const TextStyle(
                   color: searchTextColor,
                   fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
@@ -621,7 +621,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
               ),
               Text(
                 "₹${priceRange.end.toInt()}",
-                style: TextStyle(
+                style: const TextStyle(
                   color: searchTextColor,
                   fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
@@ -633,7 +633,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
       );
     } else if (selectedFilter == "Color") {
       if (colors.isEmpty) {
-        return Center(
+        return const Center(
           child: Text(
             "No colors available",
             style: TextStyle(
@@ -678,7 +678,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
       );
     } else if (selectedFilter == "Size") {
       if (sizes.isEmpty) {
-        return Center(
+        return const Center(
           child: Text(
             "No sizes available",
             style: TextStyle(
@@ -942,7 +942,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         Navigator.push(context, scaleIn(SearchScreen()))
                             .then((_) {
                           SystemChrome.setSystemUIOverlayStyle(
-                            SystemUiOverlayStyle(
+                            const SystemUiOverlayStyle(
                               statusBarColor: homeAppBarColor,
                               statusBarIconBrightness: Brightness.light,
                               statusBarBrightness: Brightness.dark,
@@ -968,7 +968,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                       onTap: () async {
                         Get.to(const WishlistScreen())?.then((_) {
                           SystemChrome.setSystemUIOverlayStyle(
-                            SystemUiOverlayStyle(
+                            const SystemUiOverlayStyle(
                               statusBarColor: homeAppBarColor,
                               statusBarIconBrightness: Brightness.light,
                               statusBarBrightness: Brightness.dark,
@@ -1028,7 +1028,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       child: Container(
                                         width: 10.sp,
                                         height: 10.sp,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: whiteColor,
                                         ),
@@ -1036,7 +1036,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                           child: Text(
                                             cartController.cartTotalValue.value
                                                 .toString(),
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 8,
                                               color: homeAppBarColor,
                                               fontFamily:

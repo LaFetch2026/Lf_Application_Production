@@ -257,6 +257,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         superCatId: widget.genderType > 0 ? widget.genderType : null,
         collectionId:
             collectionId != null && collectionId > 0 ? collectionId : null,
+        segment: widget.segment,
       );
       return;
     }
@@ -284,6 +285,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         catalogController.fetchChipsForCategory(
           collectionId: collectionId > 0 ? collectionId : null,
           superCatId: widget.genderType > 0 ? widget.genderType : null,
+          segment: widget.segment,
         );
       }
     } else if (hasCategoryId) {

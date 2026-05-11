@@ -90,6 +90,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       if (searchSc.searchController.text.trim().isEmpty) {
         searchSc.searchController.text = widget.searchQuery;
       }
+
+      // Fetch chips AFTER search results are available so we have category context
+      // Wait a brief moment to ensure searchList is populated
+      await Future.delayed(const Duration(milliseconds: 100));
       searchSc.fetchChipsForSearch();
     });
 
@@ -336,7 +340,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           _SearchFilterChipsSection(
             buildPills: _buildActiveFilterPills,
           ),
-
+          SizedBox(height: 2.sp),
           // Grid
           Expanded(
             child: Obx(() {
@@ -919,8 +923,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                                           inactiveColor:
                                                               Colors.grey,
                                                           onChanged: (v) =>
-                                                              setModalState(
-                                                                  () {
+                                                              setModalState(() {
                                                             discountRange = v;
                                                           }),
                                                         ),
@@ -1201,8 +1204,7 @@ class _SearchFilterChipsSection extends StatefulWidget {
       _SearchFilterChipsSectionState();
 }
 
-class _SearchFilterChipsSectionState
-    extends State<_SearchFilterChipsSection> {
+class _SearchFilterChipsSectionState extends State<_SearchFilterChipsSection> {
   late List<ActiveFilterPill> _pills;
 
   @override

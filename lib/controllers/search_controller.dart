@@ -553,7 +553,7 @@ class SearchScreenController extends BaseController {
   /// Extracts the most common subCatId from search results to give the
   /// backend enough context to return relevant chips.
   Future<void> fetchChipsForSearch() async {
-    final key = searchController.text.trim();
+    final key = searchController.text.trim().toLowerCase();
     print('[CHIPS] fetchChipsForSearch called, key="$key"');
     if (key.isEmpty) {
       chips.clear();
