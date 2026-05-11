@@ -104,6 +104,7 @@ class AccountScreenState extends State<AccountScreen> {
           children: [
             HomeAppbar(
               showSearch: false,
+              showBack: true,
               title: "Profile",
               onPressedHeart: () async {
                 Get.to(const WishlistScreen())?.then(
@@ -122,7 +123,7 @@ class AccountScreenState extends State<AccountScreen> {
                 );
               },
               onPressedCart: () async {
-                Get.to(CartScreen())?.then(
+                Get.to(const CartScreen())?.then(
                   (value) {
                     SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(

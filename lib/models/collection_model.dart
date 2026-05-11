@@ -6,6 +6,7 @@ class CollectionModel {
   final String name;
   final String? desc;
   final int? vendorId;
+  final int? catId; // ✅ Category ID for filtering luxe/affordable products
   final List<String> displayFor;
   final List<CollectionBanner> banners;
   final List<CollectionProductMap> productMaps;
@@ -16,6 +17,7 @@ class CollectionModel {
     required this.name,
     this.desc,
     this.vendorId,
+    this.catId,
     required this.displayFor,
     required this.banners,
     required this.productMaps,
@@ -44,6 +46,7 @@ class CollectionModel {
       name: json['name'] as String,
       desc: json['desc'] as String?,
       vendorId: json['vendorId'] as int?,
+      catId: json['catId'] as int?, // ✅ Parse category ID from API response
       displayFor: (json['displayFor'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
@@ -67,6 +70,7 @@ class CollectionModel {
       'name': name,
       'desc': desc,
       'vendorId': vendorId,
+      'catId': catId,
       'displayFor': displayFor,
       'banners': banners.map((e) => e.toJson()).toList(),
       'productMaps': productMaps.map((e) => e.toJson()).toList(),

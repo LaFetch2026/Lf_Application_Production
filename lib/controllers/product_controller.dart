@@ -1415,12 +1415,17 @@ class ProductController extends BaseController {
 
   /// Fetch LUXE products for a specific collection using API segment=luxury filter
   /// Returns up to [limit] luxury products (price >= ₹7000)
+  /// If [catId] is provided, filters to only that category
+  /// If [gender] is provided, filters to only that gender
   Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(
       int collectionId,
       {int limit = 4,
-      int gender = 0}) async {
-    final cacheKey = 'luxe_${collectionId}_$gender';
+      int gender = 0,
+      int? catId}) async {
+    // ✅ Include limit in cache key so different limits don't share cache
+    final cacheKey = 'luxe_${collectionId}_${catId ?? 0}_${gender}_limit${limit}';
     if (_luxeCache.containsKey(cacheKey)) {
+      print('✅ Using cached LUXE products for collection $collectionId (limit=$limit)');
       return _luxeCache[cacheKey]!;
     }
 
@@ -1428,11 +1433,27 @@ class ProductController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
 
-      final uri = Uri.parse(
-        '${ApiConstants.baseUrl}/filter-products?collectionId=$collectionId&segment=luxury&page=1',
-      );
+      final Map<String, String> queryParams = {
+        'collectionId': collectionId.toString(),
+        'segment': 'luxury',
+        'page': '1',
+        'limit': limit.toString(), // ✅ Pass limit to API
+      };
 
-      print('📤 Fetching LUXE products for collection $collectionId: $uri');
+      // ✅ Add gender filter if provided (to prevent cross-gender product mixing)
+      if (gender > 0) {
+        queryParams['superCatId'] = gender.toString();
+      }
+
+      // ✅ Add category filter if provided
+      if (catId != null && catId > 0) {
+        queryParams['catId'] = catId.toString();
+      }
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
+          .replace(queryParameters: queryParams);
+
+      print('📤 Fetching LUXE products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''}): $uri');
 
       final response = await http.get(
         uri,
@@ -1461,7 +1482,7 @@ class ProductController extends BaseController {
             rawProducts.whereType<Map<String, dynamic>>().take(limit).toList();
 
         print(
-            '✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId');
+            '✅ Loaded ${luxeProducts.length} LUXE products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''})');
         _luxeCache[cacheKey] = luxeProducts;
 
         return luxeProducts;
@@ -1478,12 +1499,17 @@ class ProductController extends BaseController {
 
   /// Fetch AFFORDABLE products for a specific collection using API segment=affordable filter
   /// Returns up to [limit] affordable products (price < ₹7000)
+  /// If [catId] is provided, filters to only that category
+  /// If [gender] is provided, filters to only that gender
   Future<List<Map<String, dynamic>>> fetchCollectionAffordableProducts(
       int collectionId,
       {int limit = 8,
-      int gender = 0}) async {
-    final cacheKey = 'affordable_${collectionId}_$gender';
+      int gender = 0,
+      int? catId}) async {
+    // ✅ Include limit in cache key so different limits don't share cache
+    final cacheKey = 'affordable_${collectionId}_${catId ?? 0}_${gender}_limit${limit}';
     if (_luxeCache.containsKey(cacheKey)) {
+      print('✅ Using cached affordable products for collection $collectionId (limit=$limit)');
       return _luxeCache[cacheKey]!;
     }
 
@@ -1491,11 +1517,27 @@ class ProductController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
 
-      final uri = Uri.parse(
-        '${ApiConstants.baseUrl}/filter-products?collectionId=$collectionId&segment=affordable&page=1',
-      );
+      final Map<String, String> queryParams = {
+        'collectionId': collectionId.toString(),
+        'segment': 'affordable',
+        'page': '1',
+        'limit': limit.toString(), // ✅ Pass limit to API
+      };
 
-      print('📤 Fetching affordable products for collection $collectionId: $uri');
+      // ✅ Add gender filter if provided (to prevent cross-gender product mixing)
+      if (gender > 0) {
+        queryParams['superCatId'] = gender.toString();
+      }
+
+      // ✅ Add category filter if provided
+      if (catId != null && catId > 0) {
+        queryParams['catId'] = catId.toString();
+      }
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
+          .replace(queryParameters: queryParams);
+
+      print('📤 Fetching affordable products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''}): $uri');
 
       final response = await http.get(
         uri,
@@ -1523,7 +1565,7 @@ class ProductController extends BaseController {
             rawProducts.whereType<Map<String, dynamic>>().take(limit).toList();
 
         print(
-            '✅ Loaded ${affordableProducts.length} affordable products for collection $collectionId');
+            '✅ Loaded ${affordableProducts.length} affordable products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''})');
         _luxeCache[cacheKey] = affordableProducts;
 
         return affordableProducts;

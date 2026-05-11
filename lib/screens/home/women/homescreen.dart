@@ -764,7 +764,7 @@ class HomeScreenState extends State<HomeScreen>
 
                       if (isGuest) {
                         getSnackBar("Please login to view your wishlist");
-                        Get.offAll(() => LoginScreen(
+                        Get.offAll(() => const LoginScreen(
                               initialTab: 0,
                             ));
                         return;
@@ -949,14 +949,6 @@ class HomeScreenState extends State<HomeScreen>
                                   brandController: brandController,
                                   analytics: analytics,
                                 ),
-
-                                // const SizedBox(height: 12),
-                                // Divider(
-                                //   color: Colors.grey[200],
-                                //   height: 1,
-                                //   thickness: 4.sp,
-                                // ),
-                                // const SizedBox(height: 12),
 
                                 // Shop by Category Section
                                 Obx(
@@ -1230,6 +1222,8 @@ class HomeScreenState extends State<HomeScreen>
                                             dark: dark,
                                             products: products,
                                             banners: standaloneBanners,
+                                            catId: collection
+                                                .catId, // ✅ Pass category ID from collection
                                             onProductTap: (productId) async {
                                               Get.to(
                                                 ProductDetailsScreenV2(
@@ -1550,249 +1544,6 @@ class _NavCircleButton extends StatelessWidget {
   }
 }
 
-// class _NewInSection extends StatelessWidget {
-//   final NewInController newInController;
-
-//   const _NewInSection({required this.newInController});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Obx(() {
-//       if (newInController.isLoading.value) {
-//         //NEW IN Shimmer
-//         return Padding(
-//           padding: EdgeInsets.symmetric(horizontal: 16.sp),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               // Skeleton header row
-//               Padding(
-//                 padding: EdgeInsets.only(top: 10.sp, bottom: 8.sp),
-//                 child: Row(
-//                   children: [
-//                     Container(
-//                       height: 20.sp,
-//                       width: 70.sp,
-//                       decoration: BoxDecoration(
-//                         color: Colors.black.withOpacity(0.04),
-//                         borderRadius: BorderRadius.circular(4.sp),
-//                       ),
-//                     ),
-//                     const Spacer(),
-//                     Container(
-//                       height: 28.sp,
-//                       width: 90.sp,
-//                       decoration: BoxDecoration(
-//                         color: Colors.black.withOpacity(0.04),
-//                         borderRadius: BorderRadius.circular(20.sp),
-//                       ),
-//                     ),
-//                     SizedBox(width: 8.sp),
-//                     Container(
-//                       width: 28.sp,
-//                       height: 28.sp,
-//                       decoration: BoxDecoration(
-//                         shape: BoxShape.circle,
-//                         color: Colors.black.withOpacity(0.04),
-//                       ),
-//                     ),
-//                     SizedBox(width: 6.sp),
-//                     Container(
-//                       width: 28.sp,
-//                       height: 28.sp,
-//                       decoration: BoxDecoration(
-//                         shape: BoxShape.circle,
-//                         color: Colors.black.withOpacity(0.04),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               const DummyGridList(size: 4),
-//             ],
-//           ),
-//         );
-//       }
-//       if (newInController.products.isEmpty) {
-//         return const SizedBox.shrink();
-//       }
-
-//       final paged = newInController.pagedProducts;
-//       final totalPages = newInController.totalPages;
-//       final currentPage = newInController.currentPage.value;
-
-//       final canGoPrev = currentPage > 0;
-//       final canGoNext = currentPage < totalPages - 1;
-
-//       return Padding(
-//         padding: EdgeInsets.symmetric(horizontal: 16.sp),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // Header row: NEW IN | Sort By button | prev/next arrows
-//             Row(
-//               children: [
-//                 AppText(
-//                   text: "NEW IN",
-//                   fontFamily: "Clash Display Semibold",
-//                   color: blackColor,
-//                   fontSize: 18,
-//                 ),
-//                 const Spacer(),
-//                 // Sort By pill button
-//                 GestureDetector(
-//                   onTap: () => _showSortSheet(context),
-//                   child: Container(
-//                     padding:
-//                         EdgeInsets.symmetric(horizontal: 10.sp, vertical: 6.sp),
-//                     decoration: BoxDecoration(
-//                       border: Border.all(color: const Color(0xFFD1D5DB)),
-//                       borderRadius: BorderRadius.circular(20.sp),
-//                     ),
-//                     child: Row(
-//                       mainAxisSize: MainAxisSize.min,
-//                       children: [
-//                         Text(
-//                           "Sort By",
-//                           style: TextStyle(
-//                             fontFamily: "Clash Display Regular",
-//                             fontSize: 12.sp,
-//                             color: blackColor,
-//                           ),
-//                         ),
-//                         SizedBox(width: 4.sp),
-//                         Icon(Icons.tune, size: 14.sp, color: blackColor),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(width: 8.sp),
-//                 // Prev arrow in circle
-//                 _NavCircleButton(
-//                   icon: Icons.chevron_left,
-//                   enabled: canGoPrev,
-//                   onTap: canGoPrev ? newInController.prevPage : null,
-//                 ),
-//                 SizedBox(width: 6.sp),
-//                 // Next arrow in circle
-//                 _NavCircleButton(
-//                   icon: Icons.chevron_right,
-//                   enabled: canGoNext,
-//                   onTap: canGoNext ? newInController.nextPage : null,
-//                 ),
-//               ],
-//             ),
-//             SizedBox(height: 8.sp),
-//             // Product grid — 2 columns, 8 items max
-//             GridView.builder(
-//               shrinkWrap: true,
-//               physics: const NeverScrollableScrollPhysics(),
-//               padding: EdgeInsets.zero,
-//               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                 crossAxisCount: 2,
-//                 crossAxisSpacing: 8.sp,
-//                 mainAxisSpacing: 8.sp,
-//                 childAspectRatio: 0.62,
-//               ),
-//               itemCount: paged.length,
-//               itemBuilder: (context, index) {
-//                 final product = paged[index];
-//                 final imageUrl =
-//                     (product['imageUrls'] as List?)?.firstOrNull?.toString() ??
-//                         '';
-//                 final title = product['title'] as String? ?? '';
-//                 final brand =
-//                     (product['brand'] as Map?)?['name'] as String? ?? '';
-//                 final mrp = product['mrp'] as num? ?? 0;
-//                 final price =
-//                     (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
-//                 final productId = product['id'];
-
-//                 return ProductGridCard(
-//                   imageUrl: imageUrl,
-//                   title: title,
-//                   brandName: brand,
-//                   price: price,
-//                   mrp: mrp,
-//                   onTap: () {
-//                     if (productId == null) return;
-//                     Get.to(() => ProductDetailsScreenV2(
-//                           productId: productId is int
-//                               ? productId
-//                               : int.tryParse(productId.toString()) ?? 0,
-//                           type: "add",
-//                           brandName: brand,
-//                         ));
-//                   },
-//                 );
-//               },
-//             ),
-//             SizedBox(height: 16.sp),
-//           ],
-//         ),
-//       );
-//     });
-//   }
-
-//   void _showSortSheet(BuildContext context) {
-//     showModalBottomSheet(
-//       context: context,
-//       shape: const RoundedRectangleBorder(
-//         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-//       ),
-//       builder: (_) => Obx(() {
-//         final current = newInController.sortMode.value;
-//         final options = [
-//           ('default', 'Default'),
-//           ('low_to_high', 'Price: Low to High'),
-//           ('high_to_low', 'Price: High to Low'),
-//           ('discount', 'Discount'),
-//         ];
-//         return SafeArea(
-//           child: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               Padding(
-//                 padding: EdgeInsets.symmetric(vertical: 12.sp),
-//                 child: AppText(
-//                   text: "Sort By",
-//                   fontFamily: "Clash Display Semibold",
-//                   color: blackColor,
-//                   fontSize: 16,
-//                 ),
-//               ),
-//               const Divider(height: 1),
-//               ...options.map((opt) {
-//                 final isActive = current == opt.$1;
-//                 return ListTile(
-//                   title: Text(
-//                     opt.$2,
-//                     style: TextStyle(
-//                       fontFamily: isActive
-//                           ? "Clash Display Semibold"
-//                           : "Clash Display Regular",
-//                       fontSize: 14.sp,
-//                       color: blackColor,
-//                     ),
-//                   ),
-//                   trailing: isActive
-//                       ? Icon(Icons.check, size: 18.sp, color: blackColor)
-//                       : null,
-//                   onTap: () {
-//                     newInController.applySort(opt.$1);
-//                     Navigator.pop(context);
-//                   },
-//                 );
-//               }),
-//               SizedBox(height: 8.sp),
-//             ],
-//           ),
-//         );
-//       }),
-//     );
-//   }
-// }
-
 class _NewInSection extends StatelessWidget {
   final NewInController newInController;
   const _NewInSection({required this.newInController});
@@ -1993,7 +1744,6 @@ class _NewInSection extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 16.sp),
           ],
         ),
       );
@@ -2020,7 +1770,7 @@ class _NewInSection extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 12.sp),
-                child: AppText(
+                child: const AppText(
                   text: "Sort By",
                   fontFamily: "Clash Display Semibold",
                   color: blackColor,
@@ -2067,6 +1817,7 @@ class _SectionStrip extends StatefulWidget {
   final int seed;
   final bool skipShuffle;
   final int collectionId;
+  final int? catId; // ✅ Category ID for filtering luxe/affordable products
 
   const _SectionStrip({
     super.key,
@@ -2076,6 +1827,7 @@ class _SectionStrip extends StatefulWidget {
     required this.onExploreAll,
     required this.seed,
     required this.collectionId,
+    this.catId,
     this.skipShuffle = false,
   });
 
@@ -2093,12 +1845,18 @@ class _SectionStripState extends State<_SectionStrip> {
     final gender = Get.find<HomeController>().homeGenderValue.value;
     final pc = Get.find<ProductController>();
 
-    _luxeFuture =
-        pc.fetchCollectionLuxeProducts(widget.collectionId, gender: gender);
+    // ✅ Pass catId to filter luxe/affordable products by category
+    _luxeFuture = pc.fetchCollectionLuxeProducts(
+      widget.collectionId,
+      gender: gender,
+      catId: widget.catId,
+    );
     _affordableFuture = pc.fetchCollectionAffordableProducts(
-        widget.collectionId,
-        gender: gender,
-        limit: 8);
+      widget.collectionId,
+      gender: gender,
+      limit: 8,
+      catId: widget.catId,
+    );
   }
 
   String resolveBrandName(Map<String, dynamic> p) {
@@ -2399,7 +2157,7 @@ class _SectionStripState extends State<_SectionStrip> {
                 child: GestureDetector(
                   onTap: goToLuxePage,
                   child: Text(
-                    'LUXE',
+                    'TRENDING LUXE',
                     style: TextStyle(
                       fontSize: 18.sp,
                       decoration: TextDecoration.underline,
@@ -2413,6 +2171,20 @@ class _SectionStripState extends State<_SectionStrip> {
                   ),
                 ),
               ),
+              // Padding(
+              //   padding:
+              //       EdgeInsets.symmetric(horizontal: 16.sp, vertical: 0.sp),
+              //   child: Text(
+              //     'Curated Luxury From Trending Now',
+              //     style: TextStyle(
+              //       fontSize: 12.sp,
+              //       fontFamily: 'Clash Display Regular',
+              //       color: textColor,
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(height: 12.sp),
+
               // LUXE Products Horizontal Scroll
               SizedBox(
                 height: 200.sp,
@@ -3928,6 +3700,7 @@ class _CollectionSection extends StatefulWidget {
   final VoidCallback onTitleTap;
   final VoidCallback onExploreAll;
   final int seed;
+  final int? catId; // ✅ Category ID for filtering luxe/affordable products
 
   const _CollectionSection({
     required this.collectionId,
@@ -3940,6 +3713,7 @@ class _CollectionSection extends StatefulWidget {
     required this.onTitleTap,
     required this.onExploreAll,
     required this.seed,
+    this.catId,
   });
 
   @override
@@ -4239,6 +4013,7 @@ class _CollectionSectionState extends State<_CollectionSection> {
               onExploreAll: widget.onExploreAll,
               seed: widget.seed,
               collectionId: widget.collectionId,
+              catId: widget.catId, // ✅ Pass category ID for filtering
               skipShuffle: _sortBy != 'none',
             ),
 

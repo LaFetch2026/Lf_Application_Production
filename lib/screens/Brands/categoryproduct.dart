@@ -334,12 +334,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             ? int.tryParse(widget.collectionIds.first?.toString() ?? '') ?? 0
             : 0;
 
-        print("🎯 Loading LUXE products for collectionId=$collectionId...");
+        print("🎯 Loading LUXE products for collectionId=$collectionId, gender=${widget.genderType}...");
 
         if (collectionId > 0) {
-          // Fetch LUXE products scoped to this specific collection
+          // ✅ Fetch LUXE products scoped to this specific collection AND gender
           final luxeProducts = await productController
-              .fetchCollectionLuxeProducts(collectionId, limit: 100);
+              .fetchCollectionLuxeProducts(
+                collectionId,
+                limit: 100,
+                gender: widget.genderType, // ✅ Pass gender to filter by gender
+              );
           productController.allLuxeList.assignAll(luxeProducts);
         } else {
           // No collection — fetch all luxury products globally

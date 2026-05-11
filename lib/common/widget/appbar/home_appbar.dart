@@ -16,6 +16,7 @@ class HomeAppbar extends StatefulWidget {
   final Function? onPressedProfile;
   final Function? onPressedCategories;
   final bool showSearch;
+  final bool showBack;
   final String title;
 
   const HomeAppbar({
@@ -24,6 +25,7 @@ class HomeAppbar extends StatefulWidget {
     this.onPressedHeart,
     this.onPressedSearch,
     this.showSearch = true,
+    this.showBack = false,
     this.title = "",
     this.onPressedDropDown,
     this.onPressedProfile,
@@ -97,9 +99,21 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // ---- APP TITLE OR LOGO ----
+
+            if (widget.showBack)
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                child: Padding(
+                  padding: EdgeInsets.only(right: 8.sp),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    size: 16.sp,
+                  ),
+                ),
+              ),
             if (widget.title.isNotEmpty)
               Container(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.center,
                 height: 28.sp,
                 child: AppText(
                   text: widget.title.toUpperCase(),
