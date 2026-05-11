@@ -15,6 +15,7 @@ class FilterChipsRow extends StatelessWidget {
   final Set<int> selectedChipIds;
   final void Function(FilterChipItem chip) onChipTap;
   final List<ActiveFilterPill> activeFilters;
+  final bool isDarkMode;
 
   const FilterChipsRow({
     super.key,
@@ -23,6 +24,7 @@ class FilterChipsRow extends StatelessWidget {
     this.selectedChips = const [],
     this.selectedChipIds = const {},
     this.activeFilters = const [],
+    this.isDarkMode = false,
   });
 
   @override
@@ -47,7 +49,7 @@ class FilterChipsRow extends StatelessWidget {
           separatorBuilder: (_, __) => const SizedBox(width: 6),
           itemBuilder: (context, index) {
             if (index < activeFilters.length) {
-              return _ActivePill(pill: activeFilters[index]);
+              return _ActivePill(pill: activeFilters[index], isDarkMode: isDarkMode);
             }
             final i = index - activeFilters.length;
 
@@ -56,11 +58,12 @@ class FilterChipsRow extends StatelessWidget {
                 chip: selectedChips[i],
                 isActive: true,
                 onTap: onChipTap,
+                isDarkMode: isDarkMode,
               );
             }
 
             final chip = serverChips[i - selectedChips.length];
-            return _ChipItem(chip: chip, isActive: false, onTap: onChipTap);
+            return _ChipItem(chip: chip, isActive: false, onTap: onChipTap, isDarkMode: isDarkMode);
           },
         ),
       ),
@@ -70,8 +73,9 @@ class FilterChipsRow extends StatelessWidget {
 
 class _ActivePill extends StatelessWidget {
   final ActiveFilterPill pill;
+  final bool isDarkMode;
 
-  const _ActivePill({required this.pill});
+  const _ActivePill({required this.pill, this.isDarkMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -80,13 +84,13 @@ class _ActivePill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          // color: lightPurpleColor,
-          color: blackColor,
+          color: isDarkMode ? const Color(0xFFFFFFFF) : blackColor,
           borderRadius: BorderRadius.circular(999),
           boxShadow: [
             BoxShadow(
-              // color: lightPurpleColor.withOpacity(0.22),
-              color: blackColor.withOpacity(0.22),
+              color: isDarkMode 
+                  ? const Color(0xFFFFFFFF).withOpacity(0.2)
+                  : blackColor.withOpacity(0.22),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -98,17 +102,23 @@ class _ActivePill extends StatelessWidget {
           children: [
             Text(
               pill.label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: isDarkMode ? const Color(0xFF202020) : Colors.white,
                 fontFamily: 'InstrumentSans',
                 letterSpacing: 0.2,
                 height: 1,
               ),
             ),
             const SizedBox(width: 5),
-            const Icon(Icons.close_rounded, size: 12, color: Colors.white70),
+            Icon(
+              Icons.close_rounded,
+              size: 12,
+              color: isDarkMode 
+                  ? const Color(0xFF202020).withOpacity(0.7)
+                  : Colors.white70,
+            ),
           ],
         ),
       ),
@@ -120,11 +130,13 @@ class _ChipItem extends StatelessWidget {
   final FilterChipItem chip;
   final bool isActive;
   final void Function(FilterChipItem) onTap;
+  final bool isDarkMode;
 
   const _ChipItem({
     required this.chip,
     required this.isActive,
     required this.onTap,
+    this.isDarkMode = false,
   });
 
   @override
@@ -136,30 +148,13 @@ class _ChipItem extends StatelessWidget {
         curve: Curves.easeOut,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          // color: isActive ? lightPurpleColor : const Color(0xFFF9F9FB),
-          color: isActive ? blackColor : const Color(0xFFF9F9FB),
+          color: _getBackgroundColor(),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-            // color: isActive ? lightPurpleColor : const Color(0xFFE5E7EB),
-            color: isActive ? blackColor : const Color(0xFFE5E7EB),
+            color: _getBorderColor(),
             width: 1,
           ),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    // color: lightPurpleColor.withOpacity(0.2),
-                    color: blackColor.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
+          boxShadow: _getBoxShadow(),
         ),
         child: Center(
           child: isActive
@@ -169,29 +164,29 @@ class _ChipItem extends StatelessWidget {
                   children: [
                     Text(
                       chip.label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: _getTextColor(),
                         fontFamily: 'InstrumentSans',
                         letterSpacing: 0.2,
                         height: 1,
                       ),
                     ),
                     const SizedBox(width: 5),
-                    const Icon(
+                    Icon(
                       Icons.close_rounded,
                       size: 12,
-                      color: Colors.white70,
+                      color: _getTextColor().withOpacity(0.7),
                     ),
                   ],
                 )
               : Text(
                   chip.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF6B7280),
+                    color: _getTextColor(),
                     fontFamily: 'InstrumentSans',
                     letterSpacing: 0.2,
                     height: 1,
@@ -200,5 +195,67 @@ class _ChipItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getBackgroundColor() {
+    if (isDarkMode) {
+      // Dark mode: white when selected, dark gray when not
+      return isActive ? const Color(0xFFFFFFFF) : const Color(0xFF202020);
+    } else {
+      // Light mode: black when selected, light gray when not
+      return isActive ? blackColor : const Color(0xFFF9F9FB);
+    }
+  }
+
+  Color _getBorderColor() {
+    if (isDarkMode) {
+      // Dark mode: no visible border needed (bg is distinct enough)
+      return isActive ? const Color(0xFFFFFFFF) : const Color(0xFF202020);
+    } else {
+      // Light mode: original styling
+      return isActive ? blackColor : const Color(0xFFE5E7EB);
+    }
+  }
+
+  Color _getTextColor() {
+    if (isDarkMode) {
+      // Dark mode: dark text when selected, light gray when not
+      return isActive ? const Color(0xFF202020) : const Color(0xFFA8A8A8);
+    } else {
+      // Light mode: white text when selected, gray when not
+      return isActive ? Colors.white : const Color(0xFF6B7280);
+    }
+  }
+
+  List<BoxShadow> _getBoxShadow() {
+    if (isDarkMode) {
+      // Dark mode: subtle shadow
+      return isActive
+          ? [
+              BoxShadow(
+                color: const Color(0xFFFFFFFF).withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ]
+          : [];
+    } else {
+      // Light mode: original shadows
+      return isActive
+          ? [
+              BoxShadow(
+                color: blackColor.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ]
+          : [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ];
+    }
   }
 }

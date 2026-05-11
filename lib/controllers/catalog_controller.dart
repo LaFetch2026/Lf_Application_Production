@@ -757,12 +757,14 @@ class CatalogController extends BaseController {
     int? brandId,
     String? segment,
   }) async {
+    print(
+        '🔹 fetchChipsForCategory called with: catId=$catId, subCatId=$subCatId, superCatId=$superCatId, collectionId=$collectionId, segment=$segment');
     try {
       final prefs = await SharedPreferences.getInstance();
       final Map<String, String> params = {
         'status': 'true',
         'page': '1',
-        'limit': '1', // we only need chips, not products
+        'limit': '8', // Backend needs limit >= 8 to return chips
       };
 
       if (superCatId != null && superCatId > 0) {
@@ -814,6 +816,8 @@ class CatalogController extends BaseController {
           _lastServerChips = parsed;
           chips.assignAll(parsed);
           print('✅ Chips loaded: ${parsed.length}');
+          print(
+              '✅ chips.value is now: ${chips.value.map((c) => c.label).toList()}');
         } else {
           print('⚠️ data is not a Map: ${data.runtimeType}');
         }

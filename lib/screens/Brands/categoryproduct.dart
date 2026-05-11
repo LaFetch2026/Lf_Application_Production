@@ -874,6 +874,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             _FilterChipsSection(
               catalogController: catalogController,
               buildPills: _buildActiveFilterPills,
+              isDarkMode: isLuxeView,
             ),
 
           /// ✅ Product Grid with skeleton loading
@@ -1990,10 +1991,12 @@ class _SkeletonProductTile extends StatelessWidget {
 class _FilterChipsSection extends StatefulWidget {
   final CatalogController catalogController;
   final List<ActiveFilterPill> Function() buildPills;
+  final bool isDarkMode;
 
   const _FilterChipsSection({
     required this.catalogController,
     required this.buildPills,
+    this.isDarkMode = false,
   });
 
   @override
@@ -2028,6 +2031,7 @@ class _FilterChipsSectionState extends State<_FilterChipsSection> {
         selectedChips: widget.catalogController.selectedChips.toList(),
         onChipTap: widget.catalogController.onChipTap,
         activeFilters: widget.buildPills(),
+        isDarkMode: widget.isDarkMode,
       );
     });
   }

@@ -16,6 +16,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../common/widget/appbar/productlist_appbar.dart';
 import '../../../common/widget/cards/product_card.dart';
 import '../../../common/widget/other/common_widget.dart';
+import '../../../common/widget/other/chip_shimmer_row.dart';
+import '../../../common/widget/other/filter_chips_row.dart';
 import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
@@ -210,6 +212,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
             // ✅ Reset loading state since we're not calling API
             catalogController.isCategory.value = false;
+
+            // ✅ Fetch chips for this collection
+            catalogController.fetchChipsForCategory(
+              collectionId: collectionId,
+              superCatId: productController.categoryFilter.value,
+              segment: 'affordable',
+            );
           } else {
             // ✅ Fallback: Fetch from API if homeProductList is empty
             print("🔹 Loading products for collection $collectionId from API");
@@ -229,6 +238,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
             _isProductsLoaded = true;
             print(
                 "✅ Loaded ${catalogController.categoryProductList.length} products from API for collection $collectionId");
+
+            // ✅ Fetch chips for this collection
+            catalogController.fetchChipsForCategory(
+              collectionId: collectionId,
+              superCatId: productController.categoryFilter.value,
+              segment: 'affordable',
+            );
           }
 
           // ✅ Trigger UI rebuild
@@ -380,7 +396,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
+        print(
+            "   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print(
             "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
@@ -514,7 +531,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
+        print(
+            "   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print(
             "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
@@ -712,6 +730,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           ),
           SizedBox(height: 10.sp),
 
+          // ===== FILTER CHIPS ROW =====
+          _FilterChipsSection(
+            catalogController: catalogController,
+            buildPills: _buildActiveFilterPills,
+            isDarkMode: false,
+          ),
+
           // ===== GRID =====
           Expanded(
             child: Obx(() {
@@ -813,8 +838,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                       mrp: mrp,
                       showExpress: express,
                       nudges: (item['nudges'] as List<dynamic>?)
-                              ?.map((e) => Nudge.fromJson(
-                                  e as Map<String, dynamic>))
+                              ?.map((e) =>
+                                  Nudge.fromJson(e as Map<String, dynamic>))
                               .toList() ??
                           [],
                       onTap: () async {
@@ -1435,7 +1460,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
-                                _appliedMinDiscount = discountRange.start.toInt();
+                                _appliedMinDiscount =
+                                    discountRange.start.toInt();
                                 _appliedMaxDiscount = discountRange.end.toInt();
                                 _appliedColors = List.from(selectedColors);
                                 _appliedSizes = List.from(selectedSizes);
@@ -1603,6 +1629,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       },
     );
   }
+
+  /// ✅ Build active filter pills from current filter state
+  List<ActiveFilterPill> _buildActiveFilterPills() {
+    return []; // No active filter pills for ProductViewScreen
+  }
 }
 
 /// ✅ Skeleton Product Tile
@@ -1646,5 +1677,59 @@ class _SkeletonProductTile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// ✅ Build active filter pills from current filter state
+  List<ActiveFilterPill> _buildActiveFilterPills() {
+    return []; // No active filter pills for ProductViewScreen
+  }
+}
+
+/// ✅ Dedicated StatefulWidget for the filter chips row
+class _FilterChipsSection extends StatefulWidget {
+  final CatalogController catalogController;
+  final List<ActiveFilterPill> Function() buildPills;
+  final bool isDarkMode;
+
+  const _FilterChipsSection({
+    required this.catalogController,
+    required this.buildPills,
+    this.isDarkMode = false,
+  });
+
+  @override
+  State<_FilterChipsSection> createState() => _FilterChipsSectionState();
+}
+
+class _FilterChipsSectionState extends State<_FilterChipsSection> {
+  late List<ActiveFilterPill> _pills;
+
+  @override
+  void initState() {
+    super.initState();
+    _pills = widget.buildPills();
+  }
+
+  @override
+  void didUpdateWidget(_FilterChipsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _pills = widget.buildPills();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (widget.catalogController.isCategory.value) {
+        return const ChipShimmerRow();
+      }
+      return FilterChipsRow(
+        chips: widget.catalogController.chips.toList(),
+        selectedChipIds: widget.catalogController.selectedChipIds,
+        selectedChips: widget.catalogController.selectedChips.toList(),
+        onChipTap: widget.catalogController.onChipTap,
+        activeFilters: widget.buildPills(),
+        isDarkMode: widget.isDarkMode,
+      );
+    });
   }
 }
