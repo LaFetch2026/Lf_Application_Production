@@ -2042,6 +2042,15 @@ class _SectionStripState extends State<_SectionStrip> {
             final row2Products =
                 showTwoRows ? pick.skip(4).toList() : <Map<String, dynamic>>[];
 
+            // ✅ Stabilize height to prevent layout shift during filtering
+            final bool isLoading = controller.isCategory.value && hasFilters;
+            final bool effectiveShowTwoRows = (isLoading && totalProducts == 0)
+                ? (widget.products.length > 4)
+                : showTwoRows;
+            final double containerHeight = effectiveShowTwoRows
+                ? (rowHeight * 2) + 10.sp
+                : rowHeight;
+
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -2055,54 +2064,55 @@ class _SectionStripState extends State<_SectionStrip> {
                     activeFilters: [],
                     isDarkMode: widget.dark,
                   ),
-                
-                // ✅ Show loading state when filtering
-                if (controller.isCategory.value && hasFilters)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.sp),
-                    child: const LfLogoLoader(size: 24, showGlow: false),
-                  )
-                else
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Row 1 — always up to 4 products
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (int i = 0; i < row1Products.length; i++) ...[
-                              if (i != 0) SizedBox(width: 10.sp),
-                              buildCardSlot(row1Products[i]),
-                            ],
-                            if (!showTwoRows) ...[
-                              SizedBox(width: 10.sp),
-                              buildViewAllButton(),
-                            ],
-                          ],
-                        ),
-                        if (showTwoRows) ...[
-                          SizedBox(height: 10.sp),
-                          Row(
+
+                // ✅ Use a fixed height container to prevent resizing during filtering
+                SizedBox(
+                  height: containerHeight,
+                  child: isLoading
+                      ? const Center(
+                          child: LfLogoLoader(size: 24, showGlow: false),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                          child: Column(
                             mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              for (int i = 0; i < row2Products.length; i++) ...[
-                                if (i != 0) SizedBox(width: 10.sp),
-                                buildCardSlot(row2Products[i]),
+                              // Row 1 — always up to 4 products
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  for (int i = 0; i < row1Products.length; i++) ...[
+                                    if (i != 0) SizedBox(width: 10.sp),
+                                    buildCardSlot(row1Products[i]),
+                                  ],
+                                  if (!showTwoRows) ...[
+                                    SizedBox(width: 10.sp),
+                                    buildViewAllButton(),
+                                  ],
+                                ],
+                              ),
+                              if (showTwoRows) ...[
+                                SizedBox(height: 10.sp),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    for (int i = 0; i < row2Products.length; i++) ...[
+                                      if (i != 0) SizedBox(width: 10.sp),
+                                      buildCardSlot(row2Products[i]),
+                                    ],
+                                    SizedBox(
+                                        width: row2Products.isNotEmpty ? 10.sp : 0),
+                                    buildViewAllButton(),
+                                  ],
+                                ),
                               ],
-                              SizedBox(
-                                  width: row2Products.isNotEmpty ? 10.sp : 0),
-                              buildViewAllButton(),
                             ],
                           ),
-                        ],
-                      ],
-                    ),
-                  ),
+                        ),
+                ),
                 SizedBox(height: 16.sp),
                 _buildLuxeSection(
                   collectionId: widget.collectionId,

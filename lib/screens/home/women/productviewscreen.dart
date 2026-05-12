@@ -51,11 +51,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   final wishlistController = Get.put(WishlistController());
   final controller = Get.put(CartController());
   final brandController = Get.put(BrandController());
-  
+
   // ✅ Use a unique tag for each collection to get a separate controller instance
   late final String _catalogControllerTag;
   late final CatalogController catalogController;
-  
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -146,13 +146,14 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
     // ✅ Create a unique controller instance for this collection
     // This ensures each collection has its own filter state
-    _catalogControllerTag = 'catalog_${productController.collectionId.value}_${widget.genderName}';
-    
+    _catalogControllerTag =
+        'catalog_${productController.collectionId.value}_${widget.genderName}';
+
     // ✅ Delete old instance if it exists, then create a new one
     try {
       Get.delete<CatalogController>(tag: _catalogControllerTag);
     } catch (_) {}
-    
+
     catalogController = Get.put(
       CatalogController(),
       tag: _catalogControllerTag,
@@ -735,7 +736,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   parameters: {"page_name": "wishlist_page"});
             },
             onPressedCart: () async {
-              Get.to(CartScreen())?.then((_) {
+              Get.to(const CartScreen())?.then((_) {
                 if (mounted) {
                   setState(() {
                     controller.getCartData();
@@ -749,10 +750,18 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           SizedBox(height: 10.sp),
 
           // ===== FILTER CHIPS ROW =====
-          _FilterChipsSection(
-            catalogController: catalogController,
-            buildPills: _buildActiveFilterPills,
-            isDarkMode: false,
+          // _FilterChipsSection(
+          //   catalogController: catalogController,
+          //   buildPills: _buildActiveFilterPills,
+          //   isDarkMode: false,
+          // ),
+
+          IntrinsicHeight(
+            child: _FilterChipsSection(
+              catalogController: catalogController,
+              buildPills: _buildActiveFilterPills,
+              isDarkMode: false,
+            ),
           ),
 
           // ===== GRID =====
@@ -1734,28 +1743,49 @@ class _FilterChipsSectionState extends State<_FilterChipsSection> {
     _pills = widget.buildPills();
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   // ✅ Use GetBuilder with the controller's tag to watch for updates
+  //   return GetBuilder<CatalogController>(
+  //     tag: widget.catalogController.hashCode.toString(), // Use controller instance as identifier
+  //     builder: (controller) {
+  //       // ✅ Always show chips if they exist
+  //       final chipsList = controller.chips.toList();
+
+  //       if (chipsList.isEmpty) {
+  //         return const SizedBox.shrink();
+  //       }
+
+  //       return FilterChipsRow(
+  //         chips: chipsList,
+  //         selectedChipIds: controller.selectedChipIds,
+  //         selectedChips: controller.selectedChips.toList(),
+  //         onChipTap: controller.onChipTap,
+  //         activeFilters: widget.buildPills(),
+  //         isDarkMode: widget.isDarkMode,
+  //       );
+  //     },
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    // ✅ Use GetBuilder with the controller's tag to watch for updates
-    return GetBuilder<CatalogController>(
-      tag: widget.catalogController.hashCode.toString(), // Use controller instance as identifier
-      builder: (controller) {
-        // ✅ Always show chips if they exist
-        final chipsList = controller.chips.toList();
-        
-        if (chipsList.isEmpty) {
-          return const SizedBox.shrink();
-        }
-        
-        return FilterChipsRow(
-          chips: chipsList,
-          selectedChipIds: controller.selectedChipIds,
-          selectedChips: controller.selectedChips.toList(),
-          onChipTap: controller.onChipTap,
-          activeFilters: widget.buildPills(),
-          isDarkMode: widget.isDarkMode,
-        );
-      },
-    );
+    // ✅ Use Obx — reacts to the controller's RxList without needing a tag lookup.
+    //    This removes the crash caused by GetBuilder using hashCode as a tag
+    //    while the controller was registered under a different string tag.
+    return Obx(() {
+      final chipsList = widget.catalogController.chips.toList();
+
+      if (chipsList.isEmpty) return const SizedBox.shrink();
+
+      return FilterChipsRow(
+        chips: chipsList,
+        selectedChipIds: widget.catalogController.selectedChipIds,
+        selectedChips: widget.catalogController.selectedChips.toList(),
+        onChipTap: widget.catalogController.onChipTap,
+        activeFilters: widget.buildPills(),
+        isDarkMode: widget.isDarkMode,
+      );
+    });
   }
 }
