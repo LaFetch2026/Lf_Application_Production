@@ -15,7 +15,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/common/widget/lists/dummy_product_list.dart';
 import 'package:lafetch/common/widget/other/filter_chips_row.dart';
-import 'package:lafetch/features/homepage/widgets/new_in_section.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
@@ -62,16 +61,16 @@ import 'package:shimmer/shimmer.dart';
 // ✅ Global RouteObserver for video auto-pause on navigation
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
-class HomeScreen extends StatefulWidget {
+class HomeScreenLegacy extends StatefulWidget {
   final Function(int)? onPressed;
 
-  const HomeScreen({this.onPressed, super.key});
+  const HomeScreenLegacy({this.onPressed, super.key});
 
   @override
-  State<HomeScreen> createState() => HomeScreenState();
+  State<HomeScreenLegacy> createState() => HomeScreenLegacyState();
 }
 
-class HomeScreenState extends State<HomeScreen>
+class HomeScreenLegacyState extends State<HomeScreenLegacy>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
@@ -940,13 +939,7 @@ class HomeScreenState extends State<HomeScreen>
                                 SizedBox(height: 12.sp), // ✅ Consistent spacing
 
                                 // ── NEW IN Section ──────────────────────────────
-                                // _NewInSection(newInController: newInController),
-                                RepaintBoundary(
-                                  child: NewInSection(
-                                    newInController:
-                                        newInController, // Assumes newInController is reactive and handles current genderId.
-                                  ),
-                                ),
+                                _NewInSection(newInController: newInController),
 
                                 SizedBox(
                                     height: 16
