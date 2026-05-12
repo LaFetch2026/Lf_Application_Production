@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../controllers/new_in_controller.dart';
+import '../../../core/constant/constants.dart';
 import '../../../core/utils/image_helper.dart';
 import '../../../screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 
@@ -95,6 +96,8 @@ class _NewInRotatingHangerCarouselState
   static const String _bgAsset = 'assets/images/new_in_bg.png';
   static const String _hookAsset = 'assets/images/new_in_hook.png';
   static const String _newDropBgAsset = 'assets/images/new_drop_text_bg.svg';
+  static const String _newDropTextureAsset =
+      'assets/images/new_drop_text_texture.svg';
   static const String _newDropTextAsset =
       'assets/images/new_drop_friday_text.svg';
   static const Color _punchColor = Color(0xFF2E2F35);
@@ -260,6 +263,10 @@ class _NewInRotatingHangerCarouselState
                             fit: BoxFit.contain,
                           ),
                           SvgPicture.asset(
+                            _newDropTextureAsset,
+                            fit: BoxFit.contain,
+                          ),
+                          SvgPicture.asset(
                             _newDropTextAsset,
                             width: 118.sp,
                             fit: BoxFit.contain,
@@ -372,63 +379,57 @@ class _NewInRotatingHangerCarouselState
   }
 
   String _extractImageUrl(Map<String, dynamic> product) {
-    // Keep old NEW IN behavior as the primary source since it previously worked.
-    final legacyUrls = product['imageUrls'] as List?;
-    final legacyUrl = legacyUrls
-            ?.map((e) => e?.toString().trim() ?? '')
-            .firstWhere((e) => e.isNotEmpty, orElse: () => '') ??
-        '';
-    if (legacyUrl.isNotEmpty) {
-      return legacyUrl.startsWith('//') ? 'https:$legacyUrl' : legacyUrl;
-    }
-
-    String normalize(dynamic raw) {
-      final value = raw?.toString().trim() ?? '';
+    String normalize(String raw) {
+      final value = raw.trim();
       if (value.isEmpty) return '';
       if (value.startsWith('//')) return 'https:$value';
+      if (value.startsWith('/')) {
+        final host = ApiConstants.baseUrl.replaceAll('/api', '');
+        return '$host$value';
+      }
       return value;
     }
 
-    String pickFirstFromList(List<dynamic> list) {
-      for (final item in list) {
-        if (item is String) {
-          final normalized = normalize(item);
-          if (normalized.isNotEmpty) return normalized;
-        } else if (item is Map) {
-          final normalized = normalize(
-            item['url'] ??
-                item['imageUrl'] ??
-                item['image'] ??
-                item['src'] ??
-                item['name'] ??
-                item['mobileImage'],
-          );
-          if (normalized.isNotEmpty) return normalized;
-        }
-      }
-      return '';
-    }
-
+    // Primary: exact payload shape you shared (List<String> imageUrls).
     final imageUrls = product['imageUrls'];
     if (imageUrls is List && imageUrls.isNotEmpty) {
-      final fromImageUrls = pickFirstFromList(imageUrls);
-      if (fromImageUrls.isNotEmpty) return fromImageUrls;
+      for (final entry in imageUrls) {
+        final candidate = normalize(entry?.toString() ?? '');
+        if (candidate.isNotEmpty) return candidate;
+      }
     }
 
+    // Secondary: list under `images`.
     final images = product['images'];
     if (images is List && images.isNotEmpty) {
-      final fromImages = pickFirstFromList(images);
-      if (fromImages.isNotEmpty) return fromImages;
+      for (final entry in images) {
+        if (entry is String) {
+          final candidate = normalize(entry);
+          if (candidate.isNotEmpty) return candidate;
+        } else if (entry is Map) {
+          for (final key in const ['url', 'imageUrl', 'image', 'src', 'name']) {
+            final candidate = normalize(entry[key]?.toString() ?? '');
+            if (candidate.isNotEmpty) return candidate;
+          }
+        }
+      }
     }
 
-    final fallback = normalize(
-      product['imageUrl'] ??
-          product['image'] ??
-          product['thumbnail'] ??
-          product['mobileImage'] ??
-          product['primaryImage'],
-    );
-    return fallback;
+    // Tertiary: direct keys.
+    for (final key in const [
+      'imageUrl',
+      'image',
+      'thumbnail',
+      'coverImage',
+      'primary_image',
+      'primaryImage',
+      'mobileImage',
+    ]) {
+      final candidate = normalize(product[key]?.toString() ?? '');
+      if (candidate.isNotEmpty) return candidate;
+    }
+
+    return '';
   }
 }
 
@@ -626,12 +627,16 @@ class _CardImage extends StatelessWidget {
         ),
       ),
       placeholder: (_, __) => Container(color: Colors.black.withOpacity(0.04)),
-      errorWidget: (_, __, ___) => Container(
-        color: Colors.black.withOpacity(0.05),
-        child: Icon(
-          Icons.broken_image_outlined,
-          size: 24.sp,
-          color: Colors.grey.withOpacity(0.6),
+      errorWidget: (_, __, ___) => Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(
+          color: Colors.black.withOpacity(0.05),
+          child: Icon(
+            Icons.broken_image_outlined,
+            size: 24.sp,
+            color: Colors.grey.withOpacity(0.6),
+          ),
         ),
       ),
     );
