@@ -49,7 +49,8 @@ class FilterChipsRow extends StatelessWidget {
           separatorBuilder: (_, __) => const SizedBox(width: 6),
           itemBuilder: (context, index) {
             if (index < activeFilters.length) {
-              return _ActivePill(pill: activeFilters[index], isDarkMode: isDarkMode);
+              return _ActivePill(
+                  pill: activeFilters[index], isDarkMode: isDarkMode);
             }
             final i = index - activeFilters.length;
 
@@ -63,7 +64,11 @@ class FilterChipsRow extends StatelessWidget {
             }
 
             final chip = serverChips[i - selectedChips.length];
-            return _ChipItem(chip: chip, isActive: false, onTap: onChipTap, isDarkMode: isDarkMode);
+            return _ChipItem(
+                chip: chip,
+                isActive: false,
+                onTap: onChipTap,
+                isDarkMode: isDarkMode);
           },
         ),
       ),
@@ -88,7 +93,7 @@ class _ActivePill extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
           boxShadow: [
             BoxShadow(
-              color: isDarkMode 
+              color: isDarkMode
                   ? const Color(0xFFFFFFFF).withOpacity(0.2)
                   : blackColor.withOpacity(0.22),
               blurRadius: 8,
@@ -115,7 +120,7 @@ class _ActivePill extends StatelessWidget {
             Icon(
               Icons.close_rounded,
               size: 12,
-              color: isDarkMode 
+              color: isDarkMode
                   ? const Color(0xFF202020).withOpacity(0.7)
                   : Colors.white70,
             ),

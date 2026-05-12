@@ -4,7 +4,6 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -12,8 +11,8 @@ import 'package:get/get.dart';
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../controllers/new_in_controller.dart';
 import '../../../core/constant/constants.dart';
-import '../../../core/utils/image_helper.dart';
 import '../../../screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
+import 'premium_product_card.dart';
 
 /// Tunable motion/layout constants.
 /// Keep these subtle so the section feels premium, not game-like.
@@ -453,8 +452,33 @@ class _NewInCarouselItem extends StatelessWidget {
     final String title = (product['title'] as String? ?? '').toUpperCase();
     final String brand =
         ((product['brand'] as Map?)?['name'] as String? ?? '').toUpperCase();
-    final num mrp = (product['mrp'] as num?) ?? 0;
-    final num price = ((product['basePrice'] ?? product['mrp']) as num?) ?? mrp;
+    final num price = () {
+      final raw = product['displayPrice'] ??
+          product['basePrice'] ??
+          product['price'] ??
+          product['msp'] ??
+          product['mrp'];
+      if (raw is num) return raw;
+      return num.tryParse(raw?.toString().replaceAll(',', '') ?? '') ?? 0;
+    }();
+    final num mrp = () {
+      final raw = product['displayMrp'] ??
+          product['mrp'] ??
+          product['compareAtPrice'] ??
+          product['manufacturingAmount'];
+      if (raw is num) return raw;
+      return num.tryParse(raw?.toString().replaceAll(',', '') ?? '') ?? 0;
+    }();
+    final int? discountPercent = () {
+      final d = product['discountPercent'];
+      if (d is int) return d > 0 ? d : null;
+      if (d is num) {
+        final v = d.round();
+        return v > 0 ? v : null;
+      }
+      final parsed = int.tryParse(d?.toString() ?? '');
+      return (parsed != null && parsed > 0) ? parsed : null;
+    }();
 
     return RepaintBoundary(
       child: Center(
@@ -492,81 +516,18 @@ class _NewInCarouselItem extends StatelessWidget {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 36.sp),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.sp),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(8.sp),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10.sp),
-                            child: SizedBox(
-                              height: 146.sp,
-                              width: double.infinity,
-                              child: _CardImage(imageUrl: imageUrl),
-                            ),
-                          ),
-                          SizedBox(height: 8.sp),
-                          Text(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: "Clash Display Semibold",
-                              fontSize: 12.sp,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(height: 2.sp),
-                          Text(
-                            brand,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: "Clash Display Regular",
-                              fontSize: 10.sp,
-                              color: const Color(0xFF727272),
-                            ),
-                          ),
-                          SizedBox(height: 4.sp),
-                          Row(
-                            children: [
-                              Text(
-                                "₹${price.toStringAsFixed(0)}",
-                                style: TextStyle(
-                                  fontFamily: "Clash Display Semibold",
-                                  fontSize: 13.sp,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              if (mrp > price) ...[
-                                SizedBox(width: 6.sp),
-                                Text(
-                                  "₹${mrp.toStringAsFixed(0)}",
-                                  style: TextStyle(
-                                    fontFamily: "Clash Display Regular",
-                                    fontSize: 10.sp,
-                                    color: const Color(0xFF9A9A9A),
-                                    decoration: TextDecoration.lineThrough,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                  child: PremiumProductCard(
+                    imageUrl: imageUrl,
+                    title: title,
+                    brand: brand,
+                    price: price,
+                    mrp: mrp,
+                    discountPercent: discountPercent,
+                    condensed: true,
+                    theme: PremiumProductCardTheme.light,
+                    showWishlist: false,
+                    showAdd: false,
+                    onTap: onTap,
                   ),
                 ),
                 Positioned(
@@ -588,54 +549,6 @@ class _NewInCarouselItem extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CardImage extends StatelessWidget {
-  final String imageUrl;
-  const _CardImage({required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    if (imageUrl.isEmpty) {
-      return Container(
-        color: Colors.black.withOpacity(0.04),
-        child: Icon(
-          Icons.image_outlined,
-          size: 28.sp,
-          color: Colors.grey.withOpacity(0.5),
-        ),
-      );
-    }
-
-    return CachedNetworkImage(
-      imageUrl: ImageHelper.toWebP(imageUrl),
-      fit: BoxFit.cover,
-      memCacheWidth: 420,
-      memCacheHeight: 420,
-      maxWidthDiskCache: 420,
-      maxHeightDiskCache: 420,
-      cacheManager: CacheManager(
-        Config(
-          "newInCarouselCache",
-          stalePeriod: const Duration(days: 10),
-          maxNrOfCacheObjects: 80,
-        ),
-      ),
-      placeholder: (_, __) => Container(color: Colors.black.withOpacity(0.04)),
-      errorWidget: (_, __, ___) => Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          color: Colors.black.withOpacity(0.05),
-          child: Icon(
-            Icons.broken_image_outlined,
-            size: 24.sp,
-            color: Colors.grey.withOpacity(0.6),
           ),
         ),
       ),
