@@ -89,6 +89,30 @@ class PremiumProductCard extends StatelessWidget {
                 child: Stack(
                   children: [
                     Positioned.fill(child: _CardImage(imageUrl: imageUrl)),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        width: 90.sp,
+                        height: 90.sp,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16.sp),
+                          ),
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            stops: const [0.0, 0.25, 0.26, 1.0],
+                            colors: [
+                              Colors.white.withValues(alpha: 0.75),
+                              Colors.white.withValues(alpha: 0.2),
+                              Colors.white.withValues(alpha: 0.05),
+                              Colors.white.withValues(alpha: 0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     if (showWishlist)
                       Positioned(
                         top: 8.sp,
@@ -104,9 +128,10 @@ class PremiumProductCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(10.sp, 10.sp, 10.sp, 10.sp),
+              padding: EdgeInsets.fromLTRB(10.sp, 10.sp, 10.sp, 0.sp),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

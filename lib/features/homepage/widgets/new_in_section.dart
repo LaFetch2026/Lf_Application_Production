@@ -17,7 +17,7 @@ import 'premium_product_card.dart';
 /// Tunable motion/layout constants.
 /// Keep these subtle so the section feels premium, not game-like.
 class _NewInHangerTuning {
-  static const double viewportFraction = 0.42;
+  static const double viewportFraction = 0.50;
   static const double focusedScale = 1.04;
   static const double sideScale = 0.84;
   static const double maxSideRotationDeg = 2.2;
@@ -252,8 +252,8 @@ class _NewInRotatingHangerCarouselState
                   right: 0,
                   child: Center(
                     child: SizedBox(
-                      width: 165.sp,
-                      height: 44.sp,
+                      width: 185.sp,
+                      height: 64.sp,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -267,7 +267,7 @@ class _NewInRotatingHangerCarouselState
                           ),
                           SvgPicture.asset(
                             _newDropTextAsset,
-                            width: 118.sp,
+                            // width: 118.sp,
                             fit: BoxFit.contain,
                           ),
                         ],
@@ -485,25 +485,26 @@ class _NewInCarouselItem extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: SizedBox(
-            width: 188.sp,
+            width: 210.sp,
+            height: 265.sp,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
                 Positioned(
-                  top: 10.sp,
+                  top: 0.sp,
                   left: 0,
                   right: 0,
                   child: Center(
                     child: Image.asset(
                       hookAsset,
-                      width: 22.sp,
-                      height: 24.sp,
+                      width: 26.sp,
+                      height: 28.sp,
                       fit: BoxFit.contain,
                     ),
                   ),
                 ),
                 Positioned(
-                  top: 30.sp,
+                  top: 25.sp,
                   left: 0,
                   right: 0,
                   child: Center(
@@ -538,8 +539,8 @@ class _NewInCarouselItem extends StatelessWidget {
                     // Punch hole aligned to the hook center to create
                     // the hanging-card illusion over the dark background.
                     child: Container(
-                      width: 10.sp,
-                      height: 10.sp,
+                      width: 12.sp,
+                      height: 12.sp,
                       decoration: BoxDecoration(
                         color: punchColor,
                         shape: BoxShape.circle,
