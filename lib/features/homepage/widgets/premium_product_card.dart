@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/utils/image_helper.dart';
 
@@ -56,10 +57,10 @@ class PremiumProductCard extends StatelessWidget {
 
     final double imageHeight = condensed ? 168.sp : 188.sp;
     final double titleSize = condensed ? 14.sp : 17.sp;
-    final double brandSize = condensed ? 10.sp : 11.sp;
-    final double priceSize = condensed ? 14.sp : 18.sp;
+    final double brandSize = condensed ? 8.sp : 11.sp;
+    final double priceSize = condensed ? 12.sp : 18.sp;
     final double mrpSize = condensed ? 16.sp : 12.sp;
-    final double discountSize = condensed ? 10.sp : 11.sp;
+    final double discountSize = condensed ? 8.sp : 11.sp;
 
     final int computedDiscount =
         (mrp > price && mrp > 0) ? (((mrp - price) / mrp) * 100).round() : 0;
@@ -70,6 +71,15 @@ class PremiumProductCard extends StatelessWidget {
         apiDiscount ?? (computedDiscount > 0 ? computedDiscount : 0);
     final bool showMrpStrike = mrp > price && mrp > 0;
     final bool showOffLabel = effectiveDiscount > 0;
+
+    String _formatPrice(num value) {
+      final formatter = NumberFormat.currency(
+        locale: 'en_IN',
+        symbol: '₹',
+        decimalDigits: 0,
+      );
+      return formatter.format(value);
+    }
 
     return GestureDetector(
       onTap: onTap,
@@ -148,7 +158,7 @@ class PremiumProductCard extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             fontSize: titleSize,
                             color: titleColor,
-                            // height: 1.02,
+                            height: 1.6,
                           ),
                         ),
                       ),
@@ -185,7 +195,8 @@ class PremiumProductCard extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
-                        "₹${price.toStringAsFixed(0)}",
+                        _formatPrice(price),
+                        // _formatPrice(${price.toStringAsFixed(0)}),
                         style: TextStyle(
                           fontFamily: 'InstrumentSans',
                           fontWeight: FontWeight.w600,
@@ -199,7 +210,7 @@ class PremiumProductCard extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'InstrumentSans',
                             fontWeight: FontWeight.w400,
-                            fontSize: mrpSize,
+                            fontSize: 10.sp,
                             color: mrpColor,
                             decoration: TextDecoration.lineThrough,
                             decorationColor: mrpColor,

@@ -276,11 +276,11 @@ const newInBottomExtensionImage = 'assets/images/new_in_bottom_extension.png';
 class ApiConstants {
   ApiConstants._();
 
-  // static const String baseUrl = "http://192.168.2.204:8080/api"; //staging
-  // static const String razorPayKey = "rzp_test_SPzJ3lvmyKU47B"; //staging
+  static const String baseUrl = "http://192.168.2.204:8080/api"; //staging
+  static const String razorPayKey = "rzp_test_SPzJ3lvmyKU47B"; //staging
 
-  static const String baseUrl = "https://lfapi.la-fetch.com/api"; //production
-  static const String razorPayKey = "rzp_live_SQi03pJxPr9952"; //production
+  // static const String baseUrl = "https://lfapi.la-fetch.com/api"; //production
+  // static const String razorPayKey = "rzp_live_SQi03pJxPr9952"; //production
 }
 
 // for meta dashborad
