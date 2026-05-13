@@ -17,9 +17,9 @@ import 'premium_product_card.dart';
 /// Tunable motion/layout constants.
 /// Keep these subtle so the section feels premium, not game-like.
 class _NewInHangerTuning {
-  static const double viewportFraction = 0.50;
+  static const double viewportFraction = 0.54;
   static const double focusedScale = 1.04;
-  static const double sideScale = 0.84;
+  static const double sideScale = 0.93;
   static const double maxSideRotationDeg = 2.2;
   static const double maxVerticalDrop = 16.0;
 
@@ -52,7 +52,7 @@ class NewInSection extends StatelessWidget {
                   height: 20.sp,
                   width: 90.sp,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(4.sp),
                   ),
                 ),
@@ -68,7 +68,7 @@ class NewInSection extends StatelessWidget {
       }
 
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 12.sp),
+        padding: EdgeInsets.symmetric(vertical: 0.sp),
         child: _NewInRotatingHangerCarousel(
           products: newInController.products,
         ),
@@ -223,18 +223,18 @@ class _NewInRotatingHangerCarouselState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.sp),
-            child: const Text(
-              "NEW IN",
-              style: TextStyle(
-                fontFamily: "Clash Display Semibold",
-                fontSize: 18,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          SizedBox(height: 10.sp),
+          // Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 16.sp),
+          //   child: const Text(
+          //     "NEW IN",
+          //     style: TextStyle(
+          //       fontFamily: "Clash Display Semibold",
+          //       fontSize: 18,
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(height: 10.sp),
           Container(
             height: 370.sp,
             decoration: BoxDecoration(
@@ -328,33 +328,50 @@ class _NewInRotatingHangerCarouselState
                                     (math.pi / 180.0)) *
                                 t;
 
+                            final double tiltAngle = -signedDirection * 0.2 * t;
+                            final double glowOpacity =
+                                (1.0 - t).clamp(0.0, 1.0);
+
                             return Align(
                               child: Transform(
                                 alignment: Alignment.topCenter,
                                 transform: Matrix4.identity()
+                                  ..setEntry(3, 2, 0.0015)
                                   ..translate(0.0, translateY)
-                                  ..rotateZ(rotationRad)
+                                  ..rotateY(tiltAngle)
+                                  ..rotateZ(signedDirection * 0.015 * t)
                                   ..scale(scale),
-                                child: child,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 12.sp),
+                                  child: _NewInCarouselItem(
+                                    product: product,
+                                    imageUrl: _extractImageUrl(product),
+                                    hookAsset: _hookAsset,
+                                    punchColor: _punchColor,
+                                    glowOpacity:
+                                        glowOpacity, // ✅ now actually passed
+                                    onTap: () => _openProduct(product),
+                                  ),
+                                ),
                               ),
                             );
                           },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 6.sp),
-                            child: _NewInCarouselItem(
-                              product: product,
-                              imageUrl: _extractImageUrl(product),
-                              hookAsset: _hookAsset,
-                              punchColor: _punchColor,
-                              onTap: () => _openProduct(product),
-                            ),
-                          ),
                         );
                       },
                     ),
                   ),
                 ),
               ],
+            ),
+          ),
+          Positioned(
+            top: 370.sp + 10.sp + 28.sp - 2.sp,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              newInBottomExtensionImage,
+              fit: BoxFit.fill,
             ),
           ),
         ],
@@ -438,6 +455,7 @@ class _NewInCarouselItem extends StatelessWidget {
   final String hookAsset;
   final Color punchColor;
   final VoidCallback onTap;
+  final double glowOpacity;
 
   const _NewInCarouselItem({
     required this.product,
@@ -445,6 +463,7 @@ class _NewInCarouselItem extends StatelessWidget {
     required this.hookAsset,
     required this.punchColor,
     required this.onTap,
+    this.glowOpacity = 0.0,
   });
 
   @override
@@ -458,6 +477,7 @@ class _NewInCarouselItem extends StatelessWidget {
           product['price'] ??
           product['msp'] ??
           product['mrp'];
+
       if (raw is num) return raw;
       return num.tryParse(raw?.toString().replaceAll(',', '') ?? '') ?? 0;
     }();
@@ -517,18 +537,47 @@ class _NewInCarouselItem extends StatelessWidget {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 36.sp),
-                  child: PremiumProductCard(
-                    imageUrl: imageUrl,
-                    title: title,
-                    brand: brand,
-                    price: price,
-                    mrp: mrp,
-                    discountPercent: discountPercent,
-                    condensed: true,
-                    theme: PremiumProductCardTheme.light,
-                    showWishlist: false,
-                    showAdd: false,
-                    onTap: onTap,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.sp),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF9B8FFF)
+                              .withValues(alpha: glowOpacity * 0.8),
+                          Colors.white.withValues(alpha: glowOpacity * 0.9),
+                          const Color(0xFF9B8FFF)
+                              .withValues(alpha: glowOpacity * 0.8),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF9B8FFF)
+                              .withValues(alpha: glowOpacity * 0.3),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                          offset: const Offset(0, -10),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(1.5), // this IS the border
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(11.sp),
+                      child: PremiumProductCard(
+                        imageUrl: imageUrl,
+                        title: title,
+                        brand: brand,
+                        price: price,
+                        mrp: mrp,
+                        discountPercent: discountPercent,
+                        condensed: true,
+                        theme: PremiumProductCardTheme.light,
+                        showWishlist: false,
+                        showAdd: false,
+                        onTap: onTap,
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(

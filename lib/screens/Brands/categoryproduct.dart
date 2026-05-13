@@ -336,16 +336,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             ? int.tryParse(widget.collectionIds.first?.toString() ?? '') ?? 0
             : 0;
 
-        print("🎯 Loading LUXE products for collectionId=$collectionId, gender=${widget.genderType}...");
+        print(
+            "🎯 Loading LUXE products for collectionId=$collectionId, gender=${widget.genderType}...");
 
         if (collectionId > 0) {
           // ✅ Fetch LUXE products scoped to this specific collection AND gender
-          final luxeProducts = await productController
-              .fetchCollectionLuxeProducts(
-                collectionId,
-                limit: 100,
-                gender: widget.genderType, // ✅ Pass gender to filter by gender
-              );
+          // Use pagination with limit of 20 instead of loading 100 at once
+          final luxeProducts =
+              await productController.fetchCollectionLuxeProducts(
+            collectionId,
+            limit: 10,
+            gender: widget.genderType, // ✅ Pass gender to filter by gender
+            page: 1,
+          );
           productController.allLuxeList.assignAll(luxeProducts);
         } else {
           // No collection — fetch all luxury products globally
@@ -377,6 +380,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           productController.allLuxeList,
         );
 
+        // ✅ Fetch filter chips for LUXE view
+        catalogController.fetchChipsForCategory(
+          collectionId: collectionId > 0 ? collectionId : null,
+          superCatId: widget.genderType > 0 ? widget.genderType : null,
+          segment: widget.segment ?? 'luxury',
+        );
+
         print(
             "✅ LUXE products loaded: ${productController.allLuxeList.length}");
       } else {
@@ -404,7 +414,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   // ✅ Load more products (pagination)
   Future<void> _loadMoreProducts() async {
-    if (_isLoadingMore || !_hasMoreData || !_hasActiveFilters) return;
+    if (_isLoadingMore || !_hasMoreData) return;
+
+    // ✅ Check if this is a LUXE view
+    final isLuxeView = widget.type == 'luxe' || widget.segment == 'luxury';
 
     setState(() {
       _isLoadingMore = true;
@@ -412,46 +425,80 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     });
 
     try {
-      await catalogController.getFilterAndSortProducts(
-        brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
-        colors: _appliedColors.isNotEmpty ? _appliedColors : null,
-        sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
-        minPrice: _appliedMinPrice,
-        maxPrice: _appliedMaxPrice,
-        minDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
-            ? null
-            : _appliedMinDiscount.toString(),
-        maxDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
-            ? null
-            : _appliedMaxDiscount.toString(),
-        sortOption:
-            _appliedSortOption != "recommended" ? _appliedSortOption : null,
-        catId: widget.categoryId,
-        superCatId: widget.genderType,
-        page: _currentPage,
-        limit: 20,
-        appendResults: true, // ✅ Append instead of replace
-      );
+      if (isLuxeView) {
+        // ✅ Load more LUXE products using pagination
+        final collectionId = widget.collectionIds.isNotEmpty
+            ? int.tryParse(widget.collectionIds.first?.toString() ?? '') ?? 0
+            : 0;
 
-      // Client-side filter
-      var apiResults =
-          List<dynamic>.from(catalogController.categoryProductList);
-      final filteredResults = apiResults.where((product) {
-        final productId = int.tryParse(product['id']?.toString() ?? '');
-        return productId != null &&
-            _originalCategoryProductIds.contains(productId);
-      }).toList();
+        if (collectionId > 0) {
+          final moreLuxeProducts =
+              await productController.fetchCollectionLuxeProducts(
+            collectionId,
+            limit: 20,
+            gender: widget.genderType,
+            page: _currentPage,
+          );
 
-      catalogController.categoryProductList.assignAll(filteredResults);
+          // Append new products to the list
+          productController.allLuxeList.addAll(moreLuxeProducts);
+          catalogController.categoryProductList
+              .assignAll(productController.allLuxeList);
 
-      // Check if we got less than 20 products (means no more data)
-      if (apiResults.length < 20) {
-        setState(() {
-          _hasMoreData = false;
-        });
+          // Check if we got less than 20 products (means no more data)
+          if (moreLuxeProducts.length < 20) {
+            setState(() {
+              _hasMoreData = false;
+            });
+          }
+
+          print(
+              "✅ Loaded LUXE page $_currentPage (${moreLuxeProducts.length} products)");
+        }
+      } else if (_hasActiveFilters) {
+        // ✅ Load more filtered products
+        await catalogController.getFilterAndSortProducts(
+          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
+          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
+          minPrice: _appliedMinPrice,
+          maxPrice: _appliedMaxPrice,
+          minDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMinDiscount.toString(),
+          maxDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMaxDiscount.toString(),
+          sortOption:
+              _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          catId: widget.categoryId,
+          superCatId: widget.genderType,
+          page: _currentPage,
+          limit: 20,
+          appendResults: true, // ✅ Append instead of replace
+        );
+
+        // Client-side filter
+        var apiResults =
+            List<dynamic>.from(catalogController.categoryProductList);
+        final filteredResults = apiResults.where((product) {
+          final productId = int.tryParse(product['id']?.toString() ?? '');
+          return productId != null &&
+              _originalCategoryProductIds.contains(productId);
+        }).toList();
+
+        catalogController.categoryProductList.assignAll(filteredResults);
+
+        // Check if we got less than 20 products (means no more data)
+        if (apiResults.length < 20) {
+          setState(() {
+            _hasMoreData = false;
+          });
+        }
+
+        print(
+            "✅ Loaded page $_currentPage (${filteredResults.length} products)");
       }
-
-      print("✅ Loaded page $_currentPage (${filteredResults.length} products)");
     } catch (e) {
       print("❌ Error loading more products: $e");
       setState(() {

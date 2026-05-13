@@ -54,11 +54,11 @@ class PremiumProductCard extends StatelessWidget {
     final Color discountColor =
         isDark ? const Color(0xFFA8AFD8) : const Color(0xFFA3A7C9);
 
-    final double imageHeight = condensed ? 148.sp : 188.sp;
-    final double titleSize = condensed ? 15.sp : 17.sp;
+    final double imageHeight = condensed ? 168.sp : 188.sp;
+    final double titleSize = condensed ? 14.sp : 17.sp;
     final double brandSize = condensed ? 10.sp : 11.sp;
-    final double priceSize = condensed ? 16.sp : 18.sp;
-    final double mrpSize = condensed ? 11.sp : 12.sp;
+    final double priceSize = condensed ? 14.sp : 18.sp;
+    final double mrpSize = condensed ? 16.sp : 12.sp;
     final double discountSize = condensed ? 10.sp : 11.sp;
 
     final int computedDiscount =
@@ -76,13 +76,15 @@ class PremiumProductCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(16.sp),
+          borderRadius: BorderRadius.circular(10.sp),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(16.sp)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10.sp), //IDHAR
+                  topRight: Radius.circular(10.sp)),
               child: SizedBox(
                 height: imageHeight,
                 width: double.infinity,
@@ -97,7 +99,7 @@ class PremiumProductCard extends StatelessWidget {
                         height: 90.sp,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(16.sp),
+                            topRight: Radius.circular(8.sp),
                           ),
                           gradient: LinearGradient(
                             begin: Alignment.topRight,
@@ -128,7 +130,7 @@ class PremiumProductCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(10.sp, 10.sp, 10.sp, 0.sp),
+              padding: EdgeInsets.fromLTRB(10.sp, 7.sp, 10.sp, 0.sp),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -146,7 +148,7 @@ class PremiumProductCard extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                             fontSize: titleSize,
                             color: titleColor,
-                            height: 1.05,
+                            // height: 1.02,
                           ),
                         ),
                       ),
@@ -158,7 +160,7 @@ class PremiumProductCard extends StatelessWidget {
                             iconColor:
                                 isDark ? Colors.white : const Color(0xFF32343B),
                             borderColor: isDark
-                                ? Colors.white.withOpacity(0.35)
+                                ? Colors.white.withValues(alpha: 0.35)
                                 : const Color(0xFFE2E5ED),
                             onTap: onAddTap,
                           ),
@@ -171,9 +173,10 @@ class PremiumProductCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: 'InstrumentSans',
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.bold,
                       fontSize: brandSize,
                       color: brandColor,
+                      height: 0.8,
                     ),
                   ),
                   Wrap(
@@ -185,7 +188,7 @@ class PremiumProductCard extends StatelessWidget {
                         "₹${price.toStringAsFixed(0)}",
                         style: TextStyle(
                           fontFamily: 'InstrumentSans',
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           fontSize: priceSize,
                           color: titleColor,
                         ),

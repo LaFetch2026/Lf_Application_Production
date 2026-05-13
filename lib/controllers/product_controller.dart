@@ -1417,15 +1417,19 @@ class ProductController extends BaseController {
   /// Returns up to [limit] luxury products (price >= ₹7000)
   /// If [catId] is provided, filters to only that category
   /// If [gender] is provided, filters to only that gender
+  /// If [page] is provided, fetches that specific page (default: 1)
   Future<List<Map<String, dynamic>>> fetchCollectionLuxeProducts(
       int collectionId,
       {int limit = 4,
       int gender = 0,
-      int? catId}) async {
-    // ✅ Include limit in cache key so different limits don't share cache
-    final cacheKey = 'luxe_${collectionId}_${catId ?? 0}_${gender}_limit${limit}';
+      int? catId,
+      int page = 1}) async {
+    // ✅ Include limit and page in cache key so different limits/pages don't share cache
+    final cacheKey =
+        'luxe_${collectionId}_${catId ?? 0}_${gender}_limit${limit}_page${page}';
     if (_luxeCache.containsKey(cacheKey)) {
-      print('✅ Using cached LUXE products for collection $collectionId (limit=$limit)');
+      print(
+          '✅ Using cached LUXE products for collection $collectionId (limit=$limit, page=$page)');
       return _luxeCache[cacheKey]!;
     }
 
@@ -1436,7 +1440,7 @@ class ProductController extends BaseController {
       final Map<String, String> queryParams = {
         'collectionId': collectionId.toString(),
         'segment': 'luxury',
-        'page': '1',
+        'page': page.toString(),
         'limit': limit.toString(), // ✅ Pass limit to API
       };
 
@@ -1453,7 +1457,8 @@ class ProductController extends BaseController {
       final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
           .replace(queryParameters: queryParams);
 
-      print('📤 Fetching LUXE products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''}): $uri');
+      print(
+          '📤 Fetching LUXE products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''}): $uri');
 
       final response = await http.get(
         uri,
@@ -1507,9 +1512,11 @@ class ProductController extends BaseController {
       int gender = 0,
       int? catId}) async {
     // ✅ Include limit in cache key so different limits don't share cache
-    final cacheKey = 'affordable_${collectionId}_${catId ?? 0}_${gender}_limit${limit}';
+    final cacheKey =
+        'affordable_${collectionId}_${catId ?? 0}_${gender}_limit${limit}';
     if (_luxeCache.containsKey(cacheKey)) {
-      print('✅ Using cached affordable products for collection $collectionId (limit=$limit)');
+      print(
+          '✅ Using cached affordable products for collection $collectionId (limit=$limit)');
       return _luxeCache[cacheKey]!;
     }
 
@@ -1537,7 +1544,8 @@ class ProductController extends BaseController {
       final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
           .replace(queryParameters: queryParams);
 
-      print('📤 Fetching affordable products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''}): $uri');
+      print(
+          '📤 Fetching affordable products for collection $collectionId (gender=$gender, limit=$limit${catId != null ? ', catId=$catId' : ''}): $uri');
 
       final response = await http.get(
         uri,
@@ -1575,7 +1583,8 @@ class ProductController extends BaseController {
         return [];
       }
     } catch (e) {
-      print('❌ Error fetching affordable products for collection $collectionId: $e');
+      print(
+          '❌ Error fetching affordable products for collection $collectionId: $e');
       return [];
     }
   }

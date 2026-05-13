@@ -271,6 +271,7 @@ const cancelorder = 'assets/cancelpng.png';
 const payfield = 'assets/images/paymentfield.png';
 const paysuccess = 'assets/images/paymentsucess.svg';
 const somethingwentwrong = 'assets/images/somewrong.png';
+const newInBottomExtensionImage = 'assets/images/new_in_bottom_extension.png';
 
 class ApiConstants {
   ApiConstants._();

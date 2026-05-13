@@ -895,6 +895,7 @@ class HomeScreenState extends State<HomeScreen>
                                 // ✅ Consistent spacing
                                 // Marquee Banner - Dynamic from API with icons
                                 Obx(() {
+                                  // print("Idhar");
                                   final announcements =
                                       homeController.announcements;
 
@@ -937,10 +938,11 @@ class HomeScreenState extends State<HomeScreen>
                                   );
                                 }),
 
-                                SizedBox(height: 12.sp), // ✅ Consistent spacing
+                                // SizedBox(height: 12.sp), // ✅ Consistent spacing
 
                                 // ── NEW IN Section ──────────────────────────────
                                 // _NewInSection(newInController: newInController),
+
                                 RepaintBoundary(
                                   child: NewInSection(
                                     newInController:

@@ -67,6 +67,7 @@ class _CollectionsSectionState extends State<CollectionsSection> {
                   screen: 'luxe',
                   categoryList: [],
                   title: 'LUXE',
+                  segment: 'luxury',
                 ),
               ),
             );
