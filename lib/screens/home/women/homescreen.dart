@@ -23,6 +23,7 @@ import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
 import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
+import 'package:lafetch/screens/home/women/widgets/new_in_heading.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
@@ -883,19 +884,140 @@ class HomeScreenState extends State<HomeScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Section video banner (cached controllers, no extra S3 requests on tab switch)
-                                Obx(() {
-                                  final genderId =
-                                      homeController.homeGenderValue.value;
-                                  final controller =
-                                      _sectionVideoControllers[genderId];
-                                  return _SectionVideoBanner(
-                                    controller: controller,
-                                  );
-                                }),
-                                // ✅ Consistent spacing
+                                // Obx(() {
+                                //   final genderId =
+                                //       homeController.homeGenderValue.value;
+                                //   final controller =
+                                //       _sectionVideoControllers[genderId];
+                                //   return _SectionVideoBanner(
+                                //     controller: controller,
+                                //   );
+                                // }),
+
+                                // // SizedBox(height: 12.sp), // ✅ Consistent spacing
+
+                                // // ── NEW IN Section ──────────────────────────────
+                                // // _NewInSection(newInController: newInController),
+
+                                // Transform.translate(
+                                //   offset: Offset(0, -32.sp),
+                                //   child: Center(
+                                //     child: SizedBox(
+                                //       width: 185.sp,
+                                //       height: 64.sp,
+                                //       child: Stack(
+                                //         alignment: Alignment.center,
+                                //         children: [
+                                //           SvgPicture.asset(
+                                //             newDropBgAsset,
+                                //             fit: BoxFit.contain,
+                                //           ),
+                                //           SvgPicture.asset(
+                                //             newDropTextureAsset,
+                                //             fit: BoxFit.contain,
+                                //           ),
+                                //           SvgPicture.asset(
+                                //             newDropTextAsset,
+                                //             fit: BoxFit.contain,
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
+
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        // VIDEO SECTION
+                                        Obx(() {
+                                          final genderId = homeController
+                                              .homeGenderValue.value;
+
+                                          final controller =
+                                              _sectionVideoControllers[
+                                                  genderId];
+
+                                          return _SectionVideoBanner(
+                                            controller: controller,
+                                          );
+                                        }),
+
+                                        // reserve space for overlapping badge
+                                        // SizedBox(height: 36.sp),
+
+                                        // NEW IN SECTION
+                                        RepaintBoundary(
+                                          child: NewInSection(
+                                            newInController: newInController,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    //FLOATING NEW DROP
+                                    Positioned(
+                                      top: 130.sp,
+                                      left: 0,
+                                      right: 0,
+                                      // bottom: 0.sp,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 255.sp,
+                                          height: 154.sp,
+                                          child: ClipRRect(
+                                            child: Stack(
+                                              clipBehavior: Clip.hardEdge,
+                                              alignment: Alignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  newDropBgAsset,
+                                                  height: 154.sp,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                                SvgPicture.asset(
+                                                  newDropTextureAsset,
+                                                  height: 154.sp,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                                NewInHeading(
+                                                  asset: newDropTextAsset,
+                                                  height: 25.sp,
+                                                ),
+                                                Positioned(
+                                                  top: 50.sp,
+                                                  left: 0,
+                                                  right: 0,
+                                                  child: SizedBox(
+                                                    width: 250.sp,
+                                                    height: 48.sp,
+                                                    child: CustomPaint(
+                                                      painter:
+                                                          DotMatrixPainter(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                // //NEW IN Section
+                                // RepaintBoundary(
+                                //   child: NewInSection(
+                                //     newInController:
+                                //         newInController, // Assumes newInController is reactive and handles current genderId.
+                                //   ),
+                                // ),
+
                                 // Marquee Banner - Dynamic from API with icons
                                 Obx(() {
-                                  // print("Idhar");
                                   final announcements =
                                       homeController.announcements;
 
@@ -938,21 +1060,7 @@ class HomeScreenState extends State<HomeScreen>
                                   );
                                 }),
 
-                                // SizedBox(height: 12.sp), // ✅ Consistent spacing
-
-                                // ── NEW IN Section ──────────────────────────────
-                                // _NewInSection(newInController: newInController),
-
-                                RepaintBoundary(
-                                  child: NewInSection(
-                                    newInController:
-                                        newInController, // Assumes newInController is reactive and handles current genderId.
-                                  ),
-                                ),
-
-                                SizedBox(
-                                    height: 16
-                                        .sp), // ✅ Spacing before newly launched
+                                SizedBox(height: 16.sp),
 
                                 // ── NEWLY LAUNCHED BRANDS Section ──────────────────────────────
                                 _NewlyLaunchedBrandsSection(
@@ -2259,19 +2367,6 @@ class _SectionStripState extends State<_SectionStrip> {
                   ),
                 ),
               ),
-              // Padding(
-              //   padding:
-              //       EdgeInsets.symmetric(horizontal: 16.sp, vertical: 0.sp),
-              //   child: Text(
-              //     'Curated Luxury From Trending Now',
-              //     style: TextStyle(
-              //       fontSize: 12.sp,
-              //       fontFamily: 'Clash Display Regular',
-              //       color: textColor,
-              //     ),
-              //   ),
-              // ),
-              // SizedBox(height: 12.sp),
 
               // LUXE Products Horizontal Scroll
               SizedBox(
@@ -2282,45 +2377,6 @@ class _SectionStripState extends State<_SectionStrip> {
                   itemCount: luxeProducts.length + 1,
                   separatorBuilder: (_, __) => SizedBox(width: 10.sp),
                   itemBuilder: (context, index) {
-                    // Last item — View All card (inverted colors vs bg)
-                    // if (index == luxeProducts.length) {
-                    //   // return GestureDetector(
-                    //   //   onTap: goToLuxePage,
-                    //   //   child: Container(
-                    //   //     width: 150.sp,
-                    //   //     decoration: BoxDecoration(
-                    //   //       borderRadius: BorderRadius.circular(8.sp),
-                    //   //       color: dark ? Colors.white : Colors.black,
-                    //   //       border: Border.all(
-                    //   //         color: dark ? Colors.white : Colors.black,
-                    //   //         width: 1,
-                    //   //       ),
-                    //   //     ),
-                    //   //     child: Center(
-                    //   //       child: Column(
-                    //   //         mainAxisAlignment: MainAxisAlignment.center,
-                    //   //         children: [
-                    //   //           Text(
-                    //   //             'VIEW ALL',
-                    //   //             style: TextStyle(
-                    //   //               fontSize: 13.sp,
-                    //   //               fontWeight: FontWeight.w700,
-                    //   //               color: dark ? Colors.black : Colors.white,
-                    //   //               letterSpacing: 1.0,
-                    //   //             ),
-                    //   //           ),
-                    //   //           SizedBox(height: 6.sp),
-                    //   //           Icon(
-                    //   //             Icons.arrow_forward,
-                    //   //             size: 18.sp,
-                    //   //             color: dark ? Colors.black : Colors.white,
-                    //   //           ),
-                    //   //         ],
-                    //   //       ),
-                    //   //     ),
-                    //   //   ),
-                    //   // );
-                    // }
                     if (index == luxeProducts.length) {
                       return SizedBox(
                         width: 150.sp,
@@ -4397,7 +4453,8 @@ class _AnnouncementMarqueeState extends State<_AnnouncementMarquee> {
 
     return Container(
       height: 30.sp,
-      color: const Color(0xff2D2D2E),
+      // color: const Color(0xff2D2D2E),
+      color: Colors.black,
       width: MediaQuery.of(context).size.width,
       child: ListView.builder(
         controller: _scrollController,

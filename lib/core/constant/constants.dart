@@ -272,6 +272,9 @@ const payfield = 'assets/images/paymentfield.png';
 const paysuccess = 'assets/images/paymentsucess.svg';
 const somethingwentwrong = 'assets/images/somewrong.png';
 const newInBottomExtensionImage = 'assets/images/new_in_bottom_extension.png';
+const String newDropBgAsset = 'assets/images/new_drop_text_bg.svg';
+const String newDropTextureAsset = 'assets/images/new_drop_text_texture.svg';
+const String newDropTextAsset = 'assets/images/new_drop_friday_text.svg';
 
 class ApiConstants {
   ApiConstants._();

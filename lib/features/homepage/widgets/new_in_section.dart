@@ -5,10 +5,9 @@ import 'dart:ui' show lerpDouble;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 
-import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../controllers/new_in_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../../../screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
@@ -39,25 +38,177 @@ class NewInSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget _newInShimmerCard({
+      required double width,
+      required double height,
+      bool highlighted = false,
+    }) {
+      return Column(
+        children: [
+          // Hanging line
+          Container(
+            width: 1.5.sp,
+            height: 24.sp,
+            color: Colors.black.withOpacity(0.18),
+          ),
+
+          // Punch hole
+          Container(
+            width: 11.sp,
+            height: 11.sp,
+            decoration: BoxDecoration(
+              color: const Color(0xFF2E2F35),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withOpacity(0.06),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 5.sp),
+
+          // Card shimmer
+          Shimmer.fromColors(
+            baseColor: const Color(0xFF26272D),
+            highlightColor: const Color(0xFF3B3D46),
+            period: const Duration(milliseconds: 1500),
+            child: Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14.sp),
+                boxShadow: highlighted
+                    ? [
+                        BoxShadow(
+                          color: const Color(0xFF9B8FFF).withOpacity(0.22),
+                          blurRadius: 24,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Column(
+                children: [
+                  // Fake image area
+                  Expanded(
+                    flex: 7,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.16),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(14.sp),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Fake details area
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: EdgeInsets.all(10.sp),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 10.sp,
+                            width: width * 0.52,
+                            color: Colors.black.withOpacity(0.10),
+                          ),
+                          SizedBox(height: 8.sp),
+                          Container(
+                            height: 8.sp,
+                            width: width * 0.32,
+                            color: Colors.black.withOpacity(0.07),
+                          ),
+                          const Spacer(),
+                          Row(
+                            children: [
+                              Container(
+                                height: 10.sp,
+                                width: width * 0.22,
+                                color: Colors.black.withOpacity(0.10),
+                              ),
+                              SizedBox(width: 8.sp),
+                              Container(
+                                height: 8.sp,
+                                width: width * 0.18,
+                                color: Colors.black.withOpacity(0.06),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Obx(() {
       if (newInController.isLoading.value) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        return SizedBox(
+          height: 370.sp,
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
             children: [
-              Padding(
-                padding: EdgeInsets.only(top: 8.sp, bottom: 12.sp),
-                child: Container(
-                  height: 20.sp,
-                  width: 90.sp,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    borderRadius: BorderRadius.circular(4.sp),
+              // LEFT CARD
+              Positioned(
+                left: 0.sp,
+                top: 70.sp,
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.0015)
+                    ..rotateY(0.22)
+                    ..rotateZ(-0.05)
+                    ..scale(0.92),
+                  child: Opacity(
+                    opacity: 0.38,
+                    child: _newInShimmerCard(
+                      width: 145.sp,
+                      height: 215.sp,
+                    ),
                   ),
                 ),
               ),
-              const DummyGridList(size: 2),
+
+              // RIGHT CARD
+              Positioned(
+                right: 0.sp,
+                top: 70.sp,
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.0015)
+                    ..rotateY(-0.22)
+                    ..rotateZ(0.05)
+                    ..scale(0.92),
+                  child: Opacity(
+                    opacity: 0.38,
+                    child: _newInShimmerCard(
+                      width: 145.sp,
+                      height: 215.sp,
+                    ),
+                  ),
+                ),
+              ),
+
+              // CENTER ACTIVE CARD
+              Positioned(
+                top: 50.sp,
+                child: _newInShimmerCard(
+                  width: 180.sp,
+                  height: 235.sp,
+                  highlighted: true,
+                ),
+              ),
             ],
           ),
         );
@@ -67,11 +218,8 @@ class NewInSection extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.sp),
-        child: _NewInRotatingHangerCarousel(
-          products: newInController.products,
-        ),
+      return _NewInRotatingHangerCarousel(
+        products: newInController.products,
       );
     });
   }
@@ -94,11 +242,6 @@ class _NewInRotatingHangerCarouselState
   static const int _infiniteMultiplier = 1000;
   static const String _bgAsset = 'assets/images/new_in_bg.png';
   static const String _hookAsset = 'assets/images/new_in_hook.png';
-  static const String _newDropBgAsset = 'assets/images/new_drop_text_bg.svg';
-  static const String _newDropTextureAsset =
-      'assets/images/new_drop_text_texture.svg';
-  static const String _newDropTextAsset =
-      'assets/images/new_drop_friday_text.svg';
   static const Color _punchColor = Color(0xFF2E2F35);
 
   late PageController _pageController;
@@ -223,18 +366,6 @@ class _NewInRotatingHangerCarouselState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          //   child: const Text(
-          //     "NEW IN",
-          //     style: TextStyle(
-          //       fontFamily: "Clash Display Semibold",
-          //       fontSize: 18,
-          //       color: Colors.black,
-          //     ),
-          //   ),
-          // ),
-          // SizedBox(height: 10.sp),
           Container(
             height: 370.sp,
             decoration: BoxDecoration(
@@ -246,35 +377,6 @@ class _NewInRotatingHangerCarouselState
             ),
             child: Stack(
               children: [
-                Positioned(
-                  top: 14.sp,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: SizedBox(
-                      width: 185.sp,
-                      height: 64.sp,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            _newDropBgAsset,
-                            fit: BoxFit.contain,
-                          ),
-                          SvgPicture.asset(
-                            _newDropTextureAsset,
-                            fit: BoxFit.contain,
-                          ),
-                          SvgPicture.asset(
-                            _newDropTextAsset,
-                            // width: 118.sp,
-                            fit: BoxFit.contain,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 Padding(
                   padding: EdgeInsets.only(top: 78.sp),
                   child: Listener(
@@ -506,12 +608,12 @@ class _NewInCarouselItem extends StatelessWidget {
           onTap: onTap,
           child: SizedBox(
             width: 210.sp,
-            height: 265.sp,
+            height: 230.sp,
             child: Stack(
               clipBehavior: Clip.none,
               children: [
                 Positioned(
-                  top: 0.sp,
+                  top: -40.sp,
                   left: 0,
                   right: 0,
                   child: Center(
@@ -524,19 +626,10 @@ class _NewInCarouselItem extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  top: 25.sp,
+                  top: -15.sp,
+                  bottom: 0,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    child: Container(
-                      width: 1.6.sp,
-                      height: 14.sp,
-                      color: const Color(0xFF141414),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 36.sp),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12.sp),
@@ -581,12 +674,10 @@ class _NewInCarouselItem extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  top: 46.sp,
+                  top: -5.sp,
                   left: 0,
                   right: 0,
                   child: Center(
-                    // Punch hole aligned to the hook center to create
-                    // the hanging-card illusion over the dark background.
                     child: Container(
                       width: 12.sp,
                       height: 12.sp,
