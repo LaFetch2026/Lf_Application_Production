@@ -343,14 +343,14 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                         cartId: 0,
                                       )))
                               .then((value) {
-                                if (mounted) {
-                                  setState(
-                                    () {
-                                      productController.addressList.clear();
-                                    },
-                                  );
-                                }
-                              });
+                            if (mounted) {
+                              setState(
+                                () {
+                                  productController.addressList.clear();
+                                },
+                              );
+                            }
+                          });
                         },
                         child: Padding(
                           padding: EdgeInsets.only(

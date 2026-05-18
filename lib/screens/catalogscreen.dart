@@ -53,29 +53,13 @@ class CatalogScreenState extends State<CatalogScreen> {
           backgroundColor: whiteColor,
           body: Column(
             children: [
-              /*   CatalogAppbar(
-                text: "Catalog",
-                onPressedSearch: () async {
-                  Get.to(const SearchScreen());
-                  analytics
-                      .logEvent(name: "search_page", parameters: <String, Object>{
-                    "page_name": "search_page",
-                  });
-                },
-                onPressedCart: () async {
-                  Get.to(CartScreen());
-                  analytics
-                      .logEvent(name: "cart_page", parameters: <String, Object>{
-                    "page_name": "cart_page",
-                  });
-                },
-              ), */
               HomeAppbar(
                 showSearch: true,
                 title: "Categories",
                 onPressedSearch: () async {
                   // searchController.searchController.clear();
-                  Get.to(() => const SearchScreen(), preventDuplicates: true)?.then((_) {
+                  Get.to(() => const SearchScreen(), preventDuplicates: true)
+                      ?.then((_) {
                     if (mounted) {
                       setState(() {});
                     }

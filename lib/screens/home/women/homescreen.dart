@@ -17,8 +17,7 @@ import 'package:lafetch/common/widget/lists/dummy_product_list.dart';
 import 'package:lafetch/common/widget/other/filter_chips_row.dart';
 import 'package:lafetch/features/homepage/widgets/new_in_section.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
-import 'package:lafetch/screens/Brands/categoryproduct.dart'
-    hide SizedBox, Center, Column, Padding;
+import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
 import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
@@ -34,9 +33,7 @@ import 'package:video_player/video_player.dart';
 import '../../../utils/audio_session_helper.dart';
 import '../../../common/widget/appbar/home_appbar.dart';
 import '../../../screens/accountscreen.dart';
-import '../../../screens/catalog/women_catalog.dart';
 import '../../../common/widget/lists/dummy_home_brand.dart';
-import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
 import '../../../common/widget/text/app_text.dart';
 import '../../../controllers/brand_controller.dart';
@@ -50,12 +47,10 @@ import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
-import '../../../models/collection_model.dart';
 import '../../../models/nudge_model.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
 import '../../../core/utils/image_helper.dart';
 import '../../../controllers/new_in_controller.dart';
-import '../../../common/widget/cards/product_card.dart';
 import '../../../widgets/nudge_badge_row.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:shimmer/shimmer.dart';
@@ -113,7 +108,6 @@ class HomeScreenState extends State<HomeScreen>
   bool _isLoadingMoreCollections = false;
   final int _collectionsPerPage =
       3; // ✅ Reduced to 3 to prevent memory overload
-  bool _showAllCollections = false; // ✅ Track View All button state
 
   @override
   void initState() {
@@ -445,19 +439,19 @@ class HomeScreenState extends State<HomeScreen>
 
   // Handle scroll notifications for navbar transparency
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollUpdateNotification) {
-      // Only set to scrolling if not already scrolling
-      if (!homeController.isScrolling.value) {
-        homeController.isScrolling.value = true;
-      }
-      // Reset timer on each scroll update
-      _scrollEndTimer?.cancel();
-      _scrollEndTimer = Timer(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          homeController.isScrolling.value = false;
-        }
-      });
-    }
+    // if (notification is ScrollUpdateNotification) {
+    //   // Only set to scrolling if not already scrolling
+    //   if (!homeController.isScrolling.value) {
+    //     homeController.isScrolling.value = true;
+    //   }
+    //   // Reset timer on each scroll update
+    //   _scrollEndTimer?.cancel();
+    //   _scrollEndTimer = Timer(const Duration(milliseconds: 500), () {
+    //     if (mounted) {
+    //       homeController.isScrolling.value = false;
+    //     }
+    //   });
+    // }
     return false;
   }
 
@@ -523,7 +517,6 @@ class HomeScreenState extends State<HomeScreen>
     final int genderId = tab['id'] is int
         ? tab['id'] as int
         : int.tryParse(tab['id']?.toString() ?? '') ?? 0;
-    final String genderName = tab['name']?.toString() ?? '';
 
     // Only trigger if actually changed
     if (homeController.homeGenderValue.value != genderId) {
@@ -547,12 +540,54 @@ class HomeScreenState extends State<HomeScreen>
     }
   }
 
-  /// Format price for display
-  String _formatPrice(dynamic price) {
-    if (price is num) {
-      return price.toInt().toString();
-    }
-    return price?.toString() ?? '0';
+  Widget _buildTabBar() {
+    return Obx(
+      () => homeController.isLoadingTabs.value
+          ? SizedBox(
+              height: 40.sp,
+              child: const Center(
+                child: LfLogoLoader(size: 20, showGlow: false),
+              ),
+            )
+          : homeController.genderTabs.isEmpty || _genderTabController == null
+              ? const SizedBox.shrink()
+              : SizedBox(
+                  width: double.infinity,
+                  height: 40.sp,
+                  child: TabBar(
+                    controller: _genderTabController,
+                    isScrollable: homeController.genderTabs.length > 3,
+                    tabAlignment: homeController.genderTabs.length > 3
+                        ? TabAlignment.start
+                        : TabAlignment.fill,
+                    indicatorColor: homeAppBarColor,
+                    indicatorWeight: 2.sp,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: homeAppBarColor,
+                    unselectedLabelColor: searchTextColor,
+                    dividerColor: Colors.transparent,
+                    labelStyle: TextStyle(
+                      fontSize: 13.sp,
+                      fontFamily: "Clash Display Semibold",
+                      fontWeight: FontWeight.w500,
+                    ),
+                    unselectedLabelStyle: TextStyle(
+                      fontSize: 13.sp,
+                      fontFamily: "Clash Display",
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onTap: (index) {
+                      // Let the TabController listener handle the change
+                    },
+                    tabs: homeController.genderTabs.map((tab) {
+                      final String genderName = tab['name']?.toString() ?? '';
+                      return Tab(
+                        text: genderName.toUpperCase(),
+                      );
+                    }).toList(),
+                  ),
+                ),
+    );
   }
 
   // ------- BANNERS -------
@@ -709,8 +744,10 @@ class HomeScreenState extends State<HomeScreen>
           if (notification.direction == ScrollDirection.reverse &&
               notification.metrics.pixels > 120) {
             home.isBottomNavVisible.value = false;
+            home.isScrolling.value = true;
           } else if (notification.direction == ScrollDirection.forward) {
             home.isBottomNavVisible.value = true;
+            home.isScrolling.value = false;
           }
 
           return false;
@@ -740,139 +777,89 @@ class HomeScreenState extends State<HomeScreen>
             children: [
               Column(
                 children: [
-                  HomeAppbar(
-                    onPressedSearch: () async {
-                      final searchQuery =
-                          searchController.searchController.text;
-                      await analytics.logEvent(
-                        name: 'search_page',
-                        parameters: {'search_string': searchQuery},
-                      );
-                      Get.to(const SearchScreen(), preventDuplicates: true)
-                          ?.then((value) {
-                        setState(() {
-                          productController.categoryFilter.value =
-                              homeController.homeGenderValue.value;
-                          SystemChrome.setSystemUIOverlayStyle(
-                              const SystemUiOverlayStyle(
-                            statusBarColor: whiteColor,
-                            systemNavigationBarColor: whiteColor,
-                          ));
-                        });
-                      });
-                    },
-                    onPressedHeart: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      final isGuest = prefs.getBool('skip') ?? false;
-
-                      if (isGuest) {
-                        getSnackBar("Please login to view your wishlist");
-                        Get.offAll(() => const LoginScreen(
-                              initialTab: 0,
-                            ));
-                        return;
-                      }
-
-                      Get.to(const WishlistScreen())
-                          ?.then((_) => cartController.getCartData());
-                      await analytics.logEvent(
-                        name: "wishlist_page",
-                        parameters: {"page_name": "wishlist_page"},
-                      );
-                    },
-                    onPressedCart: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      final isGuest = prefs.getBool('skip') ?? false;
-
-                      if (isGuest) {
-                        getSnackBar("Please login to view your cart");
-                        Get.offAll(() => LoginScreen(
-                              initialTab: 0,
-                            ));
-                        return;
-                      }
-
-                      Get.to(CartScreen())
-                          ?.then((_) => cartController.getCartData());
-                      await analytics.logEvent(
-                        name: "cart_page",
-                        parameters: {"page_name": "cart_page"},
-                      );
-                    },
-                    onPressedDropDown: () {
-                      homeController.showGenderList.value =
-                          !homeController.showGenderList.value;
-                      setState(() {});
-                    },
-                    onPressedProfile: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      final isGuest = prefs.getBool('skip') ?? false;
-                      if (isGuest) {
-                        getSnackBar("Please login to view your profile");
-                        Get.to(() => const LoginScreen(initialTab: 0));
-                      } else {
-                        Get.to(() => AccountScreen(onPressed: () {}),
-                            transition: Transition.rightToLeft);
-                      }
-                    },
-                  ),
-
-                  // Gender tabs with animated indicator
                   Obx(
-                    () => homeController.isLoadingTabs.value
-                        ? SizedBox(
-                            height: 40.sp,
-                            child: const Center(
-                              child: LfLogoLoader(size: 20, showGlow: false),
-                            ),
-                          )
-                        : homeController.genderTabs.isEmpty ||
-                                _genderTabController == null
-                            ? const SizedBox.shrink()
-                            : SizedBox(
-                                width: double.infinity,
-                                height: 40.sp,
-                                child: TabBar(
-                                  controller: _genderTabController,
-                                  isScrollable:
-                                      homeController.genderTabs.length > 3,
-                                  tabAlignment:
-                                      homeController.genderTabs.length > 3
-                                          ? TabAlignment.start
-                                          : TabAlignment.fill,
-                                  indicatorColor: homeAppBarColor,
-                                  indicatorWeight: 2.sp,
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                  labelColor: homeAppBarColor,
-                                  unselectedLabelColor: searchTextColor,
-                                  dividerColor: Colors.transparent,
-                                  labelStyle: TextStyle(
-                                    fontSize: 13.sp,
-                                    fontFamily: "Clash Display Semibold",
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  unselectedLabelStyle: TextStyle(
-                                    fontSize: 13.sp,
-                                    fontFamily: "Clash Display",
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                    () => HomeAppbar(
+                      useGradient: true,
+                      isSearchCollapsed: homeController.isScrolling.value,
+                      bottom: !homeController.isScrolling.value
+                          ? _buildTabBar()
+                          : null,
+                      onPressedSearch: () async {
+                        final searchQuery =
+                            searchController.searchController.text;
+                        await analytics.logEvent(
+                          name: 'search_page',
+                          parameters: {'search_string': searchQuery},
+                        );
+                        Get.to(const SearchScreen(), preventDuplicates: true)
+                            ?.then((value) {
+                          setState(() {
+                            productController.categoryFilter.value =
+                                homeController.homeGenderValue.value;
+                            SystemChrome.setSystemUIOverlayStyle(
+                                const SystemUiOverlayStyle(
+                              statusBarColor: whiteColor,
+                              systemNavigationBarColor: whiteColor,
+                            ));
+                          });
+                        });
+                      },
+                      onPressedHeart: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        final isGuest = prefs.getBool('skip') ?? false;
 
-                                  /// 🔥 THIS IS THE KEY LINE - call _changeGenderTab to load ALL data
-                                  onTap: (index) {
-                                    // Let the TabController listener handle the change
-                                    // to avoid race condition with onGenderChanged
-                                  },
+                        if (isGuest) {
+                          getSnackBar("Please login to view your wishlist");
+                          Get.offAll(() => const LoginScreen(
+                                initialTab: 0,
+                              ));
+                          return;
+                        }
 
-                                  tabs: homeController.genderTabs.map((tab) {
-                                    final String genderName =
-                                        tab['name']?.toString() ?? '';
-                                    return Tab(
-                                      text: genderName.toUpperCase(),
-                                    );
-                                  }).toList(),
-                                )),
+                        Get.to(const WishlistScreen())
+                            ?.then((_) => cartController.getCartData());
+                        await analytics.logEvent(
+                          name: "wishlist_page",
+                          parameters: {"page_name": "wishlist_page"},
+                        );
+                      },
+                      onPressedCart: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        final isGuest = prefs.getBool('skip') ?? false;
+
+                        if (isGuest) {
+                          getSnackBar("Please login to view your cart");
+                          Get.offAll(() => const LoginScreen(
+                                initialTab: 0,
+                              ));
+                          return;
+                        }
+
+                        Get.to(const CartScreen())
+                            ?.then((_) => cartController.getCartData());
+                        await analytics.logEvent(
+                          name: "cart_page",
+                          parameters: {"page_name": "cart_page"},
+                        );
+                      },
+                      onPressedDropDown: () {
+                        homeController.showGenderList.value =
+                            !homeController.showGenderList.value;
+                        setState(() {});
+                      },
+                      onPressedProfile: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        final isGuest = prefs.getBool('skip') ?? false;
+                        if (isGuest) {
+                          getSnackBar("Please login to view your profile");
+                          Get.to(() => const LoginScreen(initialTab: 0));
+                        } else {
+                          Get.to(() => AccountScreen(onPressed: () {}),
+                              transition: Transition.rightToLeft);
+                        }
+                      },
+                    ),
                   ),
-
                   Expanded(
                     child: Stack(
                       children: [
@@ -1628,303 +1615,6 @@ String? firstImageUrlFromProduct(Map<String, dynamic> m) {
     if (v is String && v.trim().isNotEmpty) return v.trim();
   }
   return null;
-}
-
-class _NavCircleButton extends StatelessWidget {
-  final IconData icon;
-  final bool enabled;
-  final VoidCallback? onTap;
-
-  const _NavCircleButton({
-    required this.icon,
-    required this.enabled,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 28.sp,
-        height: 28.sp,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: enabled ? blackColor : const Color(0xFFE5E7EB),
-        ),
-        child: Icon(
-          icon,
-          size: 18.sp,
-          color: enabled ? Colors.white : const Color(0xFF9CA3AF),
-        ),
-      ),
-    );
-  }
-}
-
-class _NewInSection extends StatelessWidget {
-  final NewInController newInController;
-  const _NewInSection({required this.newInController});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      if (newInController.isLoading.value) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 10.sp, bottom: 8.sp),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 20.sp,
-                      width: 70.sp,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.04),
-                        borderRadius: BorderRadius.circular(4.sp),
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      height: 28.sp,
-                      width: 90.sp,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.04),
-                        borderRadius: BorderRadius.circular(20.sp),
-                      ),
-                    ),
-                    SizedBox(width: 8.sp),
-                    Container(
-                      width: 28.sp,
-                      height: 28.sp,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black.withOpacity(0.04),
-                      ),
-                    ),
-                    SizedBox(width: 6.sp),
-                    Container(
-                      width: 28.sp,
-                      height: 28.sp,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black.withOpacity(0.04),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const DummyGridList(size: 4),
-            ],
-          ),
-        );
-      }
-
-      if (newInController.products.isEmpty) {
-        return const SizedBox.shrink();
-      }
-
-      final paged = newInController.pagedProducts;
-      final totalPages = newInController.totalPages;
-      final currentPage = newInController.currentPage.value;
-      final canGoPrev = currentPage > 0;
-      final canGoNext = currentPage < totalPages - 1;
-
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.sp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header row: NEW IN | Sort By button | prev/next arrows
-            Row(
-              children: [
-                const AppText(
-                  text: "NEW IN",
-                  fontFamily: "Clash Display Semibold",
-                  color: blackColor,
-                  fontSize: 18,
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () => _showSortSheet(context),
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 6.sp),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFFD1D5DB)),
-                      borderRadius: BorderRadius.circular(20.sp),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Sort By",
-                          style: TextStyle(
-                            fontFamily: "Clash Display Regular",
-                            fontSize: 12.sp,
-                            color: blackColor,
-                          ),
-                        ),
-                        SizedBox(width: 4.sp),
-                        Icon(Icons.tune, size: 14.sp, color: blackColor),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8.sp),
-                _NavCircleButton(
-                  icon: Icons.chevron_left,
-                  enabled: canGoPrev,
-                  onTap: canGoPrev ? newInController.prevPage : null,
-                ),
-                SizedBox(width: 6.sp),
-                _NavCircleButton(
-                  icon: Icons.chevron_right,
-                  enabled: canGoNext,
-                  onTap: canGoNext ? newInController.nextPage : null,
-                ),
-              ],
-            ),
-            SizedBox(height: 8.sp),
-
-            // Swipeable product grid
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onHorizontalDragEnd: (details) {
-                const swipeThreshold = 100.0;
-                final velocity = details.primaryVelocity ?? 0;
-
-                if (velocity < -swipeThreshold) {
-                  // Swiped LEFT → go forward (wrap to page 0 at the end)
-                  if (canGoNext) {
-                    newInController.nextPage();
-                  } else {
-                    newInController.goToPage(0);
-                  }
-                } else if (velocity > swipeThreshold) {
-                  // Swiped RIGHT → go back (wrap to last page at the start)
-                  if (canGoPrev) {
-                    newInController.prevPage();
-                  } else {
-                    newInController.goToPage(totalPages - 1);
-                  }
-                }
-              },
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8.sp,
-                  mainAxisSpacing: 8.sp,
-                  childAspectRatio: 0.62,
-                ),
-                itemCount: paged.length,
-                itemBuilder: (context, index) {
-                  final product = paged[index];
-                  final imageUrl = (product['imageUrls'] as List?)
-                          ?.firstOrNull
-                          ?.toString() ??
-                      '';
-                  final title = product['title'] as String? ?? '';
-                  final brand =
-                      (product['brand'] as Map?)?['name'] as String? ?? '';
-                  final mrp = product['mrp'] as num? ?? 0;
-                  final price =
-                      (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
-                  final productId = product['id'];
-                  return ProductGridCard(
-                    imageUrl: imageUrl,
-                    title: title,
-                    brandName: brand,
-                    price: price,
-                    mrp: mrp,
-                    nudges: (product['nudges'] as List<dynamic>?)
-                            ?.map((e) =>
-                                Nudge.fromJson(e as Map<String, dynamic>))
-                            .toList() ??
-                        [],
-                    onTap: () {
-                      if (productId == null) return;
-                      Get.to(() => ProductDetailsScreenV2(
-                            productId: productId is int
-                                ? productId
-                                : int.tryParse(productId.toString()) ?? 0,
-                            type: "add",
-                            brandName: brand,
-                          ));
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  void _showSortSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => Obx(() {
-        final current = newInController.sortMode.value;
-        final options = [
-          ('default', 'Default'),
-          ('low_to_high', 'Price: Low to High'),
-          ('high_to_low', 'Price: High to Low'),
-          ('discount', 'Discount'),
-        ];
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.sp),
-                child: const AppText(
-                  text: "Sort By",
-                  fontFamily: "Clash Display Semibold",
-                  color: blackColor,
-                  fontSize: 16,
-                ),
-              ),
-              const Divider(height: 1),
-              ...options.map((opt) {
-                final isActive = current == opt.$1;
-                return ListTile(
-                  title: Text(
-                    opt.$2,
-                    style: TextStyle(
-                      fontFamily: isActive
-                          ? "Clash Display Semibold"
-                          : "Clash Display Regular",
-                      fontSize: 14.sp,
-                      color: blackColor,
-                    ),
-                  ),
-                  trailing: isActive
-                      ? Icon(Icons.check, size: 18.sp, color: blackColor)
-                      : null,
-                  onTap: () {
-                    newInController.applySort(opt.$1);
-                    Navigator.pop(context);
-                  },
-                );
-              }),
-              SizedBox(height: 8.sp),
-            ],
-          ),
-        );
-      }),
-    );
-  }
 }
 
 class _SectionStrip extends StatefulWidget {
