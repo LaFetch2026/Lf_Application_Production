@@ -568,12 +568,12 @@ class HomeScreenState extends State<HomeScreen>
                     dividerColor: Colors.transparent,
                     labelStyle: TextStyle(
                       fontSize: 13.sp,
-                      fontFamily: "Clash Display Semibold",
+                      fontFamily: "InstrumentSans",
                       fontWeight: FontWeight.w500,
                     ),
                     unselectedLabelStyle: TextStyle(
                       fontSize: 13.sp,
-                      fontFamily: "Clash Display",
+                      fontFamily: "InstrumentSans",
                       fontWeight: FontWeight.w500,
                     ),
                     onTap: (index) {
@@ -870,49 +870,6 @@ class HomeScreenState extends State<HomeScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Section video banner (cached controllers, no extra S3 requests on tab switch)
-                                // Obx(() {
-                                //   final genderId =
-                                //       homeController.homeGenderValue.value;
-                                //   final controller =
-                                //       _sectionVideoControllers[genderId];
-                                //   return _SectionVideoBanner(
-                                //     controller: controller,
-                                //   );
-                                // }),
-
-                                // // SizedBox(height: 12.sp), // ✅ Consistent spacing
-
-                                // // ── NEW IN Section ──────────────────────────────
-                                // // _NewInSection(newInController: newInController),
-
-                                // Transform.translate(
-                                //   offset: Offset(0, -32.sp),
-                                //   child: Center(
-                                //     child: SizedBox(
-                                //       width: 185.sp,
-                                //       height: 64.sp,
-                                //       child: Stack(
-                                //         alignment: Alignment.center,
-                                //         children: [
-                                //           SvgPicture.asset(
-                                //             newDropBgAsset,
-                                //             fit: BoxFit.contain,
-                                //           ),
-                                //           SvgPicture.asset(
-                                //             newDropTextureAsset,
-                                //             fit: BoxFit.contain,
-                                //           ),
-                                //           SvgPicture.asset(
-                                //             newDropTextAsset,
-                                //             fit: BoxFit.contain,
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-
                                 Stack(
                                   clipBehavior: Clip.none,
                                   children: [
