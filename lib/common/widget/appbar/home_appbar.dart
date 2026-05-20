@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/common/widget/appbar/cycling_hint_animation.dart';
 import 'package:lafetch/common/widget/appbar/homepage_search_placeholder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../controllers/cart_controller.dart';
@@ -26,6 +26,8 @@ class HomeAppbar extends StatefulWidget {
   final Widget? bottom;
   final String title;
   final String searchPlaceholder;
+  final double scrollOffset; // For glassmorphism effect
+  final bool isTransparent; // Control transparency
 
   const HomeAppbar({
     Key? key,
@@ -42,6 +44,8 @@ class HomeAppbar extends StatefulWidget {
     this.onPressedDropDown,
     this.onPressedProfile,
     this.onPressedCategories,
+    this.scrollOffset = 0.0,
+    this.isTransparent = false,
   }) : super(key: key);
 
   @override
@@ -56,24 +60,14 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    Future.delayed(Duration.zero, () async {
-      final prefs = await SharedPreferences.getInstance();
-      isGuest = prefs.getBool('skip') ?? false;
-      if (!isGuest) {
-        await cartController.getCartData();
-      } else {
-        print("👤 Guest user - skipping cart data fetch in appbar");
-      }
-      if (mounted) setState(() {});
-    });
+    _init();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!isGuest) {
-      cartController.getCartData();
-    }
+  Future<void> _init() async {
+    final prefs = await SharedPreferences.getInstance();
+    isGuest = prefs.getBool('skip') ?? false;
+    if (!isGuest) cartController.getCartData();
+    if (mounted) setState(() {});
   }
 
   @override
@@ -94,45 +88,32 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
     final bool collapsed = widget.isSearchCollapsed;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 280),
-      curve: Curves.easeInOut,
       width: double.infinity,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       decoration: BoxDecoration(
+        // color: Colors.white.withValues(alpha: 0),
+        color: Colors.white.withValues(alpha: collapsed ? 0.75 : 0.0),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(12.sp),
           bottomRight: Radius.circular(12.sp),
         ),
-        border: Border.all(
-          color: const Color(0xFFF5F5F5),
-          width: 1,
+        border: Border(
+          bottom: BorderSide(
+            // color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withValues(alpha: collapsed ? 0.2 : 0.0),
+            width: 0.5,
+          ),
         ),
-        gradient: widget.useGradient
-            ? const LinearGradient(
-                begin: Alignment(-1.0, -0.25),
-                end: Alignment(1.0, 0.25),
-                colors: [
-                  Color(0xFFEBE7FF), // 0%   — deepest lavender, left
-                  Color(0xFFF1EFFF), // 35%  — lighter lavender
-                  Color(0xFFFFFFFF), // 65%  — fading to white
-                  Color(0xFFFFFFFF), // 100% — full white, right
-                ],
-                stops: [0.0, 0.35, 0.65, 1.0],
-              )
-            : null,
       ),
       child: SafeArea(
         bottom: false,
         child: Padding(
           padding: EdgeInsets.only(
-            left: 14.sp,
-            right: 14.sp,
-            top: 10.sp,
-            bottom: 10.sp,
-          ),
+              left: 14.sp, right: 14.sp, top: 10.sp, bottom: 10.sp),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ── Back button / title row ──────────────────────────────
               if (widget.showBack ||
                   widget.title.isNotEmpty ||
                   widget.onPressedCategories != null)
@@ -143,11 +124,8 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                         onTap: () => Navigator.of(context).pop(),
                         child: Padding(
                           padding: EdgeInsets.only(right: 8.sp),
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size: 16.sp,
-                            color: homeAppBarIconColor,
-                          ),
+                          child: Icon(Icons.arrow_back_ios,
+                              size: 16.sp, color: homeAppBarIconColor),
                         ),
                       ),
                     if (widget.title.isNotEmpty)
@@ -166,12 +144,8 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                         ),
                       )
                     else
-                      SvgPicture.asset(
-                        applogoCondensed,
-                        height: 28.sp,
-                        width: 70.sp,
-                        fit: BoxFit.fill,
-                      ),
+                      SvgPicture.asset(applogoCondensed,
+                          height: 28.sp, width: 70.sp, fit: BoxFit.fill),
                     const Spacer(),
                     if (widget.onPressedCategories != null)
                       InkWell(
@@ -179,20 +153,14 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 8.sp, vertical: 8.sp),
-                          child: Icon(
-                            Icons.grid_view_outlined,
-                            size: 20.sp,
-                            color: homeAppBarIconColor,
-                          ),
+                          child: Icon(Icons.grid_view_outlined,
+                              size: 20.sp, color: homeAppBarIconColor),
                         ),
                       ),
                   ],
                 ),
-
               if (widget.showBack || widget.title.isNotEmpty)
                 SizedBox(height: 8.sp),
-
-              // ── Search bar row with animated collapse ────────────────
               if (widget.showSearch)
                 HomeSearchBar(
                   collapsed: collapsed,
@@ -211,13 +179,6 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                   },
                   onProfileTap: widget.onPressedProfile,
                 ),
-
-              // ── Gender tabs — ALWAYS visible, never hidden on scroll ─
-              // FIX: removed the `!collapsed` guard that was eating the tabs
-              // if (widget.bottom != null) ...[
-              //   SizedBox(height: 10.sp),
-              //   widget.bottom!,
-              // ],
               if (widget.bottom != null)
                 ClipRect(
                   child: AnimatedAlign(
@@ -247,7 +208,7 @@ class AppbarIconButton extends StatelessWidget {
   final VoidCallback onTap;
   final Widget child;
 
-  const AppbarIconButton({required this.onTap, required this.child});
+  const AppbarIconButton({super.key, required this.onTap, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -255,8 +216,8 @@ class AppbarIconButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color:
-              Colors.white.withValues(alpha: 0.35), // was 0.10, too invisible
+          // color:
+          //     Colors.white.withValues(alpha: 0.35), // was 0.10, too invisible
           borderRadius: BorderRadius.circular(102),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.4),
