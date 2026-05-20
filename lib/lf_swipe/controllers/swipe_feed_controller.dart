@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/models/analytics_models.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -458,8 +459,22 @@ class SwipeFeedController extends GetxController {
         boardId = created['id'] as int;
       }
 
-      await _wishlistCtrl.addProductToBoard(boardId, product.id,
-          price: product.sellingPrice);
+      final analyticsProduct = AnalyticsProduct(
+        prid: product.id.toString(),
+        image: product.imageUrl,
+        prqt: 1,
+        productName: product.productName,
+        category: product.category,
+        brand: product.brandName,
+        sellingPrice: product.sellingPrice.toDouble(),
+        productUrl: "/product/${product.slug}",
+        discountedPrice: product.sellingPrice.toDouble(),
+        stockAvailability: 1, // Assuming available
+        variantId: null, // SwipeProduct doesn't expose variant ID
+        mrp: (product.mrp ?? product.sellingPrice).toDouble(),
+      );
+
+      await _wishlistCtrl.addProductToBoard(boardId, analyticsProduct);
     } catch (e) {
       print('[SwipeFeedController] _addToSwipesBoard error: $e');
     }

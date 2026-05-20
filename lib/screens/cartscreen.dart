@@ -13,6 +13,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
 import 'package:lafetch/common/widget/bottom_sheets/missing_contact_bottom_sheet.dart';
 import 'package:lafetch/controllers/order_controller.dart';
+import 'package:lafetch/models/analytics_models.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
@@ -22,6 +23,7 @@ import 'package:lafetch/screens/paymentcheckscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
+import 'package:lafetch/services/analytics/analytics_service.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/appbar/cart_appbar.dart';
@@ -257,6 +259,47 @@ class CartScreenState extends State<CartScreen> {
         return;
       }
       print("   ✅ User authenticated: userId=$userId");
+
+      // ✅ Analytics: track checkout
+      try {
+        final items = controller.orderList.map((item) {
+          final p = item['product'] as Map<String, dynamic>;
+          final inv = item['inventory'] as Map<String, dynamic>;
+          return AnalyticsProduct(
+            prid: p['id'].toString(),
+            image: (p['images'] != null && (p['images'] as List).isNotEmpty)
+                ? p['images'][0]['name'].toString()
+                : '',
+            prqt: (item['quantity'] as num).toInt(),
+            productName: p['name'].toString(),
+            category: '',
+            brand: p['brand_name'].toString(),
+            sellingPrice: (p['price'] as num).toDouble(),
+            productUrl: "/product/${p['slug'] ?? ''}",
+            discountedPrice: (p['price'] as num).toDouble(),
+            stockAvailability: (inv['stocks'] as num) > 0 ? 1 : 0,
+            variantId: inv['id'].toString(),
+            mrp: (p['mrp'] as num).toDouble(),
+          );
+        }).toList();
+
+        final order = AnalyticsOrder(
+          totalPrqt: items.fold(0, (sum, i) => sum + i.prqt),
+          sellingAmount:
+              items.fold(0.0, (sum, i) => sum + (i.mrp ?? 0) * i.prqt),
+          discountAmt: _couponDiscount.toDouble(),
+          amount: _asNum(controller.cartDetails["total"]).toDouble(),
+          shippingCost:
+              _asNum(controller.cartDetails["shipping_cost"] ?? '0').toDouble(),
+          paymentMode: 'razorpay',
+          couponCode: _couponCode,
+          items: items,
+        );
+
+        await AnalyticsService.instance.trackCheckout(order);
+      } catch (e) {
+        print("⚠️ Analytics trackCheckout error: $e");
+      }
 
       // ✅ Step 2.5: Contact gate — ensure email and phone are present
       final String _gateEmail = (prefs.getString('email') ?? '').trim();
@@ -2273,6 +2316,20 @@ class CartScreenState extends State<CartScreen> {
       await prefs.setString('applied_coupon_code', code.toUpperCase());
       await prefs.setInt('applied_coupon_discount', finalDiscount.toInt());
 
+      // ✅ Analytics: track coupon applied
+      try {
+        final num cartTotal = _asNum(controller.cartDetails["total"]);
+        await AnalyticsService.instance.trackCouponApplied(
+          code: code.toUpperCase(),
+          type: discountType.contains('%') ? 'percentage' : 'flat',
+          value: finalDiscount.toDouble(),
+          cartValue: cartTotal.toDouble(),
+          discountAmt: finalDiscount.toDouble(),
+        );
+      } catch (e) {
+        print("⚠️ Analytics trackCouponApplied error: $e");
+      }
+
       print("   ✅ Coupon applied successfully!");
       print("   💾 Saved to SharedPreferences");
       print("🎁 ═══════════════════════════════════════════════════\n");
@@ -2668,7 +2725,9 @@ class CartScreenState extends State<CartScreen> {
                                 child: SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: Center(child: LfLogoLoader(size: 12, showGlow: false)),
+                                  child: Center(
+                                      child: LfLogoLoader(
+                                          size: 12, showGlow: false)),
                                 ),
                               )
                             : Text(
@@ -3041,9 +3100,24 @@ class CartScreenState extends State<CartScreen> {
         ? (inventory["id"] as num).toInt()
         : int.tryParse("${inventory["id"]}") ?? 0;
 
+    final analyticsProduct = AnalyticsProduct(
+      prid: productId.toString(),
+      image: _firstImageUrl(product) ?? '',
+      prqt: 1,
+      productName: (product["name"] ?? '').toString(),
+      category: (product["category"]?["name"] ?? '').toString(),
+      brand: (product["brand_name"] ?? '').toString(),
+      sellingPrice: ((product["price"] ?? 0) as num).toDouble(),
+      productUrl: "/product/${product["slug"] ?? ''}",
+      discountedPrice: ((product["price"] ?? 0) as num).toDouble(),
+      stockAvailability: ((inventory["stocks"] ?? 0) as num) > 0 ? 1 : 0,
+      variantId: variantId.toString(),
+      mrp: ((product["mrp"] ?? 0) as num).toDouble(),
+    );
+
     if (isWishlisted) {
       final wishlistId = product["wishlist_id"];
-      wishlistController.addProductToBoard(wishlistId, productId);
+      wishlistController.addProductToBoard(wishlistId, analyticsProduct);
       await controller.getCartData();
 
       await analytics.logEvent(
@@ -3073,7 +3147,7 @@ class CartScreenState extends State<CartScreen> {
           },
           productImage: preview,
           onPressed: (boardId) async {
-            wishlistController.addProductToBoard(boardId, productId);
+            wishlistController.addProductToBoard(boardId, analyticsProduct);
             await controller.deleteFromCartUniversal(
                 widget.backgroundcolor, productId,
                 variantId: variantId);

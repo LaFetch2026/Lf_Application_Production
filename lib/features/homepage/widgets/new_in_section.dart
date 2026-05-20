@@ -49,7 +49,7 @@ class NewInSection extends StatelessWidget {
           Container(
             width: 1.5.sp,
             height: 24.sp,
-            color: Colors.black.withOpacity(0.18),
+            color: Colors.black.withValues(alpha: 0.18),
           ),
 
           // Punch hole
@@ -60,7 +60,7 @@ class NewInSection extends StatelessWidget {
               color: const Color(0xFF2E2F35),
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
               ),
             ),
           ),
@@ -81,7 +81,8 @@ class NewInSection extends StatelessWidget {
                 boxShadow: highlighted
                     ? [
                         BoxShadow(
-                          color: const Color(0xFF9B8FFF).withOpacity(0.22),
+                          color:
+                              const Color(0xFF9B8FFF).withValues(alpha: 0.22),
                           blurRadius: 24,
                           spreadRadius: 2,
                         ),
@@ -95,7 +96,7 @@ class NewInSection extends StatelessWidget {
                     flex: 7,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.16),
+                        color: Colors.black.withValues(alpha: 0.16),
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(14.sp),
                         ),
@@ -114,13 +115,13 @@ class NewInSection extends StatelessWidget {
                           Container(
                             height: 10.sp,
                             width: width * 0.52,
-                            color: Colors.black.withOpacity(0.10),
+                            color: Colors.black.withValues(alpha: 0.10),
                           ),
                           SizedBox(height: 8.sp),
                           Container(
                             height: 8.sp,
                             width: width * 0.32,
-                            color: Colors.black.withOpacity(0.07),
+                            color: Colors.black.withValues(alpha: 0.07),
                           ),
                           const Spacer(),
                           Row(
@@ -128,13 +129,13 @@ class NewInSection extends StatelessWidget {
                               Container(
                                 height: 10.sp,
                                 width: width * 0.22,
-                                color: Colors.black.withOpacity(0.10),
+                                color: Colors.black.withValues(alpha: 0.10),
                               ),
                               SizedBox(width: 8.sp),
                               Container(
                                 height: 8.sp,
                                 width: width * 0.18,
-                                color: Colors.black.withOpacity(0.06),
+                                color: Colors.black.withValues(alpha: 0.06),
                               ),
                             ],
                           ),
@@ -218,8 +219,11 @@ class NewInSection extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
+      // return _NewInRotatingHangerCarousel(
+      //   products: newInController.products,
+      // );
       return _NewInRotatingHangerCarousel(
-        products: newInController.products,
+        products: newInController.pagedProducts,
       );
     });
   }
@@ -363,8 +367,8 @@ class _NewInRotatingHangerCarouselState
     if (widget.products.isEmpty) return const SizedBox.shrink();
 
     return RepaintBoundary(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Container(
             height: 370.sp,
@@ -467,15 +471,15 @@ class _NewInRotatingHangerCarouselState
               ],
             ),
           ),
-          Positioned(
-            top: 370.sp + 10.sp + 28.sp - 2.sp,
-            left: 0,
-            right: 0,
-            child: Image.asset(
-              newInBottomExtensionImage,
-              fit: BoxFit.fill,
-            ),
-          ),
+          // Positioned(
+          //   top: 370.sp + 10.sp + 28.sp - 2.sp,
+          //   left: 0,
+          //   right: 0,
+          //   child: Image.asset(
+          //     newInBottomExtensionImage,
+          //     fit: BoxFit.fill,
+          //   ),
+          // ),
         ],
       ),
     );

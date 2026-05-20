@@ -15,7 +15,21 @@ class AuthApiClient extends http.BaseClient {
     final accessToken = prefs.getString('token');
 
     if (accessToken != null && accessToken.isNotEmpty) {
-      request.headers['Authorization'] = 'Bearer $accessToken';
+      final trimmed = accessToken.trim();
+      // Quick sanity check: JWTs usually have three dot-separated parts.
+      final parts = trimmed.split('.');
+      if (parts.length != 3) {
+        print(
+            '⚠️ Stored auth token does not look like a JWT (parts=${parts.length}).');
+      }
+      // If this is the test-review token we inject during local testing, do not
+      // attach it to requests — it's not a real JWT and will cause server 401s.
+      if (trimmed.startsWith('test_review_token_')) {
+        print('ℹ️ Test review token detected; skipping Authorization header.');
+      } else {
+        // Use the trimmed token when sending header
+        request.headers['Authorization'] = 'Bearer $trimmed';
+      }
     }
 
     request.headers['Content-Type'] = 'application/json';
@@ -33,16 +47,46 @@ class AuthApiClient extends http.BaseClient {
     // 🛑 Previously this would trigger Splash logout indirectly!
     if (response.statusCode == 401) {
       print("🛑 401 Unauthorized for ${request.method} ${request.url}");
+      // Read the raw response bytes and recreate a StreamedResponse so the
+      // caller can still consume the response body normally. This avoids
+      // "Bad state: Stream has already been listened to" errors when the
+      // higher-level helpers (e.g. Response.fromStream) also read the stream.
+      try {
+        final List<int> bytes = <int>[];
+        await for (final chunk in response.stream) {
+          bytes.addAll(chunk);
+        }
+        final bodyString = utf8.decode(bytes);
+        print("🔍 401 body: $bodyString");
 
-      final bodyString = await _readResponseAsString(response);
-      print("🔍 401 body: $bodyString");
+        // 🟢 FIX: Ignore 401 unless REAL logout is required
+        if (!ignore401) {
+          // Here you may force logout or refresh token
+        }
 
-      // 🟢 FIX: Ignore 401 unless REAL logout is required
-      if (!ignore401) {
-        // Here you may force logout or refresh token
+        // Recreate a fresh StreamedResponse with the same bytes so callers
+        // can read the body as usual.
+        final newStream = Stream.fromIterable([bytes]);
+        return http.StreamedResponse(
+          newStream,
+          response.statusCode,
+          headers: response.headers,
+          request: response.request,
+          reasonPhrase: response.reasonPhrase,
+          contentLength: bytes.length,
+        );
+      } catch (e) {
+        print("⚠️ Failed to read 401 body: $e");
+        // Fallthrough: return an empty stream response to avoid breaking callers
+        return http.StreamedResponse(
+          Stream.fromIterable([utf8.encode('')]),
+          response.statusCode,
+          headers: response.headers,
+          request: response.request,
+          reasonPhrase: response.reasonPhrase,
+          contentLength: 0,
+        );
       }
-
-      // Pass response normally (no forced logout)
     }
 
     return response;

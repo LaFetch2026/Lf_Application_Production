@@ -1,10 +1,12 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/models/analytics_models.dart';
+import 'package:lafetch/services/analytics/analytics_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/appbar/login_appbar.dart';
 import '../common/widget/other/common_widget.dart';
@@ -14,7 +16,6 @@ import '../common/widget/text/app_text.dart';
 import '../controllers/login_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../core/constant/constants.dart';
-import '../services/netcore_service.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
@@ -26,7 +27,6 @@ class UserDetailsScreen extends StatefulWidget {
 class UserDetailsScreenState extends State<UserDetailsScreen> {
   final userController = Get.put(ProfileController());
   final loginController = Get.put(LoginController());
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -61,18 +61,6 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /* Padding(
-                      padding: EdgeInsets.only(
-                          top: 70.sp, left: 16.sp, right: 16.sp),
-                      child: AppText(
-                        text: "Let’s get to know you\na bit more",
-                        fontFamily: "Clash Display",
-                        maxLines: 2,
-                        fontWeight: FontWeight.w500,
-                        color: blackColor,
-                        fontSize: 28,
-                      ),
-                    ), */
                     SizedBox(
                       height: 40.sp,
                     ),
@@ -326,22 +314,31 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                       // Step 1: Validate name, email, gender
                       if (userController.validateBasicProfileFields()) {
                         // Step 2: Submit profile update
-                        await userController.updateBasicProfile(
+                        final success = await userController.updateBasicProfile(
                             isInitialSetup: true);
 
-                        // Step 3: Log analytics
-                        await analytics.logEvent(
-                          name: 'user_detail_btnContinue',
-                          parameters: {'page_name': 'user_detail_btnContinue'},
-                        );
+                        if (success) {
+                          // Step 3: Log analytics via centralized service
+                          final prefs = await SharedPreferences.getInstance();
+                          final method =
+                              prefs.getString('loginProvider') ?? 'phone';
 
-                        // ── Netcore CE: track signup completion ────────────
-                        try {
-                          NetcoreService.instance.trackEvent('Signup', {
-                            'name': userController.nameController.text.trim(),
-                            'email': userController.emailController.text.trim(),
-                          });
-                        } catch (_) {}
+                          final analyticsUser = AnalyticsUser(
+                            fullName: userController.nameController.text.trim(),
+                            email: userController.emailController.text.trim(),
+                            mobile: userController.phoneController.text
+                                .trim()
+                                .replaceAll(RegExp(r'[^0-9]'), ''),
+                            gender: userController.gerderController.text
+                                .trim()
+                                .toLowerCase(),
+                          );
+
+                          await AnalyticsService.instance.trackSignup(
+                            analyticsUser,
+                            method: method,
+                          );
+                        }
                       }
                       // Errors (if any) show automatically via Obx watching nameError/emailError/genderError
                     },

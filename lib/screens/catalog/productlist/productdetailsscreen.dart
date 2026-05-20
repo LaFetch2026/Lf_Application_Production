@@ -14,6 +14,7 @@ import 'package:lafetch/common/widget/other/error_shake.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
+import 'package:lafetch/models/analytics_models.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/ProductImageScreen.dart';
 import 'package:lafetch/screens/catalog/productlist/ReviewOrderScreen.dart';
@@ -1409,13 +1410,29 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ));
                       },
                       onPressed: (boardId) async {
-                        final double wishlistPrice =
-                            ((productController.productDetails['lfMsp'] ?? 0)
-                                    as num)
-                                .toDouble();
+                        final data = productController.productDetails;
+                        final analyticsProduct = AnalyticsProduct(
+                          prid: (data['id'] ?? 0).toString(),
+                          image: (data['imageUrls'] != null &&
+                                  (data['imageUrls'] as List).isNotEmpty)
+                              ? (data['imageUrls'] as List).first.toString()
+                              : '',
+                          prqt: 1,
+                          productName: (data['title'] ?? '').toString(),
+                          category:
+                              (data['category']?['name'] ?? '').toString(),
+                          brand: (data['brand']?['name'] ?? '').toString(),
+                          sellingPrice:
+                              ((data['lfMsp'] ?? 0) as num).toDouble(),
+                          productUrl: "/product/${data['slug'] ?? ''}",
+                          discountedPrice:
+                              ((data['lfMsp'] ?? 0) as num).toDouble(),
+                          stockAvailability: 1,
+                          mrp: ((data['mrp'] ?? 0) as num).toDouble(),
+                        );
+
                         await wishlistController.addProductToBoard(
-                            boardId, productId,
-                            price: wishlistPrice);
+                            boardId, analyticsProduct);
 
                         Get.back(); // Close bottom sheet
 

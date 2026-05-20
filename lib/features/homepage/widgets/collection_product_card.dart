@@ -53,110 +53,116 @@ class CollectionProductCard extends StatelessWidget {
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              // Image section (~70% of card height)
-              Expanded(
-                flex: 7,
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(12.sp),
-                      ),
-                      child: _buildImage(),
-                    ),
-                    // Favorite button (heart icon)
-                    if (onFavorite != null)
-                      Positioned(
-                        top: 8.sp,
-                        right: 8.sp,
-                        child: GestureDetector(
-                          onTap: () {
-                            HapticFeedback.lightImpact();
-                            onFavorite!();
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(8.sp),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Image section (~70% of card height)
+                  Expanded(
+                    flex: 7,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12.sp),
+                          ),
+                          child: _buildImage(),
+                        ),
+                        // Favorite button (heart icon)
+                        if (onFavorite != null)
+                          Positioned(
+                            top: 8.sp,
+                            right: 8.sp,
+                            child: GestureDetector(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                onFavorite!();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8.sp),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.9),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              size: 18.sp,
-                              color: isFavorite ? Colors.red : Colors.black54,
+                                child: Icon(
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  size: 18.sp,
+                                  color:
+                                      isFavorite ? Colors.red : Colors.black54,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    // Nudge badges
-                    if (product.nudges != null && product.nudges!.isNotEmpty)
-                      Positioned(
-                        top: 8.sp,
-                        left: 8.sp,
-                        child: NudgeBadgeRow(
-                          nudges: product.nudges!,
-                          maxVisible: 2,
-                          isExpanded: true,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              // Content section (~30% of card height)
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: EdgeInsets.all(12.sp),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Product name (bold, large)
-                      Text(
-                        product.title.toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: "Clash Display Semibold",
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          height: 1.2,
-                        ),
-                      ),
-                      // Brand label (subtle)
-                      if (product.brand.isNotEmpty)
-                        Text(
-                          product.brand.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: "Clash Display Regular",
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black54,
-                            height: 1.2,
+                        // Nudge badges
+                        if (product.nudges != null &&
+                            product.nudges!.isNotEmpty)
+                          Positioned(
+                            top: 8.sp,
+                            left: 8.sp,
+                            child: NudgeBadgeRow(
+                              nudges: product.nudges!,
+                              maxVisible: 2,
+                              isExpanded: true,
+                            ),
                           ),
-                        ),
-                      // Price row
-                      _buildPriceRow(),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                  // Content section (~30% of card height)
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: EdgeInsets.all(12.sp),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Product name (bold, large)
+                          Text(
+                            product.title.toUpperCase(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: "Clash Display Semibold",
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              height: 1.2,
+                            ),
+                          ),
+                          // Brand label (subtle)
+                          if (product.brand.isNotEmpty)
+                            Text(
+                              product.brand.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: "Clash Display Regular",
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black54,
+                                height: 1.2,
+                              ),
+                            ),
+                          // Price row
+                          _buildPriceRow(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Add-to-bag button (circular with +)
+                ],
               ),
-              // Add-to-bag button (circular with +)
               if (onAddToBag != null)
                 Positioned(
                   bottom: 8.sp,

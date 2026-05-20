@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/models/analytics_models.dart';
 
 import '../../common/widget/appbar/backbutton_appbar.dart';
 import '../../common/widget/appbar/editboard_appbar.dart';
@@ -176,9 +177,24 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
   }
 
   Future<void> _addSingleProductToBoard() async {
+    // Note: Creating a stub AnalyticsProduct here because this screen only has productId.
+    // In a full implementation, we should pass the product object to this screen.
+    final analyticsProduct = AnalyticsProduct(
+      prid: widget.productId.toString(),
+      image: '',
+      prqt: 1,
+      productName: '',
+      category: '',
+      brand: '',
+      sellingPrice: 0.0,
+      productUrl: '',
+      discountedPrice: 0.0,
+      stockAvailability: 0,
+    );
+
     await wishlistController.addProductToBoard(
       widget.wishlistId,
-      widget.productId,
+      analyticsProduct,
     );
     Get.back();
   }

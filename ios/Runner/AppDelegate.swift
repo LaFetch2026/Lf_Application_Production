@@ -39,6 +39,9 @@ import smartech_base
     // ── Netcore CE: register for push notifications
     SmartPush.sharedInstance().registerForPushNotificationWithDefaultAuthorizationOptions()
 
+    // ── Netcore CE: install/update/reinstall tracking
+    Smartech.sharedInstance().trackAppInstallUpdateBySmartech()
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -59,6 +62,15 @@ import smartech_base
   ) {
     print("❌ Failed to register for remote notifications: \(error.localizedDescription)")
     SmartPush.sharedInstance().didFailToRegisterForRemoteNotificationsWithError(error)
+  }
+
+  override func application(
+    _ application: UIApplication,
+    didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+    fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+  ) {
+    SmartPush.sharedInstance().didReceiveRemoteNotification(userInfo,
+                                                            withCompletionHandler: completionHandler)
   }
 
   // ── Custom URL scheme handler (lafetch://) — forward to AppsFlyer

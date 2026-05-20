@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:lafetch/models/analytics_models.dart';
+import 'package:lafetch/services/analytics/analytics_service.dart';
 import 'package:lafetch/controllers/base_controller.dart';
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
@@ -492,8 +494,7 @@ class WishlistController extends BaseController {
   }
 
   /// POST /board-product  {userId, productId, boardId}
-  Future<void> addProductToBoard(int boardId, int productId,
-      {double price = 0.0}) async {
+  Future<void> addProductToBoard(int boardId, AnalyticsProduct product) async {
     final auth = await _auth();
     if (auth == null) return;
 
@@ -508,7 +509,7 @@ class WishlistController extends BaseController {
         Uri.parse(ApiEndpoints.boardProductMutate()),
         headers: _headers(token, json: true),
         body: jsonEncode(
-          {"userId": userId, "productId": productId, "boardId": boardId},
+          {"userId": userId, "productId": product.prid, "boardId": boardId},
         ),
       );
 
@@ -520,17 +521,8 @@ class WishlistController extends BaseController {
         isWishlisted.value = true;
         wishListDetails["wishlisted"] = true;
 
-        MetaEventService.instance.logAddToWishlist(
-          contentId: productId.toString(),
-          price: price,
-        );
-
-        // ── Netcore CE: track wishlist add ─────────────────────────────────
-        try {
-          NetcoreService.instance.trackEvent('Add To Wishlist', {
-            'productId': productId,
-          });
-        } catch (_) {}
+        // Centralized Analytics tracking
+        await AnalyticsService.instance.trackAddToWishlist(product);
 
         // Refresh boards list
         await fetchBoards();

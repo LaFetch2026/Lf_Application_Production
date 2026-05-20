@@ -20,6 +20,7 @@ import 'base_controller.dart';
 import 'cart_controller.dart';
 import 'home_controller.dart';
 import '../services/netcore_service.dart';
+import '../services/analytics/analytics_service.dart';
 
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -157,7 +158,7 @@ class LoginController extends BaseController {
       await signOutGoogle();
       // ── Netcore CE: clear user identity on logout ──────────────────────────
       try {
-        NetcoreService.instance.logoutUser();
+        AnalyticsService.instance.trackSignOut();
       } catch (_) {}
       getSnackBar("You have been logged out successfully.");
       Get.offAllNamed('/welcome');
@@ -194,6 +195,12 @@ class LoginController extends BaseController {
       return false;
     }
     return true;
+  }
+
+  String _getNetcoreIdentity(String? rawPhone, {String? fallback}) {
+    final cleaned = rawPhone?.replaceAll(RegExp(r'[^0-9]'), '') ?? '';
+    if (cleaned.isNotEmpty) return cleaned;
+    return fallback ?? '';
   }
 
   // ----------------- OTP FLOWS -----------------
@@ -307,6 +314,9 @@ class LoginController extends BaseController {
 
           await _syncGuestCartAfterAuth();
 
+          // Analytics
+          await AnalyticsService.instance.trackSignin(method: 'phone');
+
           hideLoading();
           getSnackBar("OTP verified successfully!");
           Get.offAll(() => const BottomNavScreen());
@@ -409,12 +419,22 @@ class LoginController extends BaseController {
           // Send pending FCM token to server
           await _sendPendingFcmToken();
 
+          // Analytics
+          await AnalyticsService.instance.trackSignin(method: 'phone');
+
           // ── Netcore CE: identify user after OTP login ──────────────────────
           try {
-            final netcoreUserId = (userData?['id'] ?? 0).toString();
-            if (netcoreUserId != '0') {
-              NetcoreService.instance.identifyUser(netcoreUserId);
-              NetcoreService.instance.loginUser(netcoreUserId);
+            final savedPhone = phone;
+            final savedEmail = prefs.getString('email') ?? '';
+            final netcoreIdentity = _getNetcoreIdentity(
+              savedPhone,
+              fallback: savedEmail.isNotEmpty
+                  ? savedEmail
+                  : (userData?['id'] ?? 0).toString(),
+            );
+            if (netcoreIdentity.isNotEmpty) {
+              NetcoreService.instance.identifyUser(netcoreIdentity);
+              NetcoreService.instance.loginUser(netcoreIdentity);
               // Update profile with available attributes
               final profileMap = <String, dynamic>{};
               final savedName = prefs.getString('name') ?? '';
@@ -428,7 +448,8 @@ class LoginController extends BaseController {
               final savedEmail = prefs.getString('email') ?? '';
               if (savedEmail.isNotEmpty) profileMap['email'] = savedEmail;
               final savedPhone = prefs.getString('phonenumber') ?? '';
-              if (savedPhone.isNotEmpty) profileMap['phone'] = savedPhone;
+              if (savedPhone.isNotEmpty)
+                profileMap['phone'] = _getNetcoreIdentity(savedPhone);
               if (profileMap.isNotEmpty) {
                 NetcoreService.instance.updateProfile(profileMap);
               }
@@ -823,7 +844,7 @@ class LoginController extends BaseController {
         final prefs = await SharedPreferences.getInstance();
         await setToken(accessToken);
         await prefs.setBool('isLoggedIn', true);
-        await prefs.setString('loginProvider', 'google');
+        await prefs.setString('loginProvider', provider);
         await prefs.setInt('userId', userData?['id'] ?? 0);
         await prefs.setInt('userId', userInfo?['id'] ?? 0);
 
@@ -845,12 +866,20 @@ class LoginController extends BaseController {
         // Send pending FCM token to server
         await _sendPendingFcmToken();
 
+        // Analytics
+        await AnalyticsService.instance.trackSignin(method: provider);
+
         // ── Netcore CE: identify user after social login ───────────────────
         try {
-          final netcoreUserId = (userData?['id'] ?? userInfo?['id'] ?? 0).toString();
-          if (netcoreUserId != '0') {
-            NetcoreService.instance.identifyUser(netcoreUserId);
-            NetcoreService.instance.loginUser(netcoreUserId);
+          final savedPhone = prefs.getString('phonenumber') ?? '';
+          final savedEmail = prefs.getString('email') ?? '';
+          final netcoreIdentity = _getNetcoreIdentity(
+            savedPhone,
+            fallback: savedEmail.isNotEmpty ? savedEmail : providerId,
+          );
+          if (netcoreIdentity.isNotEmpty) {
+            NetcoreService.instance.identifyUser(netcoreIdentity);
+            NetcoreService.instance.loginUser(netcoreIdentity);
             final profileMap = <String, dynamic>{};
             final savedName = prefs.getString('name') ?? '';
             if (savedName.isNotEmpty) {
@@ -862,8 +891,8 @@ class LoginController extends BaseController {
             }
             final savedEmail = prefs.getString('email') ?? '';
             if (savedEmail.isNotEmpty) profileMap['email'] = savedEmail;
-            final savedPhone = prefs.getString('phonenumber') ?? '';
-            if (savedPhone.isNotEmpty) profileMap['phone'] = savedPhone;
+            if (savedPhone.isNotEmpty)
+              profileMap['phone'] = _getNetcoreIdentity(savedPhone);
             if (profileMap.isNotEmpty) {
               NetcoreService.instance.updateProfile(profileMap);
             }

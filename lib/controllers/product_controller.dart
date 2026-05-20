@@ -20,6 +20,8 @@ import '../models/collection_extensions.dart';
 import '../models/collection_banner_model.dart';
 import 'base_controller.dart';
 import '../services/netcore_service.dart';
+import '../services/analytics/analytics_service.dart';
+import '../models/analytics_models.dart';
 
 class ProductController extends BaseController {
   RxBool isProduct = false.obs;
@@ -1983,15 +1985,32 @@ class ProductController extends BaseController {
 
       print("🖼️ Display images count: ${currentDisplayImages.length}");
 
-      // ── Netcore CE: track product view ────────────────────────────────────
-      // Called after all product data is loaded — additive, never replaces
-      // existing EventTrackingService calls.
+      // ── Centralized Analytics: track product view ─────────────────────────
       try {
-        NetcoreService.instance.trackEvent('Product Viewed', {
-          'productId': data['id'] ?? 0,
-          'productName': (data['title'] ?? '').toString(),
-        });
-      } catch (_) {}
+        final firstVariant = parsedVariants.isNotEmpty ? parsedVariants.first : null;
+        final hasStock = parsedVariants.any((v) => (v['stocks'] ?? 0) > 0);
+
+        final analyticsProduct = AnalyticsProduct(
+          prid: (data['id'] ?? 0).toString(),
+          image: currentDisplayImages.isNotEmpty ? currentDisplayImages.first : '',
+          prqt: 1,
+          productName: (data['title'] ?? '').toString(),
+          category: (data['category']?['name'] ?? '').toString(),
+          brand: (data['brand']?['name'] ?? '').toString(),
+          sellingPrice: firstVariant != null ? (firstVariant['price'] as num).toDouble() : 0.0,
+          productUrl: "/product/${data['slug'] ?? ''}",
+          discountedPrice: firstVariant != null ? (firstVariant['price'] as num).toDouble() : 0.0,
+          stockAvailability: hasStock ? 1 : 0,
+          variantId: firstVariant != null ? firstVariant['id'].toString() : null,
+          mrp: data['mrp'] != null 
+              ? (data['mrp'] as num).toDouble() 
+              : (firstVariant != null ? (firstVariant['compareAtPrice'] as num).toDouble() : 0.0),
+        );
+
+        await AnalyticsService.instance.trackProductView(analyticsProduct);
+      } catch (e) {
+        print("⚠️ Analytics trackProductView error: $e");
+      }
     } catch (e, stackTrace) {
       errorMsg.value = "Error fetching product: $e";
       print("❌ getProductById error: $e");

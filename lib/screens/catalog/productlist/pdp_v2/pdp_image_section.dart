@@ -207,45 +207,63 @@ extension PdpImageSection on _ProductDetailsScreenV2State {
                                   ?.toString() ??
                               '')
                           : '';
-                      scaffoldKey.currentState
-                          ?.showBottomSheet((ctx) => BottomWishlist(
-                                controller: wishlistController,
-                                wishlistList: wishlistController.wishlistList,
-                                productImage: firstImg,
-                                onPressedBoard: () {
-                                  Get.back();
-                                  Get.to(() => NewBoardScreen(
-                                      title: "New Board",
-                                      boardName: "",
-                                      hintName: "Enter board name",
-                                      boardId: 0,
-                                      btnText: "Next",
-                                      productId: productId,
-                                      categoryId: 0,
-                                      screen: ""));
-                                },
-                                onPressed: (boardId) async {
-                                  final price = ((productController
-                                              .productDetails['lfMsp'] ??
-                                          0) as num)
-                                      .toDouble();
-                                  await wishlistController.addProductToBoard(
-                                      boardId, productId,
-                                      price: price);
-                                  Get.back();
-                                  final boardName = wishlistController
-                                          .wishlistList
-                                          .firstWhere((b) => b['id'] == boardId,
-                                              orElse: () =>
-                                                  {'name': 'Board'})['name']
-                                          ?.toString() ??
-                                      'Board';
-                                  Get.to(() => BoardScreen(
-                                      boardName: boardName,
-                                      boardId: boardId,
-                                      productId: productId));
-                                },
-                              ));
+                      scaffoldKey.currentState?.showBottomSheet((ctx) =>
+                          BottomWishlist(
+                            controller: wishlistController,
+                            wishlistList: wishlistController.wishlistList,
+                            productImage: firstImg,
+                            onPressedBoard: () {
+                              Get.back();
+                              Get.to(() => NewBoardScreen(
+                                  title: "New Board",
+                                  boardName: "",
+                                  hintName: "Enter board name",
+                                  boardId: 0,
+                                  btnText: "Next",
+                                  productId: productId,
+                                  categoryId: 0,
+                                  screen: ""));
+                            },
+                            onPressed: (boardId) async {
+                              final data = productController.productDetails;
+                              final analyticsProduct = AnalyticsProduct(
+                                prid: (data['id'] ?? 0).toString(),
+                                image: (data['imageUrls'] != null &&
+                                        (data['imageUrls'] as List).isNotEmpty)
+                                    ? (data['imageUrls'] as List)
+                                        .first
+                                        .toString()
+                                    : '',
+                                prqt: 1,
+                                productName: (data['title'] ?? '').toString(),
+                                category: (data['category']?['name'] ?? '')
+                                    .toString(),
+                                brand:
+                                    (data['brand']?['name'] ?? '').toString(),
+                                sellingPrice:
+                                    ((data['lfMsp'] ?? 0) as num).toDouble(),
+                                productUrl: "/product/${data['slug'] ?? ''}",
+                                discountedPrice:
+                                    ((data['lfMsp'] ?? 0) as num).toDouble(),
+                                stockAvailability: 1,
+                                mrp: ((data['mrp'] ?? 0) as num).toDouble(),
+                              );
+
+                              await wishlistController.addProductToBoard(
+                                  boardId, analyticsProduct);
+                              Get.back();
+                              final boardName = wishlistController.wishlistList
+                                      .firstWhere((b) => b['id'] == boardId,
+                                          orElse: () =>
+                                              {'name': 'Board'})['name']
+                                      ?.toString() ??
+                                  'Board';
+                              Get.to(() => BoardScreen(
+                                  boardName: boardName,
+                                  boardId: boardId,
+                                  productId: productId));
+                            },
+                          ));
                     }
                   },
                   child: Container(

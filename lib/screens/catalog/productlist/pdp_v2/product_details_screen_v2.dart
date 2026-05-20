@@ -12,6 +12,7 @@ import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
+import 'package:lafetch/models/analytics_models.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/ProductImageScreen.dart';
 import 'package:lafetch/screens/catalog/productlist/ReviewOrderScreen.dart';
@@ -145,9 +146,10 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         MetaEventService.instance
             .logViewContent(contentId: productId.toString());
         EventTrackingService.instance.trackView(productId);
-        
+
         // ✅ Phase 3.4: Fetch fresh stock status and start polling
-        print("📱 Product Detail Page opened - syncing stock status for product $productId");
+        print(
+            "📱 Product Detail Page opened - syncing stock status for product $productId");
         productController.syncStockStatus(productId);
         productController.startStockStatusPolling(productId);
       });
@@ -163,11 +165,11 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     _pincodeFocusNode.dispose();
     _pageController.dispose();
     _scrollController.dispose();
-    
+
     // ✅ Phase 3.9: Stop polling when leaving detail page
     print("📱 Product Detail Page closed - stopping stock status polling");
     productController.stopStockStatusPolling();
-    
+
     super.dispose();
   }
 

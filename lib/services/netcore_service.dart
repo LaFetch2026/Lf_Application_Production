@@ -49,7 +49,8 @@ class NetcoreService extends GetxService {
     try {
       // Signature: (String? source, String? deeplink, Map? payload, Map? customPayload)
       Smartech().onHandleDeeplink(
-        (String? smtDeeplinkSource, String? smtDeeplink,
+        (String? smtDeeplinkSource,
+            String? smtDeeplink,
             Map<dynamic, dynamic>? smtPayload,
             Map<dynamic, dynamic>? smtCustomPayload) {
           if (smtDeeplink != null && smtDeeplink.isNotEmpty) {

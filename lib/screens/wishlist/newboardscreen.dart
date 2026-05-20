@@ -5,6 +5,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/models/analytics_models.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 
 import '../../common/widget/appbar/backbutton_appbar.dart';
@@ -108,8 +109,21 @@ class _NewBoardScreenState extends State<NewBoardScreen> {
 
     // Add product to an existing board
     if (widget.productId != 0) {
+      final analyticsProduct = AnalyticsProduct(
+        prid: widget.productId.toString(),
+        image: '',
+        prqt: 1,
+        productName: '',
+        category: '',
+        brand: '',
+        sellingPrice: 0.0,
+        productUrl: '',
+        discountedPrice: 0.0,
+        stockAvailability: 0,
+      );
+
       await wishlistController.addProductToBoard(
-          widget.boardId, widget.productId);
+          widget.boardId, analyticsProduct);
       await analytics.logEvent(
         name: 'add_product_to_board_click',
         parameters: {'page_name': 'add_product_to_board_click'},

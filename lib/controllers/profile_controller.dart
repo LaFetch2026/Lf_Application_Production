@@ -12,6 +12,7 @@ import '../core/constant/constants.dart';
 import '../screens/bottomnavscreen.dart';
 import '../screens/loginscreen.dart';
 import '../screens/home/women/homescreen.dart';
+import '../services/netcore_service.dart';
 import 'auth_api_client.dart';
 import 'base_controller.dart';
 import 'cart_controller.dart';
@@ -346,8 +347,8 @@ class ProfileController extends BaseController {
     }
   }
 
-  Future<void> updateBasicProfile({required bool isInitialSetup}) async {
-    if (!validateBasicProfileFields()) return;
+  Future<bool> updateBasicProfile({required bool isInitialSetup}) async {
+    if (!validateBasicProfileFields()) return false;
     showLoading();
 
     try {
@@ -384,12 +385,12 @@ class ProfileController extends BaseController {
       if (response.statusCode == 401) {
         getSnackBar("Session expired. Please login again.");
         Get.offAll(() => const LoginScreen(initialTab: 0));
-        return;
+        return false;
       }
 
       if (response.body.isEmpty) {
         getSnackBar("Empty response from server.");
-        return;
+        return false;
       }
 
       final data = json.decode(response.body);
@@ -430,10 +431,43 @@ class ProfileController extends BaseController {
           if (token != null) await prefs.setString('token', token);
           if (refreshToken != null)
             await prefs.setString('refreshToken', refreshToken);
+
+          final formattedPhone = displayPhone.replaceAll(RegExp(r'[^0-9]'), '');
+          final netcoreIdentity = formattedPhone.isNotEmpty
+              ? formattedPhone
+              : (email.isNotEmpty ? email : userId?.toString() ?? '');
+
+          final profileMap = <String, dynamic>{};
+          final nameParts = fullName.trim().split(' ');
+          if (nameParts.isNotEmpty && nameParts.first.isNotEmpty) {
+            profileMap['first_name'] = nameParts.first;
+          }
+          if (nameParts.length > 1) {
+            profileMap['last_name'] = nameParts.sublist(1).join(' ');
+          }
+          if (email.isNotEmpty) profileMap['email'] = email;
+          if (formattedPhone.isNotEmpty) profileMap['phone'] = formattedPhone;
+          if (_getGenderString(genderId.value).isNotEmpty) {
+            profileMap['gender'] = _getGenderString(genderId.value);
+          }
+
+          if (netcoreIdentity.isNotEmpty) {
+            try {
+              if (isInitialSetup) {
+                NetcoreService.instance.identifyUser(netcoreIdentity);
+                NetcoreService.instance.loginUser(netcoreIdentity);
+              }
+              if (profileMap.isNotEmpty) {
+                NetcoreService.instance.updateProfile(profileMap);
+              }
+            } catch (_) {
+              // Netcore errors should not break the profile update flow.
+            }
+          }
         } else {
           debugPrint("⚠️ Invalid or missing 'data' in response.");
           getSnackBar("Profile updated, but user info is missing.");
-          return;
+          return false;
         }
 
         getSnackBar("Profile updated successfully!");
@@ -455,12 +489,13 @@ class ProfileController extends BaseController {
     } catch (e, st) {
       debugPrint("❌ Profile update error: $e\n$st");
       getSnackBar("An error occurred during profile update.");
+      return false;
     } finally {
       hideLoading();
     }
+    return true;
   }
 
-  /// Updates user's phone number, potentially requiring OTP verification.
   Future<void> updatePhoneNumberWithOtp(
       {required String phone, String? otp}) async {
     if (!validatePhoneNumber(phone)) {
@@ -752,7 +787,8 @@ class ProfileController extends BaseController {
           responseData = json.decode(response.body);
         } catch (_) {}
 
-        getSnackBar(responseData?['message'] ?? "Account deleted successfully!");
+        getSnackBar(
+            responseData?['message'] ?? "Account deleted successfully!");
         await prefs.clear();
         HomeScreenState.clearCache();
 

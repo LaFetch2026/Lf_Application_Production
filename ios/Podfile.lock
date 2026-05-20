@@ -13,14 +13,6 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
-  - appsflyer_sdk (6.17.8):
-    - appsflyer_sdk/Core (= 6.17.8)
-  - appsflyer_sdk/Core (6.17.8):
-    - AppsFlyerFramework (= 6.17.8)
-    - Flutter
-  - AppsFlyerFramework (6.17.8):
-    - AppsFlyerFramework/Main (= 6.17.8)
-  - AppsFlyerFramework/Main (6.17.8)
   - audio_session (0.0.1):
     - Flutter
   - device_info_plus (0.0.1):
@@ -298,7 +290,6 @@ PODS:
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
   - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
-  - appsflyer_sdk (from `.symlinks/plugins/appsflyer_sdk/ios`)
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - facebook_app_events (from `.symlinks/plugins/facebook_app_events/ios`)
@@ -337,7 +328,6 @@ SPEC REPOS:
   trunk:
     - AppAuth
     - AppCheckCore
-    - AppsFlyerFramework
     - FBAEMKit
     - FBSDKCoreKit
     - FBSDKCoreKit_Basics
@@ -378,8 +368,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/app_links/ios"
   app_tracking_transparency:
     :path: ".symlinks/plugins/app_tracking_transparency/ios"
-  appsflyer_sdk:
-    :path: ".symlinks/plugins/appsflyer_sdk/ios"
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
   device_info_plus:
@@ -448,8 +436,6 @@ SPEC CHECKSUMS:
   app_tracking_transparency: 3d84f147f67ca82d3c15355c36b1fa6b66ca7c92
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
-  appsflyer_sdk: 219a6c5cb0343de60c7f259ecdb202084274359e
-  AppsFlyerFramework: 63577b60d6b9fcdab60135289979e7d1c9ec79b9
   audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
   device_info_plus: 335f3ce08d2e174b9fdc3db3db0f4e3b1f66bd89
   facebook_app_events: 58a1b62fd50f6009907bd167fc26b3d043e97197

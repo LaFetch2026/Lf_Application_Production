@@ -15,6 +15,8 @@ import '../screens/paymentsuccessscreen.dart';
 import '../core/services/meta_event_service.dart';
 import '../services/cache_manager.dart';
 import '../services/netcore_service.dart';
+import '../services/analytics/analytics_service.dart';
+import '../models/analytics_models.dart';
 import 'auth_api_client.dart';
 import 'base_controller.dart';
 
@@ -330,6 +332,47 @@ class CartController extends BaseController {
       // ✅ Cache the cart data
       await _cacheCartData(userId);
 
+      // ✅ Analytics: track cart items
+      try {
+        final items = orderList.map((item) {
+          final p = item['product'] as Map<String, dynamic>;
+          final inv = item['inventory'] as Map<String, dynamic>;
+          return AnalyticsProduct(
+            prid: p['id'].toString(),
+            image: (p['images'] != null && (p['images'] as List).isNotEmpty)
+                ? p['images'][0]['name'].toString()
+                : '',
+            prqt: (item['quantity'] as num).toInt(),
+            productName: p['name'].toString(),
+            category: '',
+            brand: p['brand_name'].toString(),
+            sellingPrice: (p['price'] as num).toDouble(),
+            productUrl: "/product/${p['slug'] ?? ''}",
+            discountedPrice: (p['price'] as num).toDouble(),
+            stockAvailability: (inv['stocks'] as num) > 0 ? 1 : 0,
+            variantId: inv['id'].toString(),
+            mrp: (p['mrp'] as num).toDouble(),
+          );
+        }).toList();
+
+        final cartSummary = AnalyticsOrder(
+          totalPrqt: items.fold(0, (sum, i) => sum + i.prqt),
+          sellingAmount: items.fold(0.0, (sum, i) => sum + (i.mrp ?? 0) * i.prqt),
+          discountAmt: 0.0,
+          amount: items.fold(0.0, (sum, i) => sum + i.sellingPrice * i.prqt),
+          shippingCost: 0.0,
+          paymentMode: 'cod',
+          items: items,
+        );
+
+        await AnalyticsService.instance.trackCartItems(
+          hasItems: items.isNotEmpty,
+          cartSummary: cartSummary,
+        );
+      } catch (e) {
+        print("⚠️ Analytics trackCartItems error: $e");
+      }
+
       debugPrint("🛒 Cart items parsed: ${orderList.length}");
     } catch (e, st) {
       debugPrint("❌ Exception in getCartData: $e\n$st");
@@ -482,23 +525,36 @@ class CartController extends BaseController {
 
       print("🛒 Added to cart successfully!");
       getSnackBar("Added to cart");
-      MetaEventService.instance.logAddToCart(
-        contentId: productId.toString(),
-        price: price,
-      );
-      // ── Netcore CE: track add to cart — additive, after existing tracking ──
+      
+      // Centralized Analytics tracking
       try {
         final productController = Get.isRegistered<ProductController>()
             ? Get.find<ProductController>()
             : null;
-        final productName = productController?.productDetails['title']?.toString() ?? '';
-        NetcoreService.instance.trackEvent('Add To Cart', {
-          'productId': productId,
-          'variantId': finalVariantId,
-          'productName': productName,
-          'price': price,
-        });
-      } catch (_) {}
+        
+        final data = productController?.productDetails ?? {};
+        
+        final analyticsProduct = AnalyticsProduct(
+          prid: productId.toString(),
+          image: (data['imageUrls'] != null && (data['imageUrls'] as List).isNotEmpty)
+              ? (data['imageUrls'] as List).first.toString()
+              : '',
+          prqt: quantity,
+          productName: (data['title'] ?? '').toString(),
+          category: (data['category']?['name'] ?? '').toString(),
+          brand: (data['brand']?['name'] ?? '').toString(),
+          sellingPrice: price,
+          productUrl: "/product/${data['slug'] ?? ''}",
+          discountedPrice: price,
+          stockAvailability: 1,
+          variantId: finalVariantId.toString(),
+          mrp: ((data['mrp'] ?? 0) as num).toDouble(),
+        );
+        
+        await AnalyticsService.instance.trackAddToCart(analyticsProduct);
+      } catch (e) {
+        print("⚠️ Analytics trackAddToCart error: $e");
+      }
       await CacheManager.invalidateCartCache(userId: userId);
       await getCartData(forceRefresh: true);
       return true;
